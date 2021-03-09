@@ -7,6 +7,14 @@ let CANVAS = document.getElementById('canvas');
 CANVAS.width = width; CANVAS.height = height; 
 
 // Color dictionnary
+const couleurs = {
+    blue: [0, 0, 255, 255], 
+    red: [255, 0, 0, 255],
+    pink: [255, 192, 203, 255],
+    green: [0, 255, 0, 255],
+    black: [0, 0, 0, 255], 
+    white: [255, 255, 255, 255],     
+}
 
 // Uses texture function with arguments args to print on canvas
 function generateImage(canvas, texture, ...args) {
