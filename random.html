@@ -1,0 +1,146 @@
+<html>
+<body>
+
+    <h2>Procedural Textures</h2>
+
+    <canvas id="canvas" style="border:4px solid #000;"></canvas>
+    <script> 'use strict';
+
+
+        const couleurs = {
+            blue: [0, 0, 255, 255], 
+            red: [255, 0, 0, 255],
+            pink: [255, 192, 203, 255],
+            green: [0, 255, 0, 255],
+            black: [0, 0, 0, 255], 
+            white: [255, 255, 255, 255],     
+        }
+    
+        function getRandomInt(max) 
+        {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        const width = 350, height = 250;
+
+
+            // --------- Différents randoms ---------------------------------------------
+
+        function random(i, j)
+        {   
+            return [getRandomInt(255), getRandomInt(255), getRandomInt(255), 255]; 
+        }
+
+        function solid(i, j)
+        {
+            return [0, 0, 0, 255]; 
+        }
+
+        function gradient_Horizontal(i, j)
+        {
+            return [Math.floor(255*j/height), Math.floor(255*j/height), Math.floor(255*j/height), 255];
+        }
+
+        function gradient_Vertical(i, j)
+        {
+            return [Math.floor(255*i/width), Math.floor(255*i/width), Math.floor(255*i/width), 255];
+        }
+
+        function BlackWhite(i, j)
+        {
+            let test = getRandomInt(255);
+            let value = 0; 
+
+            if (test >= 255/2) value = 255; 
+
+            return [value, value, value, 255];
+        }
+
+        /*
+        function regulatePavage_square(i, j, sizeSquare)
+        {
+            let x_test = i % (sizeSquare * 2);
+            let y_test = j % (sizeSquare * 2); 
+            if ((x_test > sizeSquare && y_test < sizeSquare) || (x_test < sizeSquare && y_test > sizeSquare))    return [255, 255, 255, 255]; 
+            
+            return [0, 0, 0, 255];  
+        }
+        */
+
+        function regulatePavage_square(i, j, nbSquare_x, nbSquare_y)
+        {
+            let sizeSquare_x = width/nbSquare_x; 
+            let sizeSquare_y = height/nbSquare_y;
+
+            let coordinate_x = Math.floor(i/sizeSquare_x);
+            let coordinate_y = Math.floor(j/sizeSquare_y);
+        
+            if (coordinate_x % 2 == 0 && coordinate_y  % 2 != 0)   return [255, 255, 255, 255]; 
+            if (coordinate_x % 2 != 0 && coordinate_y  % 2 == 0)   return [255, 255, 255, 255]; 
+
+            return [0, 0, 0, 255]; 
+        }
+
+        function regulatePavage_triangle(i, j, nbTriangle)
+        {
+            let cote = 3; 
+            let size_base = Math.sqrt(3)/2 * cote; 
+            //let type_line =     
+
+
+            // Second side
+        }
+
+
+            // ------------------------------------------------------------------- 
+
+        function show()
+        {
+            let canvas = document.getElementById('canvas');
+            canvas.width = width; canvas.height = height;
+            let context = canvas.getContext("2d");
+            
+            let image = make_image(context);
+            context.putImageData(image, 0, 0); 
+        }
+
+        function make_image(context)
+        {
+            let image = context.createImageData(width, height);
+                // Index inside the image array
+            let pixels = new Array(4); 
+            for (let n=0, y = 0; y < image.height; y++) 
+            {
+                for (let x = 0; x < image.width; x++, n += 4) 
+                {
+
+                    pixels = regulatePavage_square(x, y, 20, 10); 
+                    image.data[n]   = pixels[0]; 
+                    image.data[n+1] = pixels[1]; 
+                    image.data[n+2] = pixels[2];
+                    image.data[n+3] = pixels[3]; 
+                }
+            }
+
+            return image;
+        }
+
+        show();
+    
+
+        /*
+            Couleur = [R, G, B, A]
+            Texture = fonction(?, x, y,)
+            Couleur("blue")
+
+            fonction(x) return 
+
+        */
+
+
+    </script>
+
+</body>
+
+
+</html>
