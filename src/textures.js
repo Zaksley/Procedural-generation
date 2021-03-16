@@ -160,6 +160,19 @@ function chess(width){
     }; }; }; }; }; }; };
 };
 
+
+
+/* Texture : PerlinNoise board of color1 and color2 pixels
+ *
+ * @param width canvas width
+ * @param height canvas height
+ * @param row number of rows
+ * @param column numbe of column
+ * @param color1 first color of the paving (rgba 4-upple format)
+ * @param color2 second color of the paving (rgba 4-upple format)
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position   
+ */
 function texture_perlinNoise(width){
     return function (height) { 
     return function (row) {
@@ -189,8 +202,7 @@ function texture_perlinNoise(width){
         }
 
         /*
-        *
-        *
+        * Computes the dot product of the distance and gradient vectors
         */
         function dotGridGradient(ix, iy, x_grid, y_grid) 
         {
@@ -206,10 +218,8 @@ function texture_perlinNoise(width){
         }
 
         /*
-        *
-        *
+        * Compute Perlin noise at coordinates x,y 
         */
-
         function perlin(x, y) {
 
             let x_grid = x/row;
@@ -235,6 +245,7 @@ function texture_perlinNoise(width){
             let ix1 = interpolate(n0, n1, sx);
 
             let value = interpolate(ix0, ix1, sy);
+                // Making value between 0 and 1
             value = (value + 1)/2;
 
             if (value < 0.5) return color1;

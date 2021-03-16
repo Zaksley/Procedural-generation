@@ -66,4 +66,7 @@ function generateImage(canvas, texture, ...args) {
 ///////// TESTS (temporary) //////////
 
 //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
-generateImage(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
+//generateImage(CANVAS, texture_perlinNoise, CANVAS.width, 1, colors.orange, colors.cyan, 90);
+
+    // Test perlin noise
+//generateImage(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white);
