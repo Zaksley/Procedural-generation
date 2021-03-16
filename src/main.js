@@ -136,18 +136,16 @@ function generateImage(canvas, data) {
 let data = 
     //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
     //generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
-    generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
+    generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 10, 10, colors.cyan, colors.blue);
 // ========================================
 
 // ===== FILTERS (repeat for successive filters) =====
 // Usage : data = [filter](data)<...(args)>);
-data = filter_blur(data)(WIDTH)(HEIGHT)(10);
-data = filter_cyanColoration(data)(0.5);
+//data = filter_blur(data)(WIDTH)(HEIGHT)(10);
+//data = filter_cyanColoration(data)(1);
 // ===================================================
 
 // !! Do not touch
 generateImage(CANVAS, data);
 
-
-
-
+                                
