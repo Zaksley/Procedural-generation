@@ -136,39 +136,98 @@ function texture_squareTiling(width){
     }; }; }; }; }; }; };
 };
 
-function texture_perlinNoise(){
+
+
+/* Texture : PerlinNoise board of color1 and color2 pixels
+ *
+ * @param width canvas width
+ * @param height canvas height
+ * @param row number of rows
+ * @param column numbe of column
+ * @param color1 first color of the paving (rgba 4-upple format)
+ * @param color2 second color of the paving (rgba 4-upple format)
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position   
+ */
+function texture_perlinNoise(width){
+    return function (height) { 
+    return function (row) {
+    return function (column) {
+    return function (color1) {
+    return function (color2) {
     return function (x, y) { 
 
+        const size_square_x = width/column; 
+        const size_square_y = height/row; 
+
         function interpolate(v0, v1, w) {
-            return (v1 - v0) * w + v0; 
+            return (v1 - v0) * w + v0;
         }
 
-        function dotGradient(xx, yy, x, y) {
+        /*
+        *   Create random direction vector 
+        *   Used for the Grid 
+        */
+        function randomGradient()
+        {
+            let vector_x = Math.random(); 
+            let vector_y = Math.random(); 
+            let norme = Math.sqrt(vector_x**2 + vector_y**2); 
 
-            // Compute distance
-            let dx = x - xx;
-            let dy = y - yy; 
-
-            return (dx*Math.cos(Math.random() * 10) + dy*Math.sin(Math.random() * 10 ) ); 
+            return [vector_x / norme, vector_y / norme]; 
         }
 
+        /*
+        * Computes the dot product of the distance and gradient vectors
+        */
+        function dotGridGradient(ix, iy, x_grid, y_grid) 
+        {
+                // Get vector from integers values
+            var vector = randomGradient(ix, iy); 
+
+                // Compute distance vector 
+            let dx = x_grid - ix;
+            let dy = y_grid - iy; 
+
+                // Compute dot-product  
+            return (dx * vector[0] + dy * vector[1]); 
+        }
+
+        /*
+        * Compute Perlin noise at coordinates x,y 
+        */
         function perlin(x, y) {
-            const x1 = x + 1;
-            const y1 = y + 1;
 
-            let n0 = dotGradient(x,  y, x, y);
-            let n1 = dotGradient(x1,  y, x, y);
-            const interpolate_x = interpolate(n0, n1, Math.random()); 
+            let x_grid = x/row;
+            let y_grid = y/column; 
 
-            n0 = dotGradient(x, y1, x, y); 
-            n1 = dotGradient(x1, y1, x, y); 
-            const interpolate_y = interpolate(n0, n1, Math.random()); 
+                // Determine grid cell coordinates
+            let x0 = Math.floor(x_grid); 
+            let x1 = x0 + 1;
+            let y0 = Math.floor(y_grid); 
+            let y1 = y0 + 1;
 
-            const value = interpolate(interpolate_x, interpolate_y, Math.random());
-            console.log(value); 
-            return value; 
+                // Determine interpolation weights
+            let sx = x_grid - x0; 
+            let sy = y_grid - y0; 
+
+                 // Interpolate between grid point gradients
+            let n0 = dotGridGradient(x0, y0, x_grid, y_grid);
+            let n1 = dotGridGradient(x1, y0, x_grid, y_grid);
+            let ix0 =  interpolate(n0, n1, sx); 
+
+            n0 = dotGridGradient(x0, y1, x_grid, y_grid);
+            n1 = dotGridGradient(x1, y1, x_grid, y_grid);
+            let ix1 = interpolate(n0, n1, sx);
+
+            let value = interpolate(ix0, ix1, sy);
+                // Making value between 0 and 1
+            value = (value + 1)/2;
+
+            if (value < 0.5) return color1;
+            else return color2;  
         }
 
-        return (255 * perlin(x, y)); 
-    };
+    return perlin(x, y);
+    }; }; }; }; }; }; 
 }
