@@ -5,6 +5,8 @@ let MAX_ARGUMENTS = 50;
 const WIDTH = 550, HEIGHT = 450;
 let CANVAS = document.getElementById('canvas');
 CANVAS.width = WIDTH; CANVAS.height = HEIGHT; 
+let CONTEXT = CANVAS.getContext("2d");
+let IMAGE = CONTEXT.createImageData(CANVAS.width, CANVAS.height);
 
 // Color dictionnary
 const colors = {
@@ -20,15 +22,16 @@ const colors = {
 
 //////// MAIN FUNCTIONS ///////////
 
-/* Prints a texture on selected canvas
+/* Generates an image data array from a texture function
  *
- * @param canvas the canvas used to display the texture
- * @param texture a texture function to display
+ * @param canvas the canvas used for sizing
+ * @param texture a texture function to generate
  * @param ...args a list of arguments for the texture function
- * @precond canvas is a <canvas> html element
- * @return nothing
+ * @precond canvas must be a <canvas> html element
+ * @return an image data array (of size width*height*4)
  */
-function generateImage(canvas, texture, ...args) {
+ // TODO : réfléchir à un dictionnaire au lieu d'une liste d'arguments ?
+function generateTexture(canvas, texture, ...args) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
@@ -58,15 +61,68 @@ function generateImage(canvas, texture, ...args) {
 	};
     };
     
-    // Image printing
-    context.putImageData(image, 0, 0);
+    return image.data;
 };
 
+/* Applies a filter to an image
+ *
+ * @param data an image data array
+ * @param filter the filter function to apply to data
+ * @param ...args a list of arguments for the filter function
+ * @precond data must be of size width*height*4
+ * @return the filtered image data array 
+ */
+function applyFilter(data, filter, ...args) {
+    //
+}
 
-///////// TESTS (temporary) //////////
+/* Creates an animation on main canvas
+ *
+ * @param time timestamp of current image
+ * @return nothing
+ */
+function makeFrame(time) {
+    let dt = 0.005 * time;
+    
+    context.putImageData(image, 0, 0); 
+    requestAnimationFrame(makeFrame);
+}
 
-//generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
-//generateImage(CANVAS, texture_perlinNoise, CANVAS.width, 1, colors.orange, colors.cyan, 90);
+/* Prints an image on a canvas
+ *
+ * @param canvas the canvas for the image to be printed on
+ * @param data an image data array
+ * @precond canvas must be a <canvas> html element
+ * @precond data must be of size (canvas.width)*(canvas.height)*4 
+ * @return nothing
+ */
+function generateImage(canvas, data) {
+    // Environnment definition
+    let context = canvas.getContext("2d");
+    let image = context.createImageData(canvas.width, canvas.height);
 
-    // Test perlin noise
-//generateImage(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white);
+    for (let i = 0; i < image.data.length; i++) image.data[i] = data[i];
+    context.putImageData(image, 0, 0);
+}
+
+///////// TESTS //////////
+
+// ========== TEXTURE (only one) ==========
+// Usage : let data = generateTexture(CANVAS, [texture], <...args>);
+let data = 
+    //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
+    generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
+    generateImage(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white)
+// ========================================
+
+// ===== FILTERS (repeat for successive filters) =====
+// Usage : data = applyFilter(data, [filter], <...args>);
+
+// ===================================================
+
+// !! Do not touch
+generateImage(CANVAS, data);
+
+
+
+
