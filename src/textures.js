@@ -1,32 +1,11 @@
 'use strict';
 
-function solid(i, j)
-{
-    return [0, 0, 0, 255]; 
-};
-
-function gradient_Horizontal(i, j)
-{
-    return [Math.floor(255*j/height), Math.floor(255*j/height), Math.floor(255*j/height), 255];
-};
-
-function gradient_Vertical(i, j)
-{
-    return [Math.floor(255*i/width), Math.floor(255*i/width), Math.floor(255*i/width), 255];
-};
-
-
-function regulatePavage_square(i, j, nbSquare_x, nbSquare_y)
-{
-    let sizeSquare_x = width/nbSquare_x; 
-    let sizeSquare_y = height/nbSquare_y;
-
-    let coordinate_x = Math.floor(i/sizeSquare_x);
-    let coordinate_y = Math.floor(j/sizeSquare_y);
-
-    if (coordinate_x % 2 == 0 && coordinate_y  % 2 != 0)   return [255, 255, 255, 255]; 
-    if (coordinate_x % 2 != 0 && coordinate_y  % 2 == 0)   return [255, 255, 255, 255]; 
-
+/* Texture : full black square
+ * 
+ * @param (x,y) coordinates of the pixel
+ * @return a black pixel
+ */
+function solid(x,y){
     return [0, 0, 0, 255]; 
 };
 
@@ -37,7 +16,7 @@ function regulatePavage_square(i, j, nbSquare_x, nbSquare_y)
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_multiHorizGrad(width){
+function texture_horizontalGradients(width){
     return function (n) { 
     return function (x,y) {
         return [Math.floor(255*((n*x)%width)/width),
@@ -56,7 +35,7 @@ function texture_multiHorizGrad(width){
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_multiHorizColorGrad(width){
+function texture_horizontalColorGradients(width){
     return function (n) {
     return function (color1) {
     return function (color2) {
@@ -66,9 +45,6 @@ function texture_multiHorizColorGrad(width){
     }; }; }; };
 };
 
-
-
-
 /* Texture : paving of color1 and color2 triangles
  *
  * @param size side size of triangles
@@ -77,7 +53,7 @@ function texture_multiHorizColorGrad(width){
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
 */
-function triangle(size){
+function texture_triangleTiling(size){
     return function (color1) {
     return function (color2) {
     return function (i, j) {   
@@ -100,7 +76,7 @@ function triangle(size){
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
 */
-function hexagon(size){
+function texture_hexagonTiling(size){
     return function (color1) {
     return function (color2) {
     return function (color3) {
@@ -138,7 +114,7 @@ function hexagon(size){
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
 */
-function chess(width){
+function texture_squareTiling(width){
     return function (height) {
     return function(row) {
     return function(column) {
