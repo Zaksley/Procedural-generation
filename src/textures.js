@@ -140,30 +140,28 @@ function texture_squareTiling(width){
 
 /* Texture : PerlinNoise board of color1 and color2 pixels
  *
- * @param width canvas width
- * @param height canvas height
  * @param row number of rows
  * @param column numbe of column
- * @param color1 first color of the paving (rgba 4-upple format)
- * @param color2 second color of the paving (rgba 4-upple format)
+ * @param nb_colors number of color
+ * @param colors list of all colors in a array
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
  */
-function texture_perlinNoise(width){
-    return function (height) { 
-    return function (row) {
+function texture_perlinNoise(row){
     return function (column) {
-    return function (color1) {
-    return function (color2) {
-    return function (x, y) { 
+    return function (nb_colors) {
+    return function (colors) {
 
-        const size_square_x = width/column; 
-        const size_square_y = height/row; 
+        let stock_gradient = {}; 
 
-        function interpolate(v0, v1, w) {
-            const t = (v1 - v0) * w + v0; 
-            return (t*t*t*(10 - 15*t + 6*t*t)); 
+         // =====================================================
+
+            // Fade interpolation 
+        function interpolate(smoothstep) {
+            return (v0, v1, t) => (v1 - v0) * smoothstep(t) + v0; 
         }
+
+        const fade_Interpolation = interpolate(t => t*t*t*(10 - 15*t + 6*t*t)); 
 
         /*
         *   Create random direction vector 
@@ -171,39 +169,43 @@ function texture_perlinNoise(width){
         */
         function random_Vector()
         {
-            const vector_x = Math.random(); 
-            const vector_y = Math.random(); 
-            const norme = Math.sqrt(vector_x**2 + vector_y**2); 
-            return [vector_x / norme, vector_y / norme]; 
+            const random = Math.random() * 2 * Math.PI; 
+            return [Math.cos(random), Math.sin(random)]; 
         }
 
         /*
         * Computes the dot product of the distance and gradient vectors
         */
-        function dotGridGradient(stock_vector, distance) 
+        function dot_Product(vector, distance) 
         {
-                // Get vector from the stock array
-            var vector = stock_vector; 
-
-                // Compute dot-product  
             return (distance[0] * vector[0] + distance[1] * vector[1]); 
         }
 
-        function getDot(stock_gradient, ix, iy, x_grid, y_grid)
+        function get_Dot(ix, iy, x_grid, y_grid)
         {
                 // Get a vector
             if (!stock_gradient[[ix,iy]]) 
                 stock_gradient[[ix, iy]] = random_Vector(ix, iy);
 
-            return dotGridGradient(stock_gradient[[ix, iy]], [x_grid-ix, y_grid-iy])
+                // Calculate distance 
+            const dx = x_grid - ix;
+            const dy = y_grid - iy; 
+
+            return dot_Product(stock_gradient[[ix, iy]], [dx, dy]);
         }
 
+            // Return a color depending of the value and the colors permited 
+        function get_Colors(nb_colors, value)
+        {
+            return Math.floor(value / ( [1, 2, 3, 4, 5].map( (x) => 1/x) )[nb_colors-1]); 
+        }   
+
+        // =====================================================
+        
         /*
         * Compute Perlin noise at coordinates x,y 
         */
         return (x, y) => {
-            let stock_gradient = {}; 
-
                 // Determine precise coordinates in the grid
             const x_grid = x/row;
             const y_grid = y/column; 
@@ -218,21 +220,20 @@ function texture_perlinNoise(width){
             const distance = [x_grid-x0, y_grid-y0]; 
 
                 // Interpolate between grid point gradients
-            const Up_Left = getDot(stock_gradient, x0, y0, x_grid, y_grid);
-            const Up_Right = getDot(stock_gradient, x1, y0, x_grid, y_grid); 
-            const Down_Left = getDot(stock_gradient, x0, y1, x_grid, y_grid); 
-            const Down_Right = getDot(stock_gradient, x1, y1, x_grid, y_grid); 
+            const Up_Left = get_Dot(x0, y0, x_grid, y_grid);
+            const Up_Right = get_Dot(x1, y0, x_grid, y_grid); 
+            const Down_Left = get_Dot(x0, y1, x_grid, y_grid); 
+            const Down_Right = get_Dot(x1, y1, x_grid, y_grid); 
 
-            let value = interpolate(
-                    interpolate(Up_Left, Up_Right, distance[0]), 
-                    interpolate(Down_Left, Down_Right, distance[0]),
+            let value = fade_Interpolation(
+                    fade_Interpolation(Up_Left, Up_Right, distance[0]), 
+                    fade_Interpolation(Down_Left, Down_Right, distance[0]),
                     distance[1]
                             ); 
+
                 // Making value between 0 and 1
             value = (value + 1)/2;
-
-            if (value < 0.5) return color1;
-            else return color2;  
+            return colors[get_Colors(nb_colors, value)];
         }
-    }; }; }; }; }; }; 
+    }; }; };
 }
