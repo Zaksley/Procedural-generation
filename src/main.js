@@ -76,17 +76,55 @@ function applyFilter(data, filter, ...args) {
     //
 }
 
-/* Creates an animation on main canvas
+/* Generates an animation from a texture function
  *
- * @param time timestamp of current image
+ * @param canvas the canvas used for sizing
+ * @param texture a texture function to generate
+ * @param ...args a list of arguments for the texture function
+ * @precond canvas must be a <canvas> html element
  * @return nothing
  */
-function makeFrame(time) {
-    let dt = 0.005 * time;
+function generateMakeFrame(canvas, texture, ...args) {
+    // Environnment definition
+    let context = canvas.getContext("2d");
+    let image = context.createImageData(canvas.width, canvas.height);
+    const RGB = image.data;
+
+    // Texture function definition
+    let nbArgs = 0;
+    let textureFunction = texture;
+
+    while(typeof(textureFunction) === 'function' && nbArgs <= MAX_ARGUMENTS){
+    	// Verifies that next argument is not the last block
+    	if(typeof(textureFunction(args[0])) === 'function'){
+    	    textureFunction = textureFunction(args[0]);
+    	};
+    	args.shift();
+    	nbArgs++;
+    };
+
+    makeFrame();
     
-    context.putImageData(image, 0, 0); 
-    requestAnimationFrame(makeFrame);
-}
+    /* Creates an animation on main canvas
+     *
+     * @param time timestamp of current image
+     * @return nothing
+     */
+    function makeFrame(time) {
+    let dt = 0.005 * time;
+    for (let n = 0, y = 0; y < canvas.height; y++) {
+	for (let x = 0; x < canvas.width; x++, n += 4) {
+	    let pixel = textureFunction(x,y,dt);
+	    image.data[n]   = pixel[0]; // Red channel
+	    image.data[n+1] = pixel[1]; // Green channel
+	    image.data[n+2] = pixel[2]; // Blue channel
+	    image.data[n+3] = pixel[3]; // Alpha channel
+	};
+    };
+
+    context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
+    };
+};
 
 /* Prints an image on a canvas
  *
