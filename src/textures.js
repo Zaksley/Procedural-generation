@@ -185,73 +185,78 @@ function texture_perlinNoise(width){
         const size_square_y = height/row; 
 
         function interpolate(v0, v1, w) {
-            return (v1 - v0) * w + v0;
+            const t = (v1 - v0) * w + v0; 
+            return (t*t*t*(10 - 15*t + 6*t*t)); 
         }
 
         /*
         *   Create random direction vector 
         *   Used for the Grid 
         */
-        function randomGradient()
+        function random_Vector()
         {
-            let vector_x = Math.random(); 
-            let vector_y = Math.random(); 
-            let norme = Math.sqrt(vector_x**2 + vector_y**2); 
-
+            const vector_x = Math.random(); 
+            const vector_y = Math.random(); 
+            const norme = Math.sqrt(vector_x**2 + vector_y**2); 
             return [vector_x / norme, vector_y / norme]; 
         }
 
         /*
         * Computes the dot product of the distance and gradient vectors
         */
-        function dotGridGradient(ix, iy, x_grid, y_grid) 
+        function dotGridGradient(stock_vector, distance) 
         {
-                // Get vector from integers values
-            var vector = randomGradient(ix, iy); 
-
-                // Compute distance vector 
-            let dx = x_grid - ix;
-            let dy = y_grid - iy; 
+                // Get vector from the stock array
+            var vector = stock_vector; 
 
                 // Compute dot-product  
-            return (dx * vector[0] + dy * vector[1]); 
+            return (distance[0] * vector[0] + distance[1] * vector[1]); 
+        }
+
+        function getDot(stock_gradient, ix, iy, x_grid, y_grid)
+        {
+                // Get a vector
+            if (!stock_gradient[[ix,iy]]) 
+                stock_gradient[[ix, iy]] = random_Vector(ix, iy);
+
+            return dotGridGradient(stock_gradient[[ix, iy]], [x_grid-ix, y_grid-iy])
         }
 
         /*
         * Compute Perlin noise at coordinates x,y 
         */
-        function perlin(x, y) {
+        return (x, y) => {
+            let stock_gradient = {}; 
 
-            let x_grid = x/row;
-            let y_grid = y/column; 
+                // Determine precise coordinates in the grid
+            const x_grid = x/row;
+            const y_grid = y/column; 
 
                 // Determine grid cell coordinates
-            let x0 = Math.floor(x_grid); 
-            let x1 = x0 + 1;
-            let y0 = Math.floor(y_grid); 
-            let y1 = y0 + 1;
+            const x0 = Math.floor(x_grid); 
+            const x1 = x0 + 1;
+            const y0 = Math.floor(y_grid); 
+            const y1 = y0 + 1;
 
                 // Determine interpolation weights
-            let sx = x_grid - x0; 
-            let sy = y_grid - y0; 
+            const distance = [x_grid-x0, y_grid-y0]; 
 
-                 // Interpolate between grid point gradients
-            let n0 = dotGridGradient(x0, y0, x_grid, y_grid);
-            let n1 = dotGridGradient(x1, y0, x_grid, y_grid);
-            let ix0 =  interpolate(n0, n1, sx); 
+                // Interpolate between grid point gradients
+            const Up_Left = getDot(stock_gradient, x0, y0, x_grid, y_grid);
+            const Up_Right = getDot(stock_gradient, x1, y0, x_grid, y_grid); 
+            const Down_Left = getDot(stock_gradient, x0, y1, x_grid, y_grid); 
+            const Down_Right = getDot(stock_gradient, x1, y1, x_grid, y_grid); 
 
-            n0 = dotGridGradient(x0, y1, x_grid, y_grid);
-            n1 = dotGridGradient(x1, y1, x_grid, y_grid);
-            let ix1 = interpolate(n0, n1, sx);
-
-            let value = interpolate(ix0, ix1, sy);
+            let value = interpolate(
+                    interpolate(Up_Left, Up_Right, distance[0]), 
+                    interpolate(Down_Left, Down_Right, distance[0]),
+                    distance[1]
+                            ); 
                 // Making value between 0 and 1
             value = (value + 1)/2;
 
             if (value < 0.5) return color1;
             else return color2;  
         }
-
-    return perlin(x, y);
     }; }; }; }; }; }; 
 }

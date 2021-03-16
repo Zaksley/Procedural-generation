@@ -111,8 +111,8 @@ function generateImage(canvas, data) {
 // Usage : let data = generateTexture(CANVAS, [texture], <...args>);
 let data = 
     //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
-    generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
-    generateImage(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white)
+    //generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
+    //generateTexture(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white);
 // ========================================
 
 // ===== FILTERS (repeat for successive filters) =====
