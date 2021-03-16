@@ -1,14 +1,22 @@
 'use strict';
 
-/* Filter : cyan-coloration
+/* Filter : cyan-coloration (example)
  *
  * @param intens intensity of the recoloration
  * @precond intens must be between 0 and 1
  * @return texture recolored in cyan
  */
-function filter_cyanColoration(intens) {
-	return function (pixel) {
-		return pixel.map((e,i) => (i===3)*e+(i===2)*e+(i===1)*(e/2));
+function filter_cyanColoration(img) {
+	return function (intens) {
+		let data = img;
+		for(let i = 0; i < img.length; i++){
+			data[i] = (i%4===3 || i%4==2) 
+						? data[i] 
+						: ((i%4===1) 
+							? (1-intens/2)*(data[i])
+							: (1-intens)*data[i]);
+		};
+		return data;
 	};
 };
 
@@ -34,7 +42,7 @@ function filter_blur(img) {
 	const abs = (x) => (x > 0) ? x : -x;
 	for (let y = 0, n = 0, m, nb_near; y < height; y++) {
 	    for (let x = 0; x < width; x++, n+=4) {
-		l = 0;
+		let l = 0;
 		for (let i = -d; i < d + 1; i++) {
 		    for (let j = -d + abs(i); j < d - abs(i) + 1; j++) {
 			m = (i*width + j)*4 + n;
