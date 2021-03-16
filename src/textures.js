@@ -66,6 +66,9 @@ function texture_multiHorizColorGrad(width){
     }; }; }; };
 };
 
+
+
+
 /* Texture : paving of color1 and color2 triangles
  *
  * @param size side size of triangles
@@ -156,3 +159,40 @@ function chess(width){
 	    return color1;
     }; }; }; }; }; }; };
 };
+
+function texture_perlinNoise(){
+    return function (x, y) { 
+
+        function interpolate(v0, v1, w) {
+            return (v1 - v0) * w + v0; 
+        }
+
+        function dotGradient(xx, yy, x, y) {
+
+            // Compute distance
+            let dx = x - xx;
+            let dy = y - yy; 
+
+            return (dx*Math.cos(Math.random() * 10) + dy*Math.sin(Math.random() * 10 ) ); 
+        }
+
+        function perlin(x, y) {
+            const x1 = x + 1;
+            const y1 = y + 1;
+
+            let n0 = dotGradient(x,  y, x, y);
+            let n1 = dotGradient(x1,  y, x, y);
+            const interpolate_x = interpolate(n0, n1, Math.random()); 
+
+            n0 = dotGradient(x, y1, x, y); 
+            n1 = dotGradient(x1, y1, x, y); 
+            const interpolate_y = interpolate(n0, n1, Math.random()); 
+
+            const value = interpolate(interpolate_x, interpolate_y, Math.random());
+            console.log(value); 
+            return value; 
+        }
+
+        return (255 * perlin(x, y)); 
+    };
+}
