@@ -6,15 +6,85 @@
   <meta name="author" content="Matthieu Brassart,Enzo Médina,Léna Herau,Killian Dieu"/>
 </head>
 
-<body style="width:100vw;height:calc(100vh + 8px);overflow:hidden;display:grid;grid-template-columns:30% 1fr;margin-top:-8px;margin-left:-8px">
+<style>
+body {
+	font-family:arial;
+	width:100vw;
+	height:calc(100vh + 8px);
+	overflow:hidden;
+	display:grid;
+	grid-template-columns:30% 1fr;
+	margin-top:-8px;
+	margin-left:-8px
+}
+p {
+	font-size:18px;
+}
+input[type=range]{
+	-webkit-appearance: none; 
+  	appearance: none;
+  	width: 100%;
+  	height: 10px;
+  	background: #AAA;
+  	outline: none;
+  	border-radius:10px;
+  	opacity: 0.7;
+  	-webkit-transition: .2s;
+  	transition: opacity .2s;
+}
+input[type=range]:hover {
+	opacity:1;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: black;
+  cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: black;
+  cursor: pointer;
+  border-radius:30%;
+  border:0;
+}
+</style>
+
+<body>
 
 	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA">
 		<!-- ========= Sliders & parameters ======== -->
 		<h2>Properties :</h2>
-		<input type="range">
+
+		<label for="texture">Type de texture : </label>
+
+		<select name="texture">
+			<option value="gradients">Gradients colorés</option>
+			<option value="squareTiling">Pavage carré</option>
+			<option value="triangleTiling">Pavage triangulaire</option>
+			<option value="hexagonTiling">Pavage hexagonal</option>
+		</select><br><br>
+
+
+		<!-- EXEMPLE -->
+		<script>
+			let rowNumber = 10; let columnNumber = 10;
+		</script>
+		<p>Nombre de lignes : <b id="rowNumber">10</b></p>
+		<input type="range" min="1" max="30" value="10" oninput="updateSliderValue('rowNumber', this.value)"
+		onchange="generateImage(CANVAS, generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, this.value, columnNumber, colors.cyan, colors.blue)); rowNumber = this.value">
+
+		<p>Nombre de colonnes : <b id="columnNumber">10</b></p>
+		<input type="range" min="1" max="30" value="10" oninput="updateSliderValue('columnNumber', this.value)"
+		onchange="generateImage(CANVAS, generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, this.value, rowNumber, colors.cyan, colors.blue)); columnNumber = this.value">
+		<!-- ======= -->
+
 		<!-- TODO tous les paramètres ici -->
 	</div>
-	
+
 	<div style="grid-column: 2 / 3;">
 		<!-- ================ Canvas =============== -->
 
@@ -29,5 +99,11 @@
 <script src="../src/textures.js"></script>
 <script src="../src/animations.js"></script>
 <script src="../src/main.js"></script>
+
+<script>
+function updateSliderValue(sliderValueId, value){
+	document.getElementById(sliderValueId).innerHTML = value;
+}
+</script>
 
 </html>
