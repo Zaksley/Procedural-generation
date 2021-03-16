@@ -127,7 +127,7 @@ function generateImage(canvas, data) {
     for (let i = 0; i < image.data.length; i++) image.data[i] = data[i];
     context.putImageData(image, 0, 0);
 }
-/*
+
 ///////// TESTS //////////
 
 // ========== TEXTURE (only one) ==========
@@ -136,22 +136,21 @@ let data =
     //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
     //generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
     //generateTexture(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white);
-=======
-    generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
-
+    //generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
+    generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
 // ========================================
 
 // ===== FILTERS (repeat for successive filters) =====
 // Usage : data = [filter](data)<...(args)>);
-data = filter_blur(data)(WIDTH)(HEIGHT)(10);
-data = filter_cyanColoration(data)(0.5);
+//data = filter_blur(data)(WIDTH)(HEIGHT)(10);
+//data = filter_cyanColoration(data)(0.5);
 // ===================================================
 
 // !! Do not touch
 generateImage(CANVAS, data);
 
-*/
 
-generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
+
+//generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 
 
