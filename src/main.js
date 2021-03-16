@@ -84,11 +84,10 @@ function applyFilter(data, filter, ...args) {
  * @precond canvas must be a <canvas> html element
  * @return nothing
  */
-function generateMakeFrame(canvas, texture, ...args) {
+function generateAnimation(canvas, texture, ...args) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
-    const RGB = image.data;
 
     // Texture function definition
     let nbArgs = 0;
@@ -103,7 +102,7 @@ function generateMakeFrame(canvas, texture, ...args) {
     	nbArgs++;
     };
 
-    makeFrame();
+    makeFrame(); // Start the animation
     
     /* Creates an animation on main canvas
      *
@@ -142,7 +141,7 @@ function generateImage(canvas, data) {
     for (let i = 0; i < image.data.length; i++) image.data[i] = data[i];
     context.putImageData(image, 0, 0);
 }
-
+/*
 ///////// TESTS //////////
 
 // ========== TEXTURE (only one) ==========
@@ -161,6 +160,8 @@ let data =
 // !! Do not touch
 generateImage(CANVAS, data);
 
+*/
 
+generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 
 
