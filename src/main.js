@@ -62,6 +62,12 @@ function generateImage(canvas, texture, ...args) {
     context.putImageData(image, 0, 0);
 };
 
+function makeFrame(time) {
+    let dt = 0.005 * time;
+    
+    context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
+}
+
 
 ///////// TESTS (temporary) //////////
 
