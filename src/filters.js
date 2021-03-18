@@ -22,16 +22,93 @@ function filter_cyanColoration(img) {
 
 /* Filter : rotation
  *
+ * @param width canvas width
  * @param angle angle of the gradient (0: horizontal left-to-right)
  * @precond angle must be between 0 and 360
- * @return clockwise-crotated texture (use negative angles for counter-clockwise rotations)
+ * @return clockwise-rotated texture (use negative angles for counter-clockwise rotations)
  */
-function filter_rotation(angle) {
-	return function (pixel) {
-		//
-	};
+function filter_rotation(img) {
+    return function (width) {
+    return function (angle) {
+	let data = [];
+	data.length = img.length;
+	const height = data.length/(4*width);
+	let x_init,y_init;
+	let r,angle_init;
+	let x,y;
+	for (let i = 0, n = 0, m; i < height; i++) {
+	    for (let j = 0; j < width; j++, n+=4) {
+		if (img[n + 3] != 0) {
+		    x_init = j - width/2 + 1;
+		    y_init = i - height/2 + 1;
+		    if (Math.abs(x_init) > Math.abs(y_init))
+			r = Math.abs(x_init)*Math.sqrt(1 + y_init*y_init/(x_init*x_init));
+		    else
+			r = Math.abs(y_init)*Math.sqrt(1 + x_init*x_init/(y_init*y_init));
+		    if (r === 0) {
+			x = Math.round(width/2);
+			y = Math.round(height/2);
+		    } else {
+			if (y_init < 0)
+			    angle_init = -Math.acos(x_init/r);
+			else
+			    angle_init = Math.acos(x_init/r);
+			x = Math.round(r*Math.cos(angle_init + angle*Math.PI/180) + width/2);
+			y = Math.round(r*Math.sin(angle_init + angle*Math.PI/180) + height/2);
+		    }
+		    if (x >= 0 && x < width && y >= 0 && y < height) {
+			m = (x + y*width)*4;
+			data[m] = img[n];
+			data[m + 1] = img[n + 1];
+			data[m + 2] = img[n + 2];
+			data[m + 3] = img[n + 3];
+		    }
+		}
+	    }
+	}
+	return data;
+    }; };
 };
 
+/* Filter : horizontal flip
+ *
+ * @param width canvas width
+ * @return texture flipped horizontally
+ */
+function filter_horizontalFlip(img) {
+    return function (width) {
+	let data = [];
+	data.length = img.length;
+	const height = data.length/(4*width);
+	for (let i = 0; i < height; i++) {
+	    for (let j = 0; j < width*4; j++) {
+		data[i*width*4 + j] = img[(height - 1 - i)*width*4 + j];
+	    }
+	}
+	return data;
+    }
+};
+
+/* Filter : invert color
+ *
+ * @return texture with inverted colors 
+ */
+function filter_invertColor(img) {
+    let data = img;
+    for (let i = 0; i < data.length; i++) {
+	if (i%4 != 3)
+	    data[i] = 255 - img[i];
+    }
+    return data;
+}
+
+/* Filter : blur
+ *
+ * @param width canvas width
+ * @param height canvas height
+ * @param d distance of blurring
+ * @return blurred texture
+ */
 function filter_blur(img) {
     return function (width) {
     return function (height) {
