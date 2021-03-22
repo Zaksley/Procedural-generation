@@ -103,6 +103,27 @@ function texture_hexagonTiling(size){
     }; }; }; };
 };
 
+/* Texture :
+ *
+ *
+ */
+function texture_truncatedSquare(size) {
+    return function (colorS) {
+    return function (colorH1) {
+    return function (colorH2) {
+    return function (i, j) {
+	const h = Math.sqrt(2)*size/2;
+	const p = j%(h + size) > h ? 1 : j%(h+size)/h;
+	const offset = j%(2*(h + size)) > h + size ? 0 : h+size;
+	if ((i+offset)%(2*(h+size)) > h && (i+offset)%(2*(h+size)) < h + size && j%(h + size) > h)
+	    return colorS;
+	if ((i+offset)%(2*(h+size)) > p*h && (i+offset)%(2*(h+size)) < (2-p)*h + size)
+	    return j%(2*(h + size)) > h + size ? colorH1 : colorH2;
+	else
+	    return j%(2*(h + size)) > h + size ? colorH2 : colorH1;
+    }; }; }; };
+};
+
 /* Texture : checkerboard of color1 and color2 rectangles
  *
  * @param width canvas width
@@ -116,27 +137,25 @@ function texture_hexagonTiling(size){
 */
 function texture_squareTiling(width){
     return function (height) {
-    return function(row) {
-    return function(column) {
-    return function(color1) {
-    return function(color2) {
-    return function(x, y) {
-    const size_x = width/column;
-    const size_y = height/row;
-    if (y%(2*size_y) < size_y) {
-	if (x%(2*size_x) < size_x)
-	    return color1;
-	else
-	    return color2;
-    } else {
-	if (x%(2*size_x) < size_x)
-	    return color2;
-	else
-	    return color1;
+    return function (row) {
+    return function (column) {
+    return function (color1) {
+    return function (color2) {
+    return function (x, y) {
+	const size_x = width/column;
+	const size_y = height/row;
+	if (y%(2*size_y) < size_y) {
+	    if (x%(2*size_x) < size_x)
+		return color1;
+	    else
+		return color2;
+	} else {
+	    if (x%(2*size_x) < size_x)
+		return color2;
+	    else
+		return color1;
     }; }; }; }; }; }; };
 };
-
-
 
 /* Texture : PerlinNoise board of color1 and color2 pixels
  *

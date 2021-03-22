@@ -89,6 +89,28 @@ function filter_horizontalFlip(img) {
     }
 };
 
+/* Filter : vertical flip
+ *
+ * @param width canvas width
+ * @return texture flipped vertically
+ */
+function filter_verticalFlip(img) {
+    return function (width) {
+	let data = [];
+	data.length = img.length;
+	const height = data.length/(4*width);
+	for (let i = 0; i < height; i++) {
+	    for (let j = 0; j < width; j++) {
+		data[(i*width + j)*4] = img[((i+1)*width - j) * 4 - 4];
+		data[(i*width + j)*4 + 1] = img[((i + 1)*width - j) * 4 - 3];
+		data[(i*width + j)*4 + 2] = img[((i + 1)*width - j) * 4 - 2];
+		data[(i*width + j)*4 + 3] = img[((i + 1)*width - j) * 4 - 1];
+	    }
+	}
+	return data;
+    }
+};
+
 /* Filter : invert color
  *
  * @return texture with inverted colors 
