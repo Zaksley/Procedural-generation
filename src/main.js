@@ -133,23 +133,29 @@ function generateImage(canvas, data) {
 // ========== TEXTURE (only one) ==========
 // Usage : let data = generateTexture(CANVAS, [texture], <...args>);*/
 let data = 
-    //generateImage(CANVAS, texture_multiHorizGrad, CANVAS.width, 10);
-    //generateTexture(CANVAS, texture_multiHorizColorGrad, CANVAS.width, 1, colors.orange, colors.cyan, 90);
-
-    generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
+    //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
+    //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
+    //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
+    //generateTexture(CANVAS, texture_trihexagonal, 25, colors.orange, colors.red);
+    //generateTexture(CANVAS, texture_triangleTiling, 25, colors.orange, colors.blue);
+    //generateTexture(CANVAS, texture_truncatedSquare, 25, colors.orange, colors.blue, colors.red);
 //=======
     //generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
-
     //generateTexture(CANVAS, texture_perlinNoise, CANVAS.width, CANVAS.height, 2, 2, colors.black, colors.white);
-    //generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
 
 // ========================================
 
 // ===== FILTERS (repeat for successive filters) =====
 // Usage : data = [filter](data)<...(args)>);
+
 //data = filter_blur(data)(WIDTH)(HEIGHT)(10);
 //data = filter_cyanColoration(data)(0.5);
+//data = filter_rotation(data)(WIDTH)(25);
+//data = filter_detectOutline(data)(WIDTH);
+//data = filter_horizontalFlip(data)(WIDTH);
+//data = filter_verticalFlip(data)(WIDTH);
+//data = filter_invertColor(data);
 // ===================================================
 
 // !! Do not touch
