@@ -503,10 +503,21 @@ function texture_Voronoi(nb_case) {
         return Math.sqrt( (gx-x)**2 + (gy - y)**2 ); 
     }
 
-    function smoothstep(x, y, epsilon)
+    function distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2)
     {
-        if ( Math.abs(Math.floor(x) - Math.floor(y)) < epsilon)
+        let norme = Math.abs( Math.sqrt(  (gx_2 - gx_1)**2 + (gy_2 - gy_1)**2  )); 
+        let scalar_x = (x - ((gx_1 + gx_2)/2) ) * ( (gx_2 - gx_1)/norme );
+        let scalar_y = (y - ((gy_1 + gy_2)/2) ) * ( (gy_2 - gy_1)/norme );
+        return scalar_x + scalar_y;
+    }
+
+    function smoothstep(dist_1, dist_2, epsilon)
+    {
+        if ( Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon)
+        {
             return true;
+        }
+
         return false; 
     }
 
@@ -537,12 +548,22 @@ function texture_Voronoi(nb_case) {
 
             // It's a GERM 
         let r = 4; 
+        let bord = 2;
         if (dist_1 <= r ) return colors.blue; 
         
+        /*
         else if (smoothstep(dist_1, dist_2, 2))
         {
             return colors.black;    
         }
+        
+        else if (smoothstep(dist_1*3, dist_2, bord))    
+        {
+            return colors.green;
+        }  */
+
+        else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3)  return colors.black; 
+
         else return colors.red; 
     }
 
