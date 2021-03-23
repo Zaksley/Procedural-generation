@@ -124,6 +124,24 @@ function texture_truncatedSquare(size) {
     }; }; }; };
 };
 
+/* Texture :
+ *
+ *
+ */
+function texture_trihexagonal(size) {
+    return function (colorT) {
+    return function (colorH) {
+    return function (i, j) {
+	const h = Math.sqrt(3)*size/2;
+	const p = j%(2*h) > h ? j/h%1 : 1 - j/h%1;
+	const offset = j%(4*h) > 2*h ? 0: size;
+	if ((i+offset)%(2*size) > p*size/2 && (i+offset)%(2*size) < (2-p/2)*size)	
+	    return colorH;
+	else
+	    return colorT;
+    }; }; };
+};
+
 /* Texture : checkerboard of color1 and color2 rectangles
  *
  * @param width canvas width
