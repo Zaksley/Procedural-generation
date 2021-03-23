@@ -175,7 +175,7 @@ function texture_squareTiling(width){
     }; }; }; }; }; }; };
 };
 
-/* Texture : PerlinNoise board of color1 and color2 pixels
+/* Texture : PerlinNoise board
  *
  * @param row number of rows
  * @param column numbe of column
@@ -446,4 +446,105 @@ function texture_limitedWhiteNoise(width)
             }  
         }
     }
+}
+
+
+/* Texture : Voroinoï diagram 
+ *
+ * @param nb_case  Number of germs in Voronoï diagram
+ * @param height canvas height
+ * @param i number of lines skipped
+ * @param j number of columns skipped
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position
+ */
+function texture_Voronoi(nb_case) {
+    return function (width) {
+    return function (height) {
+
+    let count = 0; 
+    let stock_germs = {}; 
+    for (let i=0; i<nb_case; i++){
+        stock_germs[i] = [getRandomInt(width), getRandomInt(height)];  
+    }
+    
+    // TODO Mettre fonctionnel
+    // Return indice of the minest one (min[0]) and the second minest one (min[1])
+    function get_two_closest(x, y) {
+        let min = [0, 0]; 
+        let gx = 0;
+        let gy = 0;
+        count += 1; 
+        for (let i=1; i<nb_case; i++)
+        {
+
+            gx = stock_germs[i][0];
+            gy = stock_germs[i][1]; 
+
+                // Distance smaller than min[0]
+            if ( distance (x, y, stock_germs[min[0]][0],stock_germs[min[0]][1] )  >= distance(x, y, gx, gy) )
+            {
+                min[1] = min[0]; 
+                min[0] = i; 
+
+            }
+            else if ( distance(x, y, stock_germs[min[1]][0],stock_germs[min[1]][1]) > distance(x, y, gx, gy))
+            {
+                min[1] = i; 
+            }
+        }
+
+        return min; 
+    }
+    
+
+    function distance(x, y, gx, gy)
+    {
+        return Math.sqrt( (gx-x)**2 + (gy - y)**2 ); 
+    }
+
+    function smoothstep(x, y, epsilon)
+    {
+        if ( Math.abs(Math.floor(x) - Math.floor(y)) < epsilon)
+            return true;
+        return false; 
+    }
+
+        // Voronoï calcul for (x, y) coordinate 
+    return (x, y) => {
+        let min = get_two_closest(x, y); 
+
+        let gx_1 = stock_germs[min[0]][0];
+        let gy_1 = stock_germs[min[0]][1]; 
+        let dist_1 = distance(x, y, gx_1, gy_1); 
+
+        let gx_2 = stock_germs[min[1]][0];
+        let gy_2 = stock_germs[min[1]][1]; 
+        let dist_2 = distance(x, y, gx_2, gy_2); 
+
+                    /*
+        if (x === 50 && y === 95)
+        {   
+            console.log(dist_1); 
+            console.log(dist_2);
+            console.log(stock_germs[min[0]]);
+            console.log(stock_germs[min[1]]); 
+            return colors.white;
+        }
+                    */
+                    
+                
+
+            // It's a GERM 
+        let r = 4; 
+        if (dist_1 <= r ) return colors.blue; 
+        
+        else if (smoothstep(dist_1, dist_2, 2))
+        {
+            return colors.black;    
+        }
+        else return colors.red; 
+    }
+
+    }   };  
 }
