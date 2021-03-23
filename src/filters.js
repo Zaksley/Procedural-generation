@@ -166,25 +166,35 @@ function filter_blur(img) {
 
 function filter_detectOutline(img) {
     return function (width) {
+    return function (d) {
+    return function (color) {
 	let data = [];
 	data.length = img.length;
 	const height = img.length/(4*width);
 	for (let i = 0, n = 0; i < height; i++) {
 	    for (let j = 0; j < width; j++, n+=4) {
-		if (j != width - 1 && (img[n] != img[n + 4] || img[n + 1] != img[n + 5] || img[n + 2] != img[n + 6] || img[n + 3] != img[n + 7])) {
-		    [data[n], data[n + 1], data[n + 2], data[n + 3]] = [0, 0, 0, 255];
-		    [data[n + 4], data[n + 5], data[n + 6], data[n + 7]] = [0, 0, 0, 255];
+		let cond = true;
+		for(let k = 0; k < 4; k++) {
+		    if (j + 1 < width && Math.abs(img[n + k] - img[n + k + 4]) > 0 
+		       || j > 0 && Math.abs(img[n + k] - img[n + k - 4]) > 0
+		       || i + 1 < height && Math.abs(img[n + k] - img[n + 4*width + k]) > 0
+		       || i > 0 && Math.abs(img[n + k] - img[n - 4*width + k]) > 0)
+			cond = false;
 		}
-		else if (i != height - 1 && (img[n] != img[n + 4*width] || img[n + 1] != img[n + 4*width + 1] || img[n + 2] != img[n + 4*width + 2] || img[n + 3] != img[n + 4*width + 3])) {
-		    [data[n], data[n + 1], data[n + 2], data[n + 3]] = [0, 0, 0, 255];
-		    [data[n + 4*width], data[n + 4*width + 1], data[n + 4*width + 2], data[n + 4*width + 3]] = [0, 0, 0, 255];
-		}
-		else if (data[n] != 0 && data[n + 1] != 0 && data[n + 2] != 0 && data[n + 3] != 255)
-		[data[n], data[n + 1], data[n + 2], data[n + 3]] = [img[n], img[n + 1], img[n + 2], img[n + 3]];
+		for (let l = -d; l < d + 1; l++) {
+		    for(let m = -d + Math.abs(l); m < d + 1 - Math.abs(l); m++) {
+			for(let k = 0; k < 4; k++) { 
+			    if (!cond) 
+				data[n + 4*l +4*m*width + k] = color[k];
+			}
+		    }
+		}	   
+		if (cond && [data[n], data[n+1], data[n+2], data[n+3]] != color)
+		    [data[n], data[n + 1], data[n + 2], data[n + 3]] = [img[n], img[n + 1], img[n + 2], img[n + 3]];
 	    }
 	}
 	return data;
-    };
+    }; }; };
 };
 
 // Todo filters :
