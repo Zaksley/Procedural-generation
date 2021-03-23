@@ -136,9 +136,9 @@ function texture_trihexagonal(size) {
 	const p = j%(2*h) > h ? j/h%1 : 1 - j/h%1;
 	const offset = j%(4*h) > 2*h ? 0: size;
 	if ((i+offset)%(2*size) > p*size/2 && (i+offset)%(2*size) < (2-p/2)*size)	
-	    return colorH;
+	    return colorH((i+offset)%(2*size), j%h);
 	else
-	    return colorT;
+	    return colorT((i+offset+size/2)%(2*size), j%h);
     }; }; };
 };
 
