@@ -188,4 +188,4 @@ function filter_detectOutline(img) {
 };
 
 // Todo filters :
-// Rotation, horizontal/vertical flip, inversion, noise
+// Flip, noise (? quoi faire dans noise)
