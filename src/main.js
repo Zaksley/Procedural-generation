@@ -136,12 +136,12 @@ let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
-    generateTexture(CANVAS, texture_trihexagonal, 25, colors.orange, colors.red);
+    //generateTexture(CANVAS, texture_trihexagonal, 25, colors.orange, colors.red);
     //generateTexture(CANVAS, texture_triangleTiling, 25, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_truncatedSquare, 25, colors.orange, colors.blue, colors.red);
     //generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
-    generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height); 
+    //generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height); 
 
 // ========================================
 
@@ -151,7 +151,7 @@ let data =
 //data = filter_blur(data)(WIDTH)(HEIGHT)(10);
 //data = filter_cyanColoration(data)(0.5);
 //data = filter_rotation(data)(WIDTH)(25);
-data = filter_detectOutline(data)(WIDTH)(2)(colors.blue);
+//data = filter_detectOutline(data)(WIDTH)(2)(colors.blue);
 //data = filter_horizontalFlip(data)(WIDTH);
 //data = filter_verticalFlip(data)(WIDTH);
 //data = filter_invertColor(data);
