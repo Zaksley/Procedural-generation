@@ -11,4 +11,6 @@ function chromatic_circle(r){
     else
 	return [0, 0, 0, 255];
 	}; }; };
-};
+}
+
+exports.chromatic_circle = chromatic_circle;
