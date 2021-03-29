@@ -142,12 +142,12 @@ function filter_blur(img) {
 				const abs = (x) => (x > 0) ? x : -x;
 				for (let y = 0, n = 0, m, nb_near; y < height; y++) {
 					for (let x = 0; x < width; x++, n += 4) {
-						let l = 0;
+						nb_near = 0;
 						for (let i = -d; i < d + 1; i++) {
 							for (let j = -d + abs(i); j < d - abs(i) + 1; j++) {
 								m = (i * width + j) * 4 + n;
 								if (m > 0 && m < width * height * 4) {
-									l++;
+									nb_near++;
 									s[n] += img[m];
 									s[n + 1] += img[m + 1];
 									s[n + 2] += img[m + 2];
@@ -155,7 +155,7 @@ function filter_blur(img) {
 								}
 							}
 						}
-						s[n] = Math.floor(s[n] / l);
+						s[n] = Math.floor(s[n] / nb_near);
 						s[n + 1] = Math.floor(s[n + 1] / l);
 						s[n + 2] = Math.floor(s[n + 2] / l);
 						s[n + 3] = Math.floor(s[n + 3] / l);
@@ -211,7 +211,7 @@ function filter_detectOutline(img) {
 		};
 	};
 }
-
+/*
 exports.filter_cyanColoration = filter_cyanColoration;
 exports.filter_rotation = filter_rotation;
 exports.filter_horizontalFlip = filter_horizontalFlip;
@@ -219,6 +219,6 @@ exports.filter_verticalFlip = filter_verticalFlip;
 exports.filter_invertColor = filter_invertColor;
 exports.filter_blur = filter_blur;
 exports.filter_detectOutline = filter_detectOutline;
-
+*/
 // Todo filters :
 // noise (? quoi faire dans noise)

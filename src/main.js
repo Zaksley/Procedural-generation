@@ -127,12 +127,12 @@ function generateImage(canvas, data) {
     for (let i = 0; i < image.data.length; i++) image.data[i] = data[i];
     context.putImageData(image, 0, 0);
 }
-
+/*
 exports.generateTexture = generateTexture;
 exports.generateImage = generateImage;
 exports.generateAnimation = generateAnimation;
-exports.colors = colors;
-
+//exports.colors = colors;
+*/
 ///////// TESTS //////////
 
 // ========== TEXTURE (only one) ==========

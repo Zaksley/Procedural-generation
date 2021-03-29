@@ -13,4 +13,4 @@ function chromatic_circle(r){
 	}; }; };
 }
 
-exports.chromatic_circle = chromatic_circle;
+//exports.chromatic_circle = chromatic_circle;
