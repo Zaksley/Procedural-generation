@@ -17,7 +17,7 @@ function filter_cyanColoration(img) {
 					: (1 - intens) * data[i]);
 		}
 		return data;
-	}
+	};
 }
 
 /* Filter : rotation
@@ -67,8 +67,8 @@ function filter_rotation(img) {
 				}
 			}
 			return data;
-		}
-	}
+		};
+	};
 }
 
 /* Filter : horizontal flip
@@ -87,7 +87,7 @@ function filter_horizontalFlip(img) {
 			}
 		}
 		return data;
-	}
+	};
 }
 
 /* Filter : vertical flip
@@ -109,7 +109,7 @@ function filter_verticalFlip(img) {
 			}
 		}
 		return data;
-	}
+	};
 }
 
 /* Filter : invert color
@@ -119,7 +119,7 @@ function filter_verticalFlip(img) {
 function filter_invertColor(img) {
 	let data = img;
 	for (let i = 0; i < data.length; i++) {
-		if (i % 4 != 3)
+		if (i % 4 !== 3)
 			data[i] = 255 - img[i];
 	}
 	return data;
@@ -162,9 +162,9 @@ function filter_blur(img) {
 					}
 				}
 				return s;
-			}
-		}
-	}
+			};
+		};
+	};
 }
 
 /* Filter : detect outline
@@ -201,16 +201,24 @@ function filter_detectOutline(img) {
 									}
 								}
 							}
-							if (cond && [data[n], data[n + 1], data[n + 2], data[n + 3]] != color)
+							if (cond && [data[n], data[n + 1], data[n + 2], data[n + 3]] !== color)
 								[data[n], data[n + 1], data[n + 2], data[n + 3]] = [img[n], img[n + 1], img[n + 2], img[n + 3]];
 						}
 					}
 					return data;
-				}
-			}
-		}
-	}
+				};
+			};
+		};
+	};
 }
 
+exports.filter_cyanColoration = filter_cyanColoration;
+exports.filter_rotation = filter_rotation;
+exports.filter_horizontalFlip = filter_horizontalFlip;
+exports.filter_verticalFlip = filter_verticalFlip;
+exports.filter_invertColor = filter_invertColor;
+exports.filter_blur = filter_blur;
+exports.filter_detectOutline = filter_detectOutline;
+
 // Todo filters :
-// Flip, noise (? quoi faire dans noise)
+// noise (? quoi faire dans noise)
