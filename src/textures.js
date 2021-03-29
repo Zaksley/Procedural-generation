@@ -7,7 +7,7 @@
  */
 function solid(x, y) {
     return [0, 0, 0, 255];
-};
+}
 
 /* Texture : multiple horizontal black-to-white gradients
  *
@@ -550,7 +550,7 @@ function texture_Voronoi(nb_case) {
                 // It's a GERM 
                 let r = 4;
                 let bord = 2;
-                if (dist_1 <= r) return colors.blue;
+                if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
 
                 /*
                 else if (smoothstep(dist_1, dist_2, 2))
@@ -563,9 +563,9 @@ function texture_Voronoi(nb_case) {
                     return colors.green;
                 }  */
 
-                else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return colors.black;
+                else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return [0, 0, 0, 255]; //colors.black;
 
-                else return colors.red;
+                else return [255, 0, 0, 255]; //colors.red;
             };
         };
     };

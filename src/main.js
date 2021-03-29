@@ -5,7 +5,8 @@ let MAX_ARGUMENTS = 50;
 const WIDTH = 550, HEIGHT = 450;
 let CANVAS = document.getElementById('canvas');
 CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
-let CONTEXT = CANVAS.getContext("2d");
+// /!\ UNUSED
+//let CONTEXT = CANVAS.getContext("2d");
 //let IMAGE = CONTEXT.createImageData(CANVAS.width, CANVAS.height);
 
 // Color dictionnary

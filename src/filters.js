@@ -156,9 +156,9 @@ function filter_blur(img) {
 							}
 						}
 						s[n] = Math.floor(s[n] / nb_near);
-						s[n + 1] = Math.floor(s[n + 1] / l);
-						s[n + 2] = Math.floor(s[n + 2] / l);
-						s[n + 3] = Math.floor(s[n + 3] / l);
+						s[n + 1] = Math.floor(s[n + 1] / nb_near);
+						s[n + 2] = Math.floor(s[n + 2] / nb_near);
+						s[n + 3] = Math.floor(s[n + 3] / nb_near);
 					}
 				}
 				return s;
