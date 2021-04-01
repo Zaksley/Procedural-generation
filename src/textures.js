@@ -88,9 +88,7 @@ function texture_hexagonTiling(size) {
             return function (color3) {
                 return function (i, j) {
                     const h = Math.sqrt(3) * size / 2;
-                    let p = j / h % 1;
-                    if (j % (2 * h) > h)
-                        p = 1 - p;
+                    const p = j % (2 * h) > h ? 1 - j / h % 1 : j / h % 1;
                     if (i % (3 * size) > p * size / 2 && i % (3 * size) < (2 - p / 2) * size) {
                         if ((j + h) % (6 * h) < 2 * h)
                             return color1;
@@ -112,9 +110,152 @@ function texture_hexagonTiling(size) {
     };
 }
 
-/* Texture :
+/* Texture : 
  *
  *
+ */
+function texture_3Dcube(size) {
+    return function (colorU) {
+        return function (colorL) {
+            return function (colorR) {
+                return function (i, j) {
+                    const h = Math.sqrt(2) * size / 2;
+                    const offset = j % (3 * size) > 3 * size / 2 ? 0 : h;
+
+                    const x = (i + offset) % (2 * h);
+                    const y = j % (3 * size / 2);
+
+                    const p1 = 2 * y / size;
+                    const p2 = 2 * (y - size) / size;
+                    if (x > p1 * h && x - h < (1 - p1) * h)
+                        return colorU;
+                    else if (x < p2 * h || x - h > (1 - p2) * h)
+                        return colorU;
+                    else if (x < h)
+                        return colorL;
+                    else
+                        return colorR;
+                };
+            };
+        };
+    };
+}
+
+/* Texture : 
+ *
+ *
+ */
+function texture_3DgambarTiling(size) {
+    return function (colorU) {
+        return function (colorL) {
+            return function (colorR) {
+                return function (i, j) {
+                    const h = Math.sqrt(2) * size / 2;
+                    const offset = j % (3 * size) >= 3 * size / 2 ? 0 : 3 * h;
+
+                    const x = (i + offset) % (6 * h);
+                    const y = j % (3 * size / 2);
+
+                    const p1 = 2 * y / size;
+                    const p2 = 2 * (y - size) / size;
+                    if (x - 2 * h > p1 * h && x - 5 * h < (1 - p1) * h)
+                        return colorU;
+                    else if (x < p2 * h || (x - h > (1 - p2) * h && x - 2 * h < p2 * h) || x - 5 * h > (1 - p2) * h)
+                        return colorU;
+                    else if (x < h || (x > 2 * h && x < 4 * h))
+                        return colorL;
+                    else
+                        return colorR;
+                };
+            };
+        };
+    };
+}
+
+/* Texture : 
+ *
+ *
+ */
+function texture_elongatedTriangular(size) {
+    return function (colorT1) {
+        return function (colorT2) {
+            return function (colorS1) {
+                return function (colorS2) {
+                    return function (i, j) {
+                        const h = Math.sqrt(2) * size / 2;
+                        const offset = j % (2 * (h + size)) > h + size ? 0 : size / 2;
+
+                        const x = (i + offset) % size;
+                        const y = j % (h + size);
+
+                        const realcolorS = (i + offset) % (2 * size) > size ? colorS2 : colorS1;
+
+                        if (y > size) {
+                            const p = (y - size) / h;
+                            if (x > p * size / 2 && x < (1 - p / 2) * size)
+                                return colorT1;
+                            else
+                                return colorT2;
+                        }
+                        return realcolorS;
+                    };
+                };
+            };
+        };
+    };
+}
+
+/* Texture : 
+ *
+ *
+ */
+function texture_snubSquare(size) {
+    return function (colorT1) {
+        return function (colorT2) {
+            return function (colorS) {
+                return function (i, j) {
+                    const h = Math.sqrt(2) * size / 2;
+                    const offset = j % (2 * (h + size / 2)) > h + size / 2 ? h + size / 2 : 0;
+
+                    const x = (i + offset) % (2 * h + size);
+                    const y = j % (h + size / 2);
+
+                    const p1 = 1 - (2 * y / size);
+                    if (x < p1 * h)
+                        return colorT1;
+                    else if (x - (h + size) > ((1 - p1) * h))
+                        return colorT2;
+
+                    const p2 = y / h;
+                    if (x - h > p2 * size / 2 && x - (h + size / 2) < (1 - p2) * size / 2)
+                        return colorT1;
+
+                    const p3 = (y - size / 2) / h;
+                    if (x < p3 * size / 2 || x - (2 * h + size / 2) > (1 - p3) * size / 2)
+                        return colorT2;
+
+                    const p4 = 1 - (2 * (y - h) / size);
+                    if (x - size / 2 > p4 * h && x - (h + size / 2) < (1 - p4) * h) {
+                        if (x < h + size / 2)
+                            return colorT2;
+                        else
+                            return colorT1;
+                    }
+                    return colorS;
+                };
+            };
+        };
+    };
+}
+
+/* Texture : truncated square tiling
+ *
+ * @param size side size of squares and hexagons
+ * @param colorS square's color
+ * @param colorH1 hexagon's first color
+ * @param colorH2 hexagon's second color
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position
  */
 function texture_truncatedSquare(size) {
     return function (colorS) {
@@ -136,9 +277,115 @@ function texture_truncatedSquare(size) {
     };
 }
 
-/* Texture :
+/* Texture : 
  *
  *
+ */
+function texture_truncatedHexagon(size) {
+    return function (colorT) {
+        return function (colorH1) {
+            return function (colorH2) {
+                return function (colorH3) {
+                    return function (i, j) {
+                        const h = Math.sqrt(2) * size / 2;
+                        const offset = j % (2 * (2 * h + (1 + Math.sin(Math.PI / 6)) * size)) > (2 * h + (1 + Math.sin(Math.PI / 6)) * size) ? (size * (1 + Math.cos(Math.PI / 6))) : 0;
+
+                        // changing the color order to match the pattern
+                        const cond1 = ((i + 3 * offset) % (3 * (2 * size * (1 + Math.cos(Math.PI / 6)))) > (2 * size * (1 + Math.cos(Math.PI / 6))));
+                        const cond2 = ((i + 3 * offset) % (3 * (2 * size * (1 + Math.cos(Math.PI / 6)))) > 2 * (2 * size * (1 + Math.cos(Math.PI / 6))));
+                        const realcolorH1 = cond1 ? (cond2 ? colorH3 : colorH2) : colorH1;
+                        const realcolorH2 = cond1 ? (cond2 ? colorH1 : colorH3) : colorH2;
+                        const realcolorH3 = cond1 ? (cond2 ? colorH2 : colorH1) : colorH3;
+
+                        const x = (i + offset) % (2 * size * (1 + Math.cos(Math.PI / 6)));
+                        const y = j % (2 * h + (1 + Math.sin(Math.PI / 6)) * size);
+                        if (y < Math.sin(Math.PI / 6) * size) {
+                            const p1 = 1 - (y / (Math.sin(Math.PI / 6) * size));
+                            if (x - size / 2 < p1 * Math.cos(Math.PI / 6) * size)
+                                return realcolorH1;
+                            else if (x - (3 / 2 + Math.cos(Math.PI / 6)) * size > (1 - p1) * Math.cos(Math.PI / 6) * size)
+                                return realcolorH2;
+                        }
+                        else if (y < Math.sin(Math.PI / 6) * size + h) {
+                            const p2 = 1 - (y - Math.sin(Math.PI / 6) * size) / h;
+                            if (x < p2 * size / 2 || x - 2 * size * (3 / 4 + Math.cos(Math.PI / 6)) > (1 - p2) * size / 2)
+                                return colorT;
+                        }
+                        else if (y > (1 + Math.sin(Math.PI / 6)) * size + h) {
+                            const p3 = (y - ((1 + Math.sin(Math.PI / 6)) * size + h)) / h;
+                            if (x < p3 * size / 2 || x - 2 * size * (3 / 4 + Math.cos(Math.PI / 6)) > (1 - p3) * size / 2)
+                                return colorT;
+                        }
+                        return realcolorH3;
+                    };
+                };
+            };
+        };
+    };
+}
+
+/* Texture : small rhombitrihexagonal tiling
+ *
+ * @param size side size of squares, triangles and hexagons
+ * @param colorS square's color
+ * @param colorT triangle's color
+ * @param colorH hexagon's color
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position 
+ */
+function texture_smallRhombitrihexagonalTiling(size) {
+    return function (colorS) {
+        return function (colorT) {
+            return function (colorH) {
+                return function (i, j) {
+                    const h = Math.sqrt(3) * size / 2;
+                    const offset = j % (2 * (h + size * (1 + Math.sin(Math.PI / 6)))) > (h + size * (1 + Math.sin(Math.PI / 6))) ? (Math.cos(Math.PI / 6) + 1 / 2) * size : 0;
+                    const x = (i + offset) % ((2 * Math.cos(Math.PI / 6) + 1) * size);
+                    const y = j % (h + size * (1 + Math.sin(Math.PI / 6)));
+                    // top 
+                    if (y < size / 2) {
+                        if (x > Math.cos(Math.PI / 6) * size && x < (1 + Math.cos(Math.PI / 6)) * size)
+                            return colorS;
+                        else
+                            return colorH;
+                    }
+                    // middle
+                    else if (y < h + size * (1 / 2 + Math.sin(Math.PI / 6))) {
+                        // color triangle
+                        const p1 = y < h + size / 2 ? (y - size / 2) / h % 1 : 1;
+                        const p2 = y > (1 / 2 + Math.sin(Math.PI / 6)) * size ? 1 - ((y - (1 / 2 + Math.sin(Math.PI / 6)) * size) / h % 1) : 1;
+                        if (x - Math.cos(Math.PI / 6) * size > p1 * size / 2 && x - Math.cos(Math.PI / 6) * size < (1 - p1 / 2) * size
+                            || x - (1 / 2 + 2 * Math.cos(Math.PI / 6)) * size > p2 * size / 2 || x < (1 - p2) * size / 2)
+                            return colorT;
+                        // color hexagon 
+                        const p3 = y < (1 / 2 + Math.sin(Math.PI / 6)) * size ? ((y - size / 2) / (Math.sin(Math.PI / 6) * size)) % 1 : 1;
+                        const p4 = y > h + size / 2 ? 1 - ((y - (h + size / 2)) / (Math.sin(Math.PI / 6) * size)) % 1 : 1;
+                        if (x < (1 - p3) * size * Math.cos(Math.PI / 6) || x - (1 + Math.cos(Math.PI / 6)) * size > p3 * size * Math.cos(Math.PI / 6)
+                            || x - size / 2 > p4 * size * Math.cos(Math.PI / 6) && x - size / 2 < (2 - p4) * Math.cos(Math.PI / 6) * size)
+                            return colorH;
+                        // color Square
+                        else
+                            return colorS;
+                    }
+                    // bottom
+                    else
+                        if (x > size / 2 && x < (1 / 2 + 2 * Math.cos(Math.PI / 6)) * size)
+                            return colorH;
+                        else
+                            return colorS;
+                };
+            };
+        };
+    };
+}
+
+/* Texture : trihexagonal tiling
+ *
+ * @param size side size of hexagons and triangles
+ * @param colorT triangle's color
+ * @param colorH hexagon's color
+ * @param (x,y) coordinates of the pixel
+ * @return a colored pixel corresponding to (x,y) position
  */
 function texture_trihexagonal(size) {
     return function (colorT) {

@@ -16,6 +16,7 @@ const colors = {
     pink: [255, 192, 203, 255],
     green: [0, 255, 0, 255],
     black: [0, 0, 0, 255],
+    grey: [100, 100, 100, 255],
     white: [255, 255, 255, 255],
     orange: [255, 128, 0, 255],
     cyan: [0, 255, 128, 255]
@@ -149,7 +150,13 @@ let data =
     //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
     //generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height);
     //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.orange)(colors.red), texture_horizontalColorGradients(2*25)(1)(colors.blue)(colors.green));
-    generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.blue)(colors.green), texture_squareTiling(2 * 25)(25 * Math.sqrt(3))(4)(4)(colors.orange)(colors.red));
+    //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.blue)(colors.green), texture_squareTiling(2 * 25)(25 * Math.sqrt(3))(4)(4)(colors.orange)(colors.red));
+    //generateTexture(CANVAS, texture_rhombitrihexagonalTiling, 25, colors.orange, colors.green, colors.blue);
+    //generateTexture(CANVAS, texture_truncatedHexagon, 50 , colors.orange, colors.blue, colors.red, colors.green);
+    //generateTexture(CANVAS, texture_elongatedTriangular, 50, colors.red, colors.blue, colors.green, colors.orange);
+    //generateTexture(CANVAS, texture_snubSquare, 50, colors.red, colors.blue, colors.green);
+    //generateTexture(CANVAS, texture_3Dcube, 100, colors.black, colors.grey, colors.white);
+    generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
 
 // ========================================
 
@@ -159,7 +166,7 @@ let data =
 //data = filter_blur(data)(WIDTH)(HEIGHT)(10);
 //data = filter_cyanColoration(data)(0.5);
 //data = filter_rotation(data)(WIDTH)(25);
-data = filter_detectOutline(data)(WIDTH)(2)(20)(colors.black);
+//data = filter_detectOutline(data)(WIDTH)(2)(20)(colors.black);
 //data = filter_horizontalFlip(data)(WIDTH);
 //data = filter_verticalFlip(data)(WIDTH);
 //data = filter_invertColor(data);
