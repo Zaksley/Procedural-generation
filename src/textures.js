@@ -110,6 +110,50 @@ function texture_hexagonTiling(size) {
     };
 }
 
+/* Texture :
+ *
+ *
+ */
+function texture_caireTiling(size) {
+    return function (angle) {
+        return function (color1) {
+            return function (color2) {
+                return function (color3) {
+                    return function (color4) {
+                        return function (i, j) {
+                            const alpha = angle * Math.PI / 180;
+                            const small_h = Math.cos(alpha / 2) * size;
+                            const big_h = Math.sin(alpha / 2) * size;
+                            const h = big_h + small_h;
+                            const offset = j % (4 * big_h) < 2 * big_h ? 0 : 2 * big_h;
+
+                            const x = (i + offset) % (4 * big_h);
+                            const y = j % (2 * big_h);
+
+                            const p1 = y / (2 * big_h);
+                            const p2 = 1 - (y - (big_h - small_h)) / (2 * small_h);
+
+                            const cond1 = (x - (big_h - small_h)) < p1 * (2 * small_h) || (x - (3 * big_h - small_h) > (1 - p1) * (2 * small_h));
+                            const cond2 = (x < p2 * (2 * big_h) || x - (2 * big_h) > (1 - p2) * (2 * big_h));
+                            const cond3 = (x < 2 * big_h);
+
+                            if (cond1 && cond2)
+                                return color1;
+                            else if (cond1 && cond3 || cond2 && !cond3)
+                                return color2;
+                            else if (cond1 && !cond3 || cond2 && cond3)
+                                return color3;
+                            else
+                                return color4;
+                        };
+                    };
+                };
+            };
+        };
+    };
+}
+
+
 /* Texture : 
  *
  *

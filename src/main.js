@@ -156,7 +156,8 @@ let data =
     //generateTexture(CANVAS, texture_elongatedTriangular, 50, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_snubSquare, 50, colors.red, colors.blue, colors.green);
     //generateTexture(CANVAS, texture_3Dcube, 100, colors.black, colors.grey, colors.white);
-    generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
+    //generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
+    //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
 
 // ========================================
 
@@ -173,10 +174,9 @@ let data =
 // ===================================================
 
 // !! Do not touch
-generateImage(CANVAS, data);
+//generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
-
-
+generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
