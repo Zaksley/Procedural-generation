@@ -620,26 +620,18 @@ function texture_whiteNoise() {
         255];
 }
 
-function getTwoInterpolateIndices(i, n) {
-    let before = n - i + 1;
-    let after = n + i - 1;
-    while (before % i !== 0) before++;
-    while (after % i !== 0) after--;
+function getFourInterpolateCoordinates(i, j, x, y)
+{
+    let top = y - j + 1;
+    let bottom  = y + j - 1;
+    let left = x - i + 1;
+    let right = x + i - 1;
 
-    return [before, after];
-}
-
-function getFourInterpolateCoordinates(i, j, x, y) {
-    let left = y - j + 1;
-    let right = y + j - 1;
-    let top = x - i + 1;
-    let bottom = x + i - 1;
-
-    while (top % i !== 0) top++;
-    while (bottom % i !== 0) bottom--;
-    while (left % j !== 0) left++;
-    while (right % j !== 0) right--;
-
+    while (top % j != 0) top++;
+    while (bottom % j != 0) bottom--;
+    while (left % i != 0) left++;
+    while (right % i != 0) right--;
+    
     return [top, bottom, left, right];
 }
 
@@ -653,121 +645,97 @@ function getFourInterpolateCoordinates(i, j, x, y) {
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_limitedWhiteNoise(width) {
-    return (height) => (i) => (j) => {
+function texture_limitedWhiteNoise(width)
+{
+    let cpt = 0;
+    return function(height) {
+    return function(i) {
+    return function(j) {
+            
         let pixels = [];
-        for (let x = 0; x < width; x++) {
-            pixels[x] = [];
-            for (let y = 0; y < height; y++) {
-                pixels[x][y] = [];
-                if (x % i === 0 && y % j === 0) {
-                    pixels[x][y][0] = getRandomInt(256); // Red channel
-                    pixels[x][y][1] = getRandomInt(256); // Green channel
-                    pixels[x][y][2] = getRandomInt(256); // Blue channel
-                    pixels[x][y][3] = 255; // Alpha channel
+        for (let a = 0; a < width; a++) {
+            pixels[a] = [];
+	    for (let b = 0; b < height; b++) {
+                pixels[a][b] = [];
+                if (a % i === 0 && b % j === 0)
+                {
+	            pixels[a][b][0] = getRandomInt(256); // Red channel
+	            pixels[a][b][1] = getRandomInt(256); // Green channel
+	            pixels[a][b][2] = getRandomInt(256); // Blue channel
+	            pixels[a][b][3] = 255; // Alpha channel
                 }
-                else {
-                    pixels[x][y][0] = 255; // Red channel
-                    pixels[x][y][1] = 255; // Green channel
-                    pixels[x][y][2] = 255; // Blue channel
-                    pixels[x][y][3] = 255; // Alpha channel
+                else
+                {
+                    pixels[a][b][0] = 255; // Red channel
+	            pixels[a][b][1] = 255; // Green channel
+	            pixels[a][b][2] = 255; // Blue channel
+	            pixels[a][b][3] = 255; // Alpha channel
                 }
-            }
+	    }
         }
 
-        return (x, y) => {
-            if (x % i === 0 && y % j === 0) {
+        return (x,y) => {
+            if (x % i === 0 && y % j === 0)
+            {
                 return [pixels[x][y][0],
-                pixels[x][y][1],
-                pixels[x][y][2],
-                pixels[x][y][3]];
+                        pixels[x][y][1],
+                        pixels[x][y][2],
+                        pixels[x][y][3]];
             }
-            else {
-                if (x % i === 0 && y % j !== 0) // top - bottom case
-                {
-                    let [top, bottom] = getTwoInterpolateIndices(j, y);
-
-                    let redVal = pixels[x][top][0];
-                    let greVal = pixels[x][top][1];
-                    let bluVal = pixels[x][top][2];
-                    let alpVal = pixels[x][top][3];
-
-                    if (bottom < height) {
-                        redVal = Math.floor((pixels[x][top][0] + pixels[x][bottom][0]) / 2);
-                        greVal = Math.floor((pixels[x][top][1] + pixels[x][bottom][1]) / 2);
-                        bluVal = Math.floor((pixels[x][top][2] + pixels[x][bottom][2]) / 2);
-                        alpVal = Math.floor((pixels[x][top][3] + pixels[x][bottom][3]) / 2);
-                    }
-
-                    return [redVal, greVal, bluVal, alpVal];
-                }
-
-                if (x % i !== 0 && y % j === 0) // left - right case
-                {
-                    let [left, right] = getTwoInterpolateIndices(i, x);
-
-                    let redVal = pixels[left][y][0];
-                    let greVal = pixels[left][y][1];
-                    let bluVal = pixels[left][y][2];
-                    let alpVal = pixels[left][y][3];
-
-                    if (right < width) {
-                        redVal = Math.floor((pixels[left][y][0] + pixels[right][y][0]) / 2);
-                        greVal = Math.floor((pixels[left][y][1] + pixels[right][y][1]) / 2);
-                        bluVal = Math.floor((pixels[left][y][2] + pixels[right][y][2]) / 2);
-                        alpVal = Math.floor((pixels[left][y][3] + pixels[right][y][3]) / 2);
-                    }
-
-                    return [redVal, greVal, bluVal, alpVal];
-                }
-
+            else
+            {
                 // full square case
-                // /!\ Seems to broke the code /!\
+                if (typeof(x) != 'number' && typeof(y) != 'number')
+                    return [255, 255, 255, 255];
 
-                //let [t, b, l, r] = getFourInterpolateCoordinates(i, j, x, y);
+                let [top, bottom, left, right] = getFourInterpolateCoordinates(i, j, x, y);
 
-                // let redVal = pixels[left][top][0];
-                // let greVal = pixels[left][top][1];
-                // let bluVal = pixels[left][top][2];
-                // let alpVal = pixels[left][top][3];
-                // let numberNeighboor = 1;
+                let redVal = 0; 
+                let greVal = 0; 
+                let bluVal = 0; 
+                let alpVal = pixels[left][top][3];
 
-                // if (right < width)
-                // {
-                //     redVal += pixels[right][top][0];
-                //     greVal += pixels[right][top][1];
-                //     bluVal += pixels[right][top][2];
-                //     alpVal += pixels[right][top][3];
-                //     numberNeighboor++;
-                // }
+                let neighboors = [];
+                
+                neighboors.push({x:left, y:top, dist: Math.abs(x - left) + Math.abs(y - top)});
 
-                // if (bottom < height)
-                // {
-                //     redVal += pixels[left][bottom][0];
-                //     greVal += pixels[left][bottom][1];
-                //     bluVal += pixels[left][bottom][2];
-                //     alpVal += pixels[left][bottom][3];
-                //     numberNeighboor++;
-                // }
+                if (right < width)
+                {
+                    neighboors.push({x:right, y:top, dist: Math.abs(x - right) + Math.abs(y - top)});
+                }
+                
+                if (bottom < height)
+                {
+                    neighboors.push({x:left, y:bottom, dist: Math.abs(x - left) + Math.abs(y - bottom)});
+                }
+                
+                if (bottom < height && right < width)
+                {
+                    neighboors.push({x:right, y:bottom, dist: Math.abs(x - right) + Math.abs(y - bottom)});
+                }
 
-                // if (bottom < height && right < width)
-                // {
-                //     redVal += pixels[right][bottom][0];
-                //     greVal += pixels[right][bottom][1];
-                //     bluVal += pixels[right][bottom][2];
-                //     alpVal += pixels[right][bottom][3];
-                //     numberNeighboor++;
-                // }
+                const distMax = neighboors.reduce((acc,el) => acc += el.dist, 0);
+                neighboors.sort((el1, el2) => el1.dist - el2.dist);
 
-                // redVal = Math.floor(redVal / numberNeighboor);
-                // greVal = Math.floor(greVal / numberNeighboor);
-                // bluVal = Math.floor(bluVal / numberNeighboor);
-                // alpVal = Math.floor(alpVal / numberNeighboor);
-                // return [redVal, greVal, bluVal, alpVal];
-                return [255, 255, 255, 255];
-            }
-        };
-    };
+                
+                for (let k = 0; k < neighboors.length / 2; ++k)
+                {
+                    let tmp = neighboors[k].dist;
+                    neighboors[k].dist = neighboors[neighboors.length-k-1].dist;
+                    neighboors[neighboors.length-k-1].dist = tmp;
+                }
+
+                neighboors.forEach(el => {
+                    redVal += pixels[el.x][el.y][0] * (el.dist) / distMax;
+                    greVal += pixels[el.x][el.y][1] * (el.dist) / distMax;
+                    bluVal += pixels[el.x][el.y][2] * (el.dist) / distMax;
+                });
+
+                return [redVal, greVal, bluVal, alpVal];
+
+            }  
+        }
+    };};};
 }
 
 
