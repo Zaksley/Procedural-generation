@@ -147,7 +147,7 @@ let data =
     //generateTexture(CANVAS, texture_triangleTiling, 25, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_truncatedSquare, 25, colors.orange, colors.blue, colors.red);
     //generateTexture(CANVAS, texture_hexagonTiling, 20, colors.cyan, colors.orange, colors.blue);
-    //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
+    generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 45, 45);
     //generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height);
     //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.orange)(colors.red), texture_horizontalColorGradients(2*25)(1)(colors.blue)(colors.green));
     //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.blue)(colors.green), texture_squareTiling(2 * 25)(25 * Math.sqrt(3))(4)(4)(colors.orange)(colors.red));
@@ -174,9 +174,9 @@ let data =
 // ===================================================
 
 // !! Do not touch
-//generateImage(CANVAS, data);
+generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
-generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
+//generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
