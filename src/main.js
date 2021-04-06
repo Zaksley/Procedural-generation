@@ -10,7 +10,7 @@ CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
 //let IMAGE = CONTEXT.createImageData(CANVAS.width, CANVAS.height);
 
 // Color dictionnary
-const colors = {
+const COLORS = {
     blue: [0, 0, 255, 255],
     red: [255, 0, 0, 255],
     pink: [255, 192, 203, 255],
@@ -28,12 +28,39 @@ const colors = {
  *
  * @param canvas the canvas used for sizing
  * @param texture a texture function to generate
+ * @precond canvas must be a <canvas> html element
+ * @return an image data array (of size width*height*4)
+ */
+function generateTexture(canvas, texture) {
+    // Environnment definition
+    let context = canvas.getContext("2d");
+    let image = context.createImageData(canvas.width, canvas.height);
+
+    // Texture application
+    for (let n = 0, y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++, n += 4) {
+            
+            let pixel = texture(x, y);
+            
+            image.data[n] = pixel[0]; // Red channel
+            image.data[n + 1] = pixel[1]; // Green channel
+            image.data[n + 2] = pixel[2]; // Blue channel
+            image.data[n + 3] = pixel[3]; // Alpha channel
+        }
+    }
+
+    return image.data;
+}
+
+/* OUTDATED Generates an image data array from a texture function
+ *
+ * @param canvas the canvas used for sizing
+ * @param texture a texture function to generate
  * @param ...args a list of arguments for the texture function
  * @precond canvas must be a <canvas> html element
  * @return an image data array (of size width*height*4)
  */
-// TODO : réfléchir à un dictionnaire au lieu d'une liste d'arguments ?
-function generateTexture(canvas, texture, ...args) {
+function generateTextureOld(canvas, texture, ...args) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
@@ -158,6 +185,8 @@ let data =
     //generateTexture(CANVAS, texture_3Dcube, 100, colors.black, colors.grey, colors.white);
     //generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
     //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
+    //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
+    generateTexture(CANVAS, texture_squareTiling({}));
 
 // ========================================
 
@@ -174,9 +203,9 @@ let data =
 // ===================================================
 
 // !! Do not touch
-//generateImage(CANVAS, data);
+generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
-generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
+//generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
