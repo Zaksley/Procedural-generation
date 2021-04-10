@@ -19,11 +19,11 @@ function texture_solid(dict) {
 
     const colors = dict['colors']   || [];
     const color = colors[0]         || COLORS.cyan;
-    
-    return function (x,y) {
+
+    return function (x, y) {
         return color;
     };
-};
+}
 
 /* Texture : multiple horizontal color1-to-color2 gradients
  * 
@@ -34,7 +34,7 @@ function texture_solid(dict) {
  * @precond each color must be a 4-element array (rgba format)
  * @return a colored pixel corresponding to (x,y) position
  */
- // updated
+// updated
 function texture_horizontalGradient(dict) {
 
     const width = dict['width']     || WIDTH;
@@ -43,12 +43,12 @@ function texture_horizontalGradient(dict) {
     const color1 = colors[0]        || COLORS.blue;
     const color2 = colors[1]        || COLORS.cyan;
 
-    return function (x,y) {
+    return function (x, y) {
         return [0, 0, 0, 0].map((e, i) =>
-            Math.floor(color1[i] * ((n * (width - x)) % width) / width 
-                     + color2[i] * ((n * x) % width) / width));
+            Math.floor(color1[i] * ((n * (width - x)) % width) / width
+                + color2[i] * ((n * x) % width) / width));
     };
-};
+}
 
 /* Texture : paving of color1 and color2 triangles
  *
@@ -68,18 +68,18 @@ function texture_triangleTiling(dict) {
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
-                
+
         const offset = get_offset(j, 2 * h, 0.5, size / 2);
 
         const [x, y] = ij2xy((i + offset), size, j, h);
         const p = y / h;
 
-        if (x > p * size / 2 && x - size / 2 < (1 - p ) * size / 2)
+        if (x > p * size / 2 && x - size / 2 < (1 - p) * size / 2)
             return color1;
         else
             return color2;
     };
-};
+}
 
 /* Texture : paving of color1, color2 and color3 hexagons
  *
@@ -96,13 +96,13 @@ function texture_hexagonTiling(dict) {
     const color1 = colors[0]        || COLORS.cyan;
     const color2 = colors[1]        || COLORS.orange;
     const color3 = colors[2]        || COLORS.blue;
-    
+
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
-            
+
         const offset = get_offset(i, 3 * size, 0.5, h);
         const [x, y] = ij2xy(i, 3 * size / 2, (j + offset), 2 * h);
-        
+
         const cond1 = (j + 3 * offset) % (6 * h) > 2 * h;
         const cond2 = (j + 3 * offset) % (6 * h) > 4 * h;
 
@@ -110,16 +110,16 @@ function texture_hexagonTiling(dict) {
         const realcolor2 = cond1 ? cond2 ? color1 : color3 : color2;
         const realcolor3 = cond1 ? cond2 ? color2 : color1 : color3;
 
-                const p1 = 1 - y / h;
+        const p1 = 1 - y / h;
         const p2 = (y - h) / h;
         if (x > p1 * size / 2 && x > p2 * size / 2)
             return realcolor1;
         else if (y < h)
             return realcolor2;
-        else 
+        else
             return realcolor3;
     };
-};
+}
 
 /* Texture :
  *
@@ -160,8 +160,50 @@ function texture_caireTiling(dict) {
         else
             return color4;
     };
-}; 
+}
 
+/* Texture : 
+ *
+ *
+ */
+function texture_pentagonTiling4(dict) {
+    const a = dict['size1']        || 50;
+    const b = dict['size2']        || 70;
+    const angle = dict['angle']    || 120;
+    const colors = dict['colors']  || [];
+    const color1 = colors[0]       || COLORS.blue;
+    const color2 = colors[1]       || COLORS.red;
+    const color3 = colors[2]       || COLORS.orange;
+    const color4 = colors[3]       || COLORS.cyan;
+
+    return function (i, j) {
+        const alpha = (angle - 90) * Math.PI / 180;
+       
+        const x_offset = Math.floor(j / (a + b * (Math.cos(alpha) + Math.sin(alpha)))) * (a + b * (Math.sin(alpha) - Math.cos(alpha)));
+        const y_offset = Math.floor((i + x_offset)  / (a + b * (Math.cos(alpha) + Math.sin(alpha)))) * (2 * b * Math.cos(alpha));
+        const [x, y] = ij2xy(i + x_offset, a + b * (Math.cos(alpha) + Math.sin(alpha)), j + y_offset, a + b * (Math.cos(alpha) + Math.sin(alpha)));
+        
+        const p1 = (y - b * Math.cos(alpha)) / (b * Math.sin(alpha));
+        const p2 = (y - a) / (b * (Math.cos(alpha) + Math.sin(alpha)) - a);
+        if ((x + b * Math.sin(alpha) > p1 * b * Math.cos(alpha)) && x < a && x - b * (Math.cos(alpha) - Math.sin(alpha)) < (1 - p2) * (a + b * (Math.sin(alpha) - Math.cos(alpha))))
+            return color1;
+        const p3 = (y - a) / (b * Math.sin(alpha))
+        const p4 = 1 - (y - (a + b * (Math.sin(alpha) - Math.cos(alpha)))) / (b * Math.cos(alpha));
+        const p5 = y / (a + b * (Math.cos(alpha) - Math.sin(alpha)));
+        if (x - 2 * a < p5 * (b * (Math.cos(alpha) + Math.sin(alpha)) + a)) {
+            if (x - a > p3 * b * Math.cos(alpha)) {
+                if (x - (a + b * Math.cos(alpha)) < p4 * b * Math.sin(alpha))
+                    return color2;
+                else
+                    return color1;
+            }
+            else if (x > b * (Math.cos(alpha) - Math.sin(alpha)) && x - (a + b * Math.cos(alpha)) < p4 * b * Math.sin(alpha))
+                return color3;
+        }
+        return color4;
+    };
+
+}
 
 /* Texture : 
  *
@@ -180,7 +222,7 @@ function texture_3Dcube(dict) {
         const offset = get_offset(j, 3 * size, 0.5, h);
 
         const [x, y] = ij2xy(i + offset, 2 * h, j, 3 * size / 2);
-                
+
         const p1 = 2 * y / size;
         const p2 = 2 * (y - size) / size;
         if (x > p1 * h && x - h < (1 - p1) * h)
@@ -192,7 +234,7 @@ function texture_3Dcube(dict) {
         else
             return colorR;
     };
-};
+}
 
 /* Texture : 
  *
@@ -209,9 +251,9 @@ function texture_3DgambarTiling(dict) {
     return function (i, j) {
         const h = Math.sqrt(2) * size / 2;
         const offset = get_offset(j, 3 * size, 0.5, 3 * h);
-        
+
         const [x, y] = ij2xy(i + offset, 6 * h, j, 3 * size / 2);
-        
+
         const p1 = 2 * y / size;
         const p2 = 2 * (y - size) / size;
         if (x - 2 * h > p1 * h && x - 5 * h < (1 - p1) * h)
@@ -223,7 +265,7 @@ function texture_3DgambarTiling(dict) {
         else
             return colorR;
     };
-};
+}
 
 /* Texture : 
  *
@@ -243,7 +285,7 @@ function texture_elongatedTriangular(dict) {
         const offset = get_offset(j, 2 * (h + size), 0.5, size / 2);
 
         const [x, y] = ij2xy(i + offset, size, j, h + size);
-       
+
         const realcolorS = (i + offset) % (2 * size) > size ? colorS2 : colorS1;
 
         if (y > size) {
@@ -255,7 +297,7 @@ function texture_elongatedTriangular(dict) {
         }
         return realcolorS;
     };
-};
+}
 
 /* Texture : 
  *
@@ -271,10 +313,10 @@ function texture_snubSquare(dict) {
 
     return function (i, j) {
         const h = Math.sqrt(2) * size / 2;
-        const offset = get_offset(j, 2 * h + size, 0.5, h + size / 2 );
-        
+        const offset = get_offset(j, 2 * h + size, 0.5, h + size / 2);
+
         const [x, y] = ij2xy(i + offset, 2 * h + size, j, h + size / 2);
-                    
+
         const p1 = 1 - (2 * y / size);
         if (x < p1 * h)
             return colorT1;
@@ -298,7 +340,7 @@ function texture_snubSquare(dict) {
         }
         return colorS;
     };
-};
+}
 
 /* Texture : truncated square tiling
  *
@@ -325,15 +367,15 @@ function texture_truncatedSquare(dict) {
 
         const realcolorH1 = j % (2 * (h + size)) > h + size ? colorH1 : colorH2;
         const realcolorH2 = j % (2 * (h + size)) > h + size ? colorH2 : colorH1;
-            
-        if (x > h && x < h + size &&  y > h)
+
+        if (x > h && x < h + size && y > h)
             return colorS;
         if (x > p * h && x - (h + size) < (1 - p) * h)
             return realcolorH1;
         else
             return realcolorH2;
     };
-};
+}
 
 /* Texture : 
  *
@@ -379,7 +421,7 @@ function texture_truncatedHexagon(dict) {
         }
         return realcolorH3;
     };
-};
+}
 
 /* Texture : small rhombitrihexagonal tiling
  *
@@ -390,7 +432,7 @@ function texture_truncatedHexagon(dict) {
  * @return a colored pixel corresponding to (x,y) position 
  */
 function texture_smallRhombitrihexagonalTiling(dict) {
-    
+
     const size = dict['size']       || 60;
     const colors = dict['colors']   || [];
     const colorS = colors[0]        || COLORS.cyan;
@@ -401,7 +443,7 @@ function texture_smallRhombitrihexagonalTiling(dict) {
         const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 2 * (h + size * (1 + Math.sin(Math.PI / 6))), 0.5, (Math.cos(Math.PI / 6) + 1 / 2) * size);
 
-        const [x, y] = ij2xy(i + offset,(2 * Math.cos(Math.PI / 6) + 1) * size , j,h + size * (1 + Math.sin(Math.PI / 6)));
+        const [x, y] = ij2xy(i + offset, (2 * Math.cos(Math.PI / 6) + 1) * size, j, h + size * (1 + Math.sin(Math.PI / 6)));
         // top 
         if (y < size / 2) {
             if (x > Math.cos(Math.PI / 6) * size && x < (1 + Math.cos(Math.PI / 6)) * size)
@@ -423,7 +465,7 @@ function texture_smallRhombitrihexagonalTiling(dict) {
             if (x < (1 - p3) * size * Math.cos(Math.PI / 6) || x - (1 + Math.cos(Math.PI / 6)) * size > p3 * size * Math.cos(Math.PI / 6)
                 || x - size / 2 > p4 * size * Math.cos(Math.PI / 6) && x - size / 2 < (2 - p4) * Math.cos(Math.PI / 6) * size)
                 return colorH;
-            // color Square
+            // color square
             else
                 return colorS;
         }
@@ -434,7 +476,7 @@ function texture_smallRhombitrihexagonalTiling(dict) {
             else
                 return colorS;
     };
-};
+}
 
 /* Texture : trihexagonal tiling
  *
@@ -448,8 +490,8 @@ function texture_trihexagonal(dict) {
 
     const size = dict['size']       || 60;
     const colors = dict['colors']   || [];
-    const colorT = colors[0]        || texture_solid({colors: [COLORS.cyan]});
-    const colorH = colors[1]        || texture_solid({colors: [COLORS.orange]});
+    const colorT = colors[0]        || texture_solid({ colors: [COLORS.cyan] });
+    const colorH = colors[1]        || texture_solid({ colors: [COLORS.orange] });
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -459,11 +501,11 @@ function texture_trihexagonal(dict) {
         const [x, y] = ij2xy(i + offset, 2 * size, j, h);
 
         if (x > p * size / 2 && (i + offset) % (2 * size) < (2 - p / 2) * size)
-            return colorH(x, y);
+            return colorH;
         else
-            return colorT((i + offset + size / 2) % (2 * size), j % h);
+            return colorT;
     };
-};
+}
 
 /* Texture : checkerboard of color1 and color2 rectangles
  *
@@ -504,7 +546,7 @@ function texture_squareTiling(dict) {
                 return color1;
         }
     };
-};
+}
 
 /* Texture : PerlinNoise board
  *
@@ -617,10 +659,9 @@ function texture_whiteNoise() {
         255];
 }
 
-function getFourInterpolateCoordinates(i, j, x, y)
-{
+function getFourInterpolateCoordinates(i, j, x, y) {
     let top = y - j + 1;
-    let bottom  = y + j - 1;
+    let bottom = y + j - 1;
     let left = x - i + 1;
     let right = x + i - 1;
 
@@ -628,7 +669,7 @@ function getFourInterpolateCoordinates(i, j, x, y)
     while (bottom % j != 0) bottom--;
     while (left % i != 0) left++;
     while (right % i != 0) right--;
-    
+
     return [top, bottom, left, right];
 }
 
@@ -642,97 +683,90 @@ function getFourInterpolateCoordinates(i, j, x, y)
  * @param (i,j) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_limitedWhiteNoise(width)
-{
+function texture_limitedWhiteNoise(width) {
     let cpt = 0;
-    return function(height) {
-    return function(i) {
-    return function(j) {
-            
-        let pixels = [];
-        for (let a = 0; a < width; a++) {
-            pixels[a] = [];
-	    for (let b = 0; b < height; b++) {
-                pixels[a][b] = [];
-                if (a % i === 0 && b % j === 0)
-                {
-	            pixels[a][b][0] = getRandomInt(256); // Red channel
-	            pixels[a][b][1] = getRandomInt(256); // Green channel
-	            pixels[a][b][2] = getRandomInt(256); // Blue channel
-	            pixels[a][b][3] = 255; // Alpha channel
-                }
-                else
-                {
-                    pixels[a][b][0] = 255; // Red channel
-	            pixels[a][b][1] = 255; // Green channel
-	            pixels[a][b][2] = 255; // Blue channel
-	            pixels[a][b][3] = 255; // Alpha channel
-                }
-	    }
-        }
+    return function (height) {
+        return function (i) {
+            return function (j) {
 
-        return (x,y) => {
-            if (x % i === 0 && y % j === 0)
-            {
-                return [pixels[x][y][0],
+                let pixels = [];
+                for (let a = 0; a < width; a++) {
+                    pixels[a] = [];
+                    for (let b = 0; b < height; b++) {
+                        pixels[a][b] = [];
+                        if (a % i === 0 && b % j === 0) {
+                            pixels[a][b][0] = getRandomInt(256); // Red channel
+                            pixels[a][b][1] = getRandomInt(256); // Green channel
+                            pixels[a][b][2] = getRandomInt(256); // Blue channel
+                            pixels[a][b][3] = 255; // Alpha channel
+                        }
+                        else {
+                            pixels[a][b][0] = 255; // Red channel
+                            pixels[a][b][1] = 255; // Green channel
+                            pixels[a][b][2] = 255; // Blue channel
+                            pixels[a][b][3] = 255; // Alpha channel
+                        }
+                    }
+                }
+
+                return (x, y) => {
+                    if (x % i === 0 && y % j === 0) {
+                        return [pixels[x][y][0],
                         pixels[x][y][1],
                         pixels[x][y][2],
                         pixels[x][y][3]];
-            }
-            else
-            {
-                // full square case
-                if (typeof(x) != 'number' && typeof(y) != 'number')
-                    return [255, 255, 255, 255];
+                    }
+                    else {
+                        // full square case
+                        if (typeof (x) != 'number' && typeof (y) != 'number')
+                            return [255, 255, 255, 255];
 
-                let [top, bottom, left, right] = getFourInterpolateCoordinates(i, j, x, y);
+                        let [top, bottom, left, right] = getFourInterpolateCoordinates(i, j, x, y);
 
-                let redVal = 0; 
-                let greVal = 0; 
-                let bluVal = 0; 
-                let alpVal = pixels[left][top][3];
+                        let redVal = 0;
+                        let greVal = 0;
+                        let bluVal = 0;
+                        let alpVal = pixels[left][top][3];
 
-                let neighboors = [];
-                
-                neighboors.push({x:left, y:top, dist: Math.abs(x - left) + Math.abs(y - top)});
+                        let neighboors = [];
 
-                if (right < width)
-                {
-                    neighboors.push({x:right, y:top, dist: Math.abs(x - right) + Math.abs(y - top)});
+                        neighboors.push({ x: left, y: top, dist: Math.abs(x - left) + Math.abs(y - top) });
+
+                        if (right < width) {
+                            neighboors.push({ x: right, y: top, dist: Math.abs(x - right) + Math.abs(y - top) });
+                        }
+
+                        if (bottom < height) {
+                            neighboors.push({ x: left, y: bottom, dist: Math.abs(x - left) + Math.abs(y - bottom) });
+                        }
+
+                        if (bottom < height && right < width) {
+                            neighboors.push({ x: right, y: bottom, dist: Math.abs(x - right) + Math.abs(y - bottom) });
+                        }
+
+                        const distMax = neighboors.reduce((acc, el) => acc += el.dist, 0);
+                        neighboors.sort((el1, el2) => el1.dist - el2.dist);
+
+
+                        for (let k = 0; k < neighboors.length / 2; ++k) {
+                            let tmp = neighboors[k].dist;
+                            neighboors[k].dist = neighboors[neighboors.length - k - 1].dist;
+                            neighboors[neighboors.length - k - 1].dist = tmp;
+                        }
+
+                        neighboors.forEach(el => {
+                            redVal += pixels[el.x][el.y][0] * (el.dist) / distMax;
+                            greVal += pixels[el.x][el.y][1] * (el.dist) / distMax;
+                            bluVal += pixels[el.x][el.y][2] * (el.dist) / distMax;
+                        });
+
+                        return [redVal, greVal, bluVal, alpVal];
+
+                    }
                 }
-                
-                if (bottom < height)
-                {
-                    neighboors.push({x:left, y:bottom, dist: Math.abs(x - left) + Math.abs(y - bottom)});
-                }
-                
-                if (bottom < height && right < width)
-                {
-                    neighboors.push({x:right, y:bottom, dist: Math.abs(x - right) + Math.abs(y - bottom)});
-                }
-
-                const distMax = neighboors.reduce((acc,el) => acc += el.dist, 0);
-                neighboors.sort((el1, el2) => el1.dist - el2.dist);
-
-                
-                for (let k = 0; k < neighboors.length / 2; ++k)
-                {
-                    let tmp = neighboors[k].dist;
-                    neighboors[k].dist = neighboors[neighboors.length-k-1].dist;
-                    neighboors[neighboors.length-k-1].dist = tmp;
-                }
-
-                neighboors.forEach(el => {
-                    redVal += pixels[el.x][el.y][0] * (el.dist) / distMax;
-                    greVal += pixels[el.x][el.y][1] * (el.dist) / distMax;
-                    bluVal += pixels[el.x][el.y][2] * (el.dist) / distMax;
-                });
-
-                return [redVal, greVal, bluVal, alpVal];
-
-            }  
-        }
-    };};};
+            };
+        };
+    };
 }
 
 

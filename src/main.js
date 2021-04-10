@@ -41,7 +41,9 @@ function generateTexture(canvas, texture) {
         for (let x = 0; x < canvas.width; x++, n += 4) {
             
             let pixel = texture(x, y);
-            
+            while (typeof (pixel) === 'function')
+                pixel = pixel(x, y);
+
             image.data[n] = pixel[0]; // Red channel
             image.data[n + 1] = pixel[1]; // Green channel
             image.data[n + 2] = pixel[2]; // Blue channel
@@ -177,16 +179,17 @@ let data =
     //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
     //generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height);
     //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.orange)(colors.red), texture_horizontalColorGradients(2*25)(1)(colors.blue)(colors.green));
-    //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.blue)(colors.green), texture_squareTiling(2 * 25)(25 * Math.sqrt(3))(4)(4)(colors.orange)(colors.red));
+    //generateTexture(CANVAS, texture_trihexagonal({size: 25, colors: [texture_horizontalGradient({width: WIDTH, n: 1, colors: [COLORS.blue, COLORS.green]}), texture_squareTiling({width: 2 * 25, height: 25 * Math.sqrt(3), rows: 4, columns: 4, colors: [COLORS.orange, COLORS.red]})]}));
     //generateTexture(CANVAS, texture_rhombitrihexagonalTiling, 25, colors.orange, colors.green, colors.blue);
     //generateTexture(CANVAS, texture_truncatedHexagon, 50 , colors.orange, colors.blue, colors.red, colors.green);
     //generateTexture(CANVAS, texture_elongatedTriangular, 50, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_snubSquare, 50, colors.red, colors.blue, colors.green);
     //generateTexture(CANVAS, texture_3Dcube, 100, colors.black, colors.grey, colors.white);
-    //generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
     //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
-    generateTexture(CANVAS, texture_solid({}));
+    //generateTexture(CANVAS, texture_solid({}));
+    generateTexture(CANVAS, texture_pentagonTiling4({}));
+    //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
 
 // ========================================
 
