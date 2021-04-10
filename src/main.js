@@ -251,4 +251,4 @@ let data =
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
-generateAnimation(CANVAS, yin_yang({colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), chromatic_circle({}), animated_caireTiling({})]}));
+generateAnimation(CANVAS, yin_yang({colors: [add_animation({function: texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), func_x: ((x, dt) => x + 100 * (1 + Math.cos(0.1*dt))), func_y: ((y, dt) => y + 100 * (1 + Math.sin(0.1*dt)))}), chromatic_circle({}), animated_caireTiling({})]}));

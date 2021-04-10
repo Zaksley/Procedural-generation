@@ -1,3 +1,24 @@
+/* Animation : adding animation to a texture
+ *
+ * @param dict.function texture function
+ * @param dict.fun_x    function taking two parameters (x, dt)
+ * @param dict.fun_x    function taking two parameters (y, dt)
+ * @param (x, y, dt)    coordinates of the pixel and time
+ * @return a colored pixel corresponding to the position and time (x, y, dt) with the corresponding transformation
+ */
+function add_animation(dict) {
+    const func = dict['function'] || texture_solid({});
+    const func_x = dict['func_x'] || ((x, dt) => x);
+    const func_y = dict['func_y'] || ((y, dt) => y); 
+
+    return function(x, y, dt) {
+        const new_x = func_x(x, dt);
+        const new_y = func_y(y, dt);
+
+        return func(new_x, new_y);
+    };
+}
+
 function chromatic_circle(dict) {
     const r = dict['radius']      || 150;
     const center = dict['center'] || []
