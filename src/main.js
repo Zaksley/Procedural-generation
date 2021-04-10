@@ -2,7 +2,7 @@
 
 // Global variables
 let MAX_ARGUMENTS = 50;
-const WIDTH = 550, HEIGHT = 450;
+const WIDTH = 500, HEIGHT = 500;
 let CANVAS = document.getElementById('canvas');
 CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
 // /!\ UNUSED
@@ -54,6 +54,45 @@ function generateTexture(canvas, texture) {
     return image.data;
 }
 
+/* Generates an animation from a texture function
+ *
+ * @param canvas the canvas used for sizing
+ * @param texture a texture function to generate
+ * @param ...args a list of arguments for the texture function
+ * @precond canvas must be a <canvas> html element
+ * @return nothing
+ */
+function generateAnimation(canvas, texture) {
+    // Environnment definition
+    let context = canvas.getContext("2d");
+    let image = context.createImageData(canvas.width, canvas.height);
+
+    makeFrame(); // Start the animation
+
+    /* Creates an animation on main canvas
+     *
+     * @param time timestamp of current image
+     * @return nothing
+     */
+    function makeFrame(time) {
+        let dt = 0.005 * time;
+        for (let n = 0, y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++, n += 4) {
+                let pixel = texture(x, y, dt);
+                while (typeof (pixel) === 'function')
+                    pixel = pixel(x, y, dt);
+
+                image.data[n] = pixel[0]; // Red channel
+                image.data[n + 1] = pixel[1]; // Green channel
+                image.data[n + 2] = pixel[2]; // Blue channel
+                image.data[n + 3] = pixel[3]; // Alpha channel
+            }
+        }
+
+        context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
+    }
+}
+
 /* OUTDATED Generates an image data array from a texture function
  *
  * @param canvas the canvas used for sizing
@@ -93,7 +132,7 @@ function generateTextureOld(canvas, texture, ...args) {
     return image.data;
 }
 
-/* Generates an animation from a texture function
+/* OUTDATED Generates an animation from a texture function
  *
  * @param canvas the canvas used for sizing
  * @param texture a texture function to generate
@@ -101,7 +140,7 @@ function generateTextureOld(canvas, texture, ...args) {
  * @precond canvas must be a <canvas> html element
  * @return nothing
  */
-function generateAnimation(canvas, texture, ...args) {
+function generateAnimationOld(canvas, texture, ...args) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
@@ -188,7 +227,7 @@ let data =
     //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
     //generateTexture(CANVAS, texture_solid({}));
-    generateTexture(CANVAS, texture_pentagonTiling4({}));
+    //generateTexture(CANVAS, texture_pentagonTiling4({}));
     //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
 
 // ========================================
@@ -206,9 +245,10 @@ let data =
 // ===================================================
 
 // !! Do not touch
-generateImage(CANVAS, data);
+//generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
+generateAnimation(CANVAS, yin_yang({colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), chromatic_circle({}), animated_caireTiling({})]}));
