@@ -672,10 +672,10 @@ function getFourInterpolateCoordinates(i, j, x, y) {
     let left = x - i + 1;
     let right = x + i - 1;
 
-    while (top % j != 0) top++;
-    while (bottom % j != 0) bottom--;
-    while (left % i != 0) left++;
-    while (right % i != 0) right--;
+    while (top % j !== 0) top++;
+    while (bottom % j !== 0) bottom--;
+    while (left % i !== 0) left++;
+    while (right % i !== 0) right--;
 
     return [top, bottom, left, right];
 }
@@ -691,7 +691,6 @@ function getFourInterpolateCoordinates(i, j, x, y) {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_limitedWhiteNoise(width) {
-    let cpt = 0;
     return function (height) {
         return function (i) {
             return function (j) {
@@ -725,7 +724,7 @@ function texture_limitedWhiteNoise(width) {
                     }
                     else {
                         // full square case
-                        if (typeof (x) != 'number' && typeof (y) != 'number')
+                        if (typeof (x) !== 'number' && typeof (y) !== 'number')
                             return [255, 255, 255, 255];
 
                         let [top, bottom, left, right] = getFourInterpolateCoordinates(i, j, x, y);
@@ -770,7 +769,7 @@ function texture_limitedWhiteNoise(width) {
                         return [redVal, greVal, bluVal, alpVal];
 
                     }
-                }
+                };
             };
         };
     };
