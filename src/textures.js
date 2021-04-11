@@ -147,7 +147,6 @@ function texture_caireTiling(dict) {
         const alpha = angle * Math.PI / 180;
         const small_h = Math.cos(alpha / 2) * size;
         const big_h = Math.sin(alpha / 2) * size;
-        const h = big_h + small_h;
         const offset = get_offset(j, 4 * big_h, 0.5, 2 * big_h);
 
         const [x, y] = ij2xy(i + offset, 4 * big_h, j, 2 * big_h);
@@ -195,7 +194,7 @@ function texture_pentagonTiling4(dict) {
         const p2 = (y - a) / (b * (Math.cos(alpha) + Math.sin(alpha)) - a);
         if ((x + b * Math.sin(alpha) > p1 * b * Math.cos(alpha)) && x < a && x - b * (Math.cos(alpha) - Math.sin(alpha)) < (1 - p2) * (a + b * (Math.sin(alpha) - Math.cos(alpha))))
             return color1;
-        const p3 = (y - a) / (b * Math.sin(alpha))
+        const p3 = (y - a) / (b * Math.sin(alpha));
         const p4 = 1 - (y - (a + b * (Math.sin(alpha) - Math.cos(alpha)))) / (b * Math.cos(alpha));
         const p5 = y / (a + b * (Math.cos(alpha) - Math.sin(alpha)));
         if (x - 2 * a < p5 * (b * (Math.cos(alpha) + Math.sin(alpha)) + a)) {
@@ -409,7 +408,7 @@ function texture_truncatedHexagon(dict) {
         const realcolorH2 = cond1 ? (cond2 ? colorH1 : colorH3) : colorH2;
         const realcolorH3 = cond1 ? (cond2 ? colorH2 : colorH1) : colorH3;
 
-        const [x, y] = ij2xy(i + offset, 2 * size * (1 + Math.cos(Math.PI / 6)), j, (2 * h + (1 + Math.sin(Math.PI / 6)) * size))
+        const [x, y] = ij2xy(i + offset, 2 * size * (1 + Math.cos(Math.PI / 6)), j, (2 * h + (1 + Math.sin(Math.PI / 6)) * size));
         if (y < Math.sin(Math.PI / 6) * size) {
             const p1 = 1 - (y / (Math.sin(Math.PI / 6) * size));
             if (x - size / 2 < p1 * Math.cos(Math.PI / 6) * size)
@@ -503,11 +502,11 @@ function texture_trihexagonal(dict) {
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
-        const p = j % (2 * h) > h ? j / h % 1 : 1 - j / h % 1;
         const offset = get_offset(j, 4 * h, 0.5, size);
 
         const [x, y] = ij2xy(i + offset, 2 * size, j, h);
 
+        const p = j % (2 * h) > h ? y / h : 1 - y / h;
         if (x > p * size / 2 && (i + offset) % (2 * size) < (2 - p / 2) * size)
             return colorH;
         else

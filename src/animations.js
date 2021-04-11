@@ -23,18 +23,19 @@ function rotation(dict) {
     const borders = dict['borders'] || [];
     const width = borders[0]        || 0;
     const height = borders[1]       || 0;
-    const center = dict['center']   || []
+    const center = dict['center']   || [];
     const center_x = center[0]      || width / 2;
     const center_y = center[1]      || height / 2;
     const angle = dict['angle']     || 0;
-    const func = dict['function']   || ((angle, dt) => angle);
+    const func = dict['function']   || ((angle, dt) => angle + 0 * dt);
 
     return function(x, y, dt) {
         if (width !== 0 && height !== 0 && angle % 360 !== 0) {
             const alpha = func(angle, dt) * Math.PI / 180;
+            const x_init = x - center_x;
+            const y_init = y - center_y;
+            let r, angle_init;
 
-            x_init = x - center_x;
-            y_init = y - center_y;
             if (Math.abs(x_init) > Math.abs(y_init))
                 r = Math.abs(x_init) * Math.sqrt(1 + y_init * y_init / (x_init * x_init));
             else
@@ -47,8 +48,8 @@ function rotation(dict) {
                     angle_init = -Math.acos(x_init / r);
                 else
                     angle_init = Math.acos(x_init / r);
-                x = r * Math.cos(angle_init + alpha) + width / 2;
-                y = r * Math.sin(angle_init + alpha) + height / 2;
+                x = r * Math.cos(angle_init + alpha) + center_x;
+                y = r * Math.sin(angle_init + alpha) + center_y;
             }
         }
         return [x, y];
@@ -93,12 +94,12 @@ function add_animation(dict) {
             [new_x, new_y] = func[i](new_x, new_y, dt);
 
         return texture(new_x, new_y, dt);
-    }
+    };
 }
 
 function chromatic_circle(dict) {
     const r = dict['radius']      || 150;
-    const center = dict['center'] || []
+    const center = dict['center'] || [];
     const center_x = center[0]    || 250;
     const center_y = center[1]    || 250;
     const colors = dict['colors'] || [];
@@ -116,13 +117,13 @@ function chromatic_circle(dict) {
 }
 
 function animated_caireTiling(dict) {
-    const size = dict['size']       || 50;
+    //const size = dict['size']       || 50;
     const angle = dict['size']      || 135;
-    const colors = dict['colors']   || [];
-    const color1 = colors[0]        || COLORS.cyan;
-    const color2 = colors[1]        || COLORS.orange;
-    const color3 = colors[2]        || COLORS.blue;
-    const color4 = colors[3]        || COLORS.pink;
+    //const colors = dict['colors']   || [];
+    //const color1 = colors[0]        || COLORS.cyan;
+    //const color2 = colors[1]        || COLORS.orange;
+    //const color3 = colors[2]        || COLORS.blue;
+    //const color4 = colors[3]        || COLORS.pink;
 
     return function (x, y, dt) {
         const new_angle = 90 + Math.abs((5 * dt + angle) % 180 - 90);
@@ -134,7 +135,7 @@ function animated_caireTiling(dict) {
 function yin_yang(dict) {
     const r = dict['radius']      || 150;
     const rot = dict['rotation']  || 0;
-    const center = dict['center'] || []
+    const center = dict['center'] || [];
     const center_x = center[0]    || 250;
     const center_y = center[1]    || 250;
     const colors = dict['colors'] || [];
