@@ -2,7 +2,7 @@
 
 // Global variables
 let MAX_ARGUMENTS = 50;
-const WIDTH = 550, HEIGHT = 450;
+const WIDTH = 500, HEIGHT = 500;
 let CANVAS = document.getElementById('canvas');
 CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
 // /!\ UNUSED
@@ -28,7 +28,9 @@ function generateTexture(canvas, texture) {
         for (let x = 0; x < canvas.width; x++, n += 4) {
             
             let pixel = texture(x, y);
-            
+            while (typeof (pixel) === 'function')
+                pixel = pixel(x, y);
+
             image.data[n] = pixel[0]; // Red channel
             image.data[n + 1] = pixel[1]; // Green channel
             image.data[n + 2] = pixel[2]; // Blue channel
@@ -37,6 +39,45 @@ function generateTexture(canvas, texture) {
     }
 
     return image.data;
+}
+
+/* Generates an animation from a texture function
+ *
+ * @param canvas the canvas used for sizing
+ * @param texture a texture function to generate
+ * @param ...args a list of arguments for the texture function
+ * @precond canvas must be a <canvas> html element
+ * @return nothing
+ */
+function generateAnimation(canvas, texture) {
+    // Environnment definition
+    let context = canvas.getContext("2d");
+    let image = context.createImageData(canvas.width, canvas.height);
+
+    makeFrame(); // Start the animation
+
+    /* Creates an animation on main canvas
+     *
+     * @param time timestamp of current image
+     * @return nothing
+     */
+    function makeFrame(time) {
+        let dt = 0.005 * time;
+        for (let n = 0, y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++, n += 4) {
+                let pixel = texture(x, y, dt);
+                while (typeof (pixel) === 'function')
+                    pixel = pixel(x, y, dt);
+
+                image.data[n] = pixel[0]; // Red channel
+                image.data[n + 1] = pixel[1]; // Green channel
+                image.data[n + 2] = pixel[2]; // Blue channel
+                image.data[n + 3] = pixel[3]; // Alpha channel
+            }
+        }
+
+        context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
+    }
 }
 
 /* OUTDATED Generates an image data array from a texture function
@@ -78,7 +119,7 @@ function generateTextureOld(canvas, texture, ...args) {
     return image.data;
 }
 
-/* Generates an animation from a texture function
+/* OUTDATED Generates an animation from a texture function
  *
  * @param canvas the canvas used for sizing
  * @param texture a texture function to generate
@@ -86,7 +127,7 @@ function generateTextureOld(canvas, texture, ...args) {
  * @precond canvas must be a <canvas> html element
  * @return nothing
  */
-function generateAnimation(canvas, texture, ...args) {
+function generateAnimationOld(canvas, texture, ...args) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
@@ -164,16 +205,17 @@ let data =
     //generateTexture(CANVAS, texture_limitedWhiteNoise, CANVAS.width, CANVAS.height, 3, 2);
     //generateTexture(CANVAS, texture_Voronoi, 50, CANVAS.width, CANVAS.height);
     //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.orange)(colors.red), texture_horizontalColorGradients(2*25)(1)(colors.blue)(colors.green));
-    //generateTexture(CANVAS, texture_trihexagonal, 25, texture_horizontalColorGradients(25)(1)(colors.blue)(colors.green), texture_squareTiling(2 * 25)(25 * Math.sqrt(3))(4)(4)(colors.orange)(colors.red));
+    //generateTexture(CANVAS, texture_trihexagonal({size: 25, colors: [texture_horizontalGradient({width: WIDTH, n: 1, colors: [COLORS.blue, COLORS.green]}), texture_squareTiling({width: 2 * 25, height: 25 * Math.sqrt(3), rows: 4, columns: 4, colors: [COLORS.orange, COLORS.red]})]}));
     //generateTexture(CANVAS, texture_rhombitrihexagonalTiling, 25, colors.orange, colors.green, colors.blue);
     //generateTexture(CANVAS, texture_truncatedHexagon, 50 , colors.orange, colors.blue, colors.red, colors.green);
     //generateTexture(CANVAS, texture_elongatedTriangular, 50, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_snubSquare, 50, colors.red, colors.blue, colors.green);
     //generateTexture(CANVAS, texture_3Dcube, 100, colors.black, colors.grey, colors.white);
-    //generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
     //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
-    generateTexture(CANVAS, texture_squareTiling({width:45, colors: [COLORS.cyan, COLORS.red]}));
+    //generateTexture(CANVAS, texture_solid({}));
+    //generateTexture(CANVAS, texture_pentagonTiling4({}));
+    //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
 
 // ========================================
 
@@ -190,9 +232,13 @@ let data =
 // ===================================================
 
 // !! Do not touch
-generateImage(CANVAS, data);
+//generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
 //generateAnimation(CANVAS, animated_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
+//generateAnimation(CANVAS, yin_yang({colors: [add_animation({texture: texture_hexagonTiling({size: 20, colors: [yin_yang({radius: 50}), COLORS.green, COLORS.grey]}), function: [((x, dt) => x + 100 * (1 + Math.cos(0.1*dt))), ((y, dt) => y + 100 * (1 + Math.sin(0.1*dt)))]}), chromatic_circle({}), add_animation({function: circle({}), texture:animated_caireTiling({})})]}));
+//generateAnimation(CANVAS, add_animation({function: translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), texture: add_animation({ texture: yin_yang({rotation: 1, colors: [chromatic_circle({radius: 500})]}), function: circle({}) }) }) );
+//generateAnimation(CANVAS, add_animation({function: translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), texture: add_animation({ texture: yin_yang({ colors: [[50, 150, 50, 255]]}), function: rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt}) }) }) );
+generateAnimation(CANVAS, add_animation({ function: [rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt}), translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
