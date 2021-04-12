@@ -1,5 +1,18 @@
 'use strict';
 
+// Color dictionnary
+const COLORS = {
+    blue: [0, 0, 255, 255],
+    red: [255, 0, 0, 255],
+    pink: [255, 192, 203, 255],
+    green: [0, 255, 0, 255],
+    black: [0, 0, 0, 255],
+    grey: [100, 100, 100, 255],
+    white: [255, 255, 255, 255],
+    orange: [255, 128, 0, 255],
+    cyan: [0, 255, 128, 255]
+};
+
 function ij2xy(i, width, j, height) {
     return [i % width, j % height];
 }
@@ -38,7 +51,7 @@ function texture_solid(dict) {
 function texture_horizontalGradient(dict) {
 
     const width = dict['width']     || WIDTH;
-    const n = dict['n']             || 3;
+    const n = dict['columns']             || 3;
     const colors = dict['colors']   || [];
     const color1 = colors[0]        || COLORS.blue;
     const color2 = colors[1]        || COLORS.cyan;
@@ -849,3 +862,4 @@ function texture_Voronoi(nb_case) {
         };
     };
 }
+

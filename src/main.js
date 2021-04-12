@@ -9,19 +9,6 @@ CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
 //let CONTEXT = CANVAS.getContext("2d");
 //let IMAGE = CONTEXT.createImageData(CANVAS.width, CANVAS.height);
 
-// Color dictionnary
-const COLORS = {
-    blue: [0, 0, 255, 255],
-    red: [255, 0, 0, 255],
-    pink: [255, 192, 203, 255],
-    green: [0, 255, 0, 255],
-    black: [0, 0, 0, 255],
-    grey: [100, 100, 100, 255],
-    white: [255, 255, 255, 255],
-    orange: [255, 128, 0, 255],
-    cyan: [0, 255, 128, 255]
-};
-
 //////// MAIN FUNCTIONS ///////////
 
 /* Generates an image data array from a texture function
@@ -186,7 +173,7 @@ let data =
     //generateTexture(CANVAS, texture_3DgambarTiling, 50, colors.black, colors.grey, colors.white);
     //generateTexture(CANVAS, texture_caireTiling, 50, 90, colors.red, colors.blue, colors.green, colors.orange);
     //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
-    generateTexture(CANVAS, texture_solid({}));
+    generateTexture(CANVAS, texture_squareTiling({width:45, colors: [COLORS.cyan, COLORS.red]}));
 
 // ========================================
 
