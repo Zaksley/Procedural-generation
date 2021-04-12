@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf8"/>
   <title>Procedural Textures (Equipe 12830)</title>
-  <meta name="author" content="Matthieu Brassart,Enzo Médina,Léna Herau,Killian Dieu"/>
+  <meta name="author" content="Mathieu Brassart,Enzo Médina,Léna Herau,Killian Dieu"/>
 </head>
 
 <style>
@@ -51,38 +51,130 @@ input[type=range]::-moz-range-thumb {
   border-radius:30%;
   border:0;
 }
+input[type=color] {
+	margin-left:18px;
+}
 </style>
 
 <body>
 
 	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA">
+		
 		<!-- ========= Sliders & parameters ======== -->
 		<h2>Properties :</h2>
 
 		<label for="texture">Type de texture : </label>
 
-		<select name="texture">
-			<option value="gradients">Gradients colorés</option>
-			<option value="squareTiling">Pavage carré</option>
-			<option value="triangleTiling">Pavage triangulaire</option>
-			<option value="hexagonTiling">Pavage hexagonal</option>
+		<script>
+			// Global vars
+			let TEXTURE = "";
+			let DICT = {};
+		</script>
+
+		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
+			<option value="solid">Solid color</option>
+			<option value="horizontalGradient">Color gradients</option>
+			<optgroup label="Regular Tilings">
+				<option value="triangleTiling">Triangular tiling</option>
+				<option value="hexagonTiling">Hexagonal tiling</option>
+			</optgroup>
+			<optgroup label="Semi-Regular Tilings">
+				<option value="3Dcube">Isometric cubic tiling</option>
+				<option value="3DgambarTiling">Gambar tiling</option>
+				<option value="elongatedTriangular">Elongated triangular tiling</option>
+				<option value="snubSquare">Snub square tiling</option>
+				<option value="truncatedSquare">Truncated square tiling</option>
+				<option value="truncatedHexagon">Truncated hexagon tiling</option>
+				<option value="smallRhombitrihexagonalTiling">Small rhombitrihexagonal tiling</option>
+				<option value="trihexagonal">Trihexagonal tiling</option>
+				<option value="pentagonTiling4">PentagonTiling4</option>
+			</optgroup>
+			<optgroup label="Non-regular Tilings">
+				<option value="squareTiling">Checkboard</option>
+				<option value="caireTiling">Pentagonal tiling</option>
+			</optgroup>
+			<optgroup label="Noise maps">
+				<option value="whiteNoise">White noise</option>
+				<option value="limitedWhiteNoise" disabled>Limited white noise</option>
+				<option value="perlinNoise" disabled>Perlin noise</option>
+			</optgroup>
+			<optgroup label="Diagrams">
+				<option value="Voronoi" disabled>Voronoï diagram</option>
+			</optgroup>
+			<optgroup label="Animations">
+				<option disabled>Todo</option>
+			</optgroup>
 		</select><br><br>
 
+		<!-- SIZE -->
+		<div class="textureOption size" style="display:none">
+			<p>Pattern size : <b id="size">80</b></p>
+			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size', this.value)"
+			onchange="DICT['size'] = parseInt(this.value); regenerateImage();">
+		</div>
 
-		<!-- EXEMPLE -->
-		<script>
-			let rowNumber = 10; let columnNumber = 10;
-		</script>
-		<p>Nombre de lignes : <b id="rowNumber">10</b></p>
-		<input type="range" min="1" max="30" value="10" oninput="updateSliderValue('rowNumber', this.value)"
-		onchange="generateImage(CANVAS, generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, this.value, columnNumber, colors.cyan, colors.blue)); rowNumber = this.value">
+		<!-- SIZE 2 -->
+		<div class="textureOption size2" style="display:none">
+			<p>Pattern second size : <b id="size2">80</b></p>
+			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size2', this.value)"
+			onchange="DICT['size2'] = parseInt(this.value); regenerateImage();">
+		</div>
 
-		<p>Nombre de colonnes : <b id="columnNumber">10</b></p>
-		<input type="range" min="1" max="30" value="10" oninput="updateSliderValue('columnNumber', this.value)"
-		onchange="generateImage(CANVAS, generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, this.value, rowNumber, colors.cyan, colors.blue)); columnNumber = this.value">
+		<!-- COLUMNS -->
+		<div class="textureOption columns" style="display:none">
+			<p>Columns : <b id="columns">3</b></p>
+			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('columns', this.value)"
+			onchange="DICT['columns'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- ROWS -->
+		<div class="textureOption rows" style="display:none">
+			<p>Rows : <b id="rows">3</b></p>
+			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('rows', this.value)"
+			onchange="DICT['rows'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- ANGLE -->
+		<div class="textureOption angle" style="display:none">
+			<p>Angle : <b id="angle">135</b>°</p>
+			<input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
+			onchange="DICT['angle'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- COLOR 1 -->
+		<div class="textureOption color1" style="display:none">
+			<p>Color 1 : <b id="color1">#0080FF</b>
+			<input type="color" value="#0080FF" oninput="updateSliderValue('color1', this.value)"
+			onchange="DICT['color1'] = hexaToRGBA(this.value); regenerateImage();">
+			</p>
+		</div>
+
+		<!-- COLOR 2 -->
+		<div class="textureOption color2" style="display:none">
+			<p>Color 2 : <b id="color2">#0000FF</b>
+			<input type="color" value="#0000FF" oninput="updateSliderValue('color2', this.value)"
+			onchange="DICT['color2'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			</p>
+		</div>
+
+		<!-- COLOR 3 -->
+		<div class="textureOption color3" style="display:none">
+			<p>Color 3 : <b id="color3">#ff8000</b>
+			<input type="color" value="#ff8000" oninput="updateSliderValue('color3', this.value)"
+			onchange="DICT['color3'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			</p>
+		</div>
+
+		<!-- COLOR 4 -->
+		<div class="textureOption color4" style="display:none">
+			<p>Color 4 : <b id="color4">#ef76ff</b>
+			<input type="color" value="#ef76ff" oninput="updateSliderValue('color4', this.value)"
+			onchange="DICT['color4'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			</p>
+		</div>
+
 		<!-- ======= -->
 
-		<!-- TODO tous les paramètres ici -->
 	</div>
 
 	<div style="grid-column: 2 / 3;">
@@ -101,9 +193,68 @@ input[type=range]::-moz-range-thumb {
 <script src="../src/main.js"></script>
 
 <script>
-function updateSliderValue(sliderValueId, value){
-	document.getElementById(sliderValueId).innerHTML = value;
-}
+
+	function regenerateImage(){
+		generateImage(CANVAS, generateTexture(CANVAS, window[TEXTURE](DICT)));
+	};
+
+	function updateSliderValue(sliderValueId, value){
+		document.getElementById(sliderValueId).innerHTML = value;
+	};
+
+	function hexaToRGBA(hexa){
+		let rgb = [hexa.substr(1,2),hexa.substr(3,2),hexa.substr(5,2)];
+		rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
+		rgba.push(255);
+		return rgba;
+	};
+
+	// TODO : add animation support
+	function showTextureOptions(value){
+		TEXTURE = "texture_" + value;
+		console.log("Switching to " + value + " texture ...");
+		// Generating default texture
+		regenerateImage();
+
+		// Gathering options
+		let options = [];
+		switch(value){
+			// General
+			case "solid": 				options = ["color1"]; break;
+			case "horizontalGradient": 	options = ["columns", "color1", "color2"]; break;
+			// Regular tilings
+			case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
+			case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+			// Semi-regular tilings
+			case "3Dcube": 				options = ["size", "color1", "color2", "color3"]; break;
+			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+			case "elongatedTriangular": options = ["size", "color1", "color2", "color3", "color4"]; break;
+			case "snubSquare": 			options = ["size", "color1", "color2", "color3"]; break;
+			case "truncatedSquare": 	options = ["size", "color1", "color2", "color3"]; break;
+			case "truncatedHexagon": 	options = ["size", "color1", "color2", "color3", "color4"]; break;
+			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+			case "smallRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
+			case "trihexagonal": 		options = ["size", "color1", "color2"]; break;
+			// Non-regular tilings
+			case "squareTiling": 		options = ["rows", "columns"]; break;
+			case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
+			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
+			// Noise maps todo
+			// Diagrams todo
+			// Animations todo
+
+			default: 					options = []; break;
+		};
+
+		// Displaying options
+		Array.from(document.getElementsByClassName("textureOption")).forEach(function(e, i){
+			e.style.display = "none";
+		});
+		options.forEach(function(e, i){
+			document.getElementsByClassName(e)[0].style.display = "block";
+		});
+	};
+
 </script>
 
 </html>
