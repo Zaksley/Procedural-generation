@@ -100,13 +100,16 @@ input[type=color] {
 			</optgroup>
 			<optgroup label="Noise maps">
 				<option value="whiteNoise">White noise</option>
-				<option value="limitedWhiteNoise" disabled>Limited white noise</option>
+				<option value="limitedWhiteNoise">Limited white noise</option>
 				<option value="perlinNoise" disabled>Perlin noise</option>
 			</optgroup>
 			<optgroup label="Diagrams">
 				<option value="Voronoi" disabled>Voronoï diagram</option>
 			</optgroup>
-			<optgroup label="Animations">
+                        <optgroup label="Cellular Automata">
+                                <option value="forestFire">Forest Fire</option>
+                        </optgroup>
+                        <optgroup label="Animations">
 				<option disabled>Todo</option>
 			</optgroup>
 		</select><br><br>
@@ -128,17 +131,38 @@ input[type=color] {
 		<!-- COLUMNS -->
 		<div class="textureOption columns" style="display:none">
 			<p>Columns : <b id="columns">3</b></p>
-			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('columns', this.value)"
+			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('columns', this.value)"
 			onchange="DICT['columns'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- ROWS -->
 		<div class="textureOption rows" style="display:none">
 			<p>Rows : <b id="rows">3</b></p>
-			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('rows', this.value)"
+			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
 			onchange="DICT['rows'] = parseInt(this.value); regenerateImage();">
 		</div>
 
+		<!-- TREE PROBABILITY -->
+		<div class="textureOption treeP" style="display:none">
+			<p>Tree Probability : <b id="treeP">50</b></p>
+			<input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
+			onchange="DICT['treeP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- LIGHTNING PROBABILITY -->
+		<div class="textureOption lightP" style="display:none">
+			<p>Lightning Probability : <b id="lightP">5</b></p>
+			<input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
+			onchange="DICT['lightP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- STEP NUMBER -->
+		<div class="textureOption step" style="display:none">
+			<p>Step : <b id="step">30</b></p>
+			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
+			onchange="DICT['step'] = parseInt(this.value); regenerateImage();">
+		</div>
+                
 		<!-- ANGLE -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
@@ -263,8 +287,11 @@ input[type=color] {
 			case "squareTiling": 		options = ["rows", "columns"]; break;
 			case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
-			// Noise maps todo
-			// Diagrams todo
+	                // Noise maps todo
+                        case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+	                // Diagrams todo
+                        // Cellular Automata
+                        case "forestFire":              options = ["treeP", "lightP", "step"]; break;
 			// Animations todo
 
 			default: 					options = []; break;

@@ -29,6 +29,26 @@ function get_offset(coord, freq, percent, offset) {
     return (coord / freq) % 1 < percent ? 0 : offset;
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+// Used in limitedWhiteNoise
+function getFourInterpolateCoordinates(i, j, x, y) {
+    let top = y - j + 1;
+    let bottom = y + j - 1;
+    let left = x - i + 1;
+    let right = x + i - 1;
+
+    while (top % j !== 0) top++;
+    while (bottom % j !== 0) bottom--;
+    while (left % i !== 0) left++;
+    while (right % i !== 0) right--;
+
+    return [top, bottom, left, right];
+}
+
+
 /* Texture : full black square
  * 
  * @param dict.colors    the color to fill (1-element array)
@@ -668,9 +688,7 @@ function texture_perlinNoise(row) {
 
 
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
+
 
 function texture_whiteNoise() {
     return (x, y) => [getRandomInt(256),
@@ -679,112 +697,95 @@ function texture_whiteNoise() {
         255];
 }
 
-function getFourInterpolateCoordinates(i, j, x, y) {
-    let top = y - j + 1;
-    let bottom = y + j - 1;
-    let left = x - i + 1;
-    let right = x + i - 1;
-
-    while (top % j !== 0) top++;
-    while (bottom % j !== 0) bottom--;
-    while (left % i !== 0) left++;
-    while (right % i !== 0) right--;
-
-    return [top, bottom, left, right];
-}
-
 
 /* Texture : band-limited white noise
  *
- * @param width  canvas width
- * @param height canvas height
- * @param i number of lines skipped
- * @param j number of columns skipped
- * @param (i,j) coordinates of the pixel
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.rows     rows    frequency
+ * @param dict.columns  columns frequency
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_limitedWhiteNoise(width) {
-    return function (height) {
-        return function (i) {
-            return function (j) {
+function texture_limitedWhiteNoise(dict) {
+    const width = dict['width']     || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const rows = dict['rows']       || 5;
+    const columns = dict['columns'] || 5;
+    let pixels = [];
+    
+    for (let a = 0; a < width; a++) {
+        pixels[a] = [];
+        for (let b = 0; b < height; b++) {
+            pixels[a][b] = [];
+            if (a % rows === 0 && b % columns === 0) {
+                pixels[a][b][0] = getRandomInt(256); // Red channel
+                pixels[a][b][1] = getRandomInt(256); // Green channel
+                pixels[a][b][2] = getRandomInt(256); // Blue channel
+                pixels[a][b][3] = 255; // Alpha channel
+            }
+            else {
+                pixels[a][b][0] = 255; // Red channel
+                pixels[a][b][1] = 255; // Green channel
+                pixels[a][b][2] = 255; // Blue channel
+                pixels[a][b][3] = 255; // Alpha channel
+            }
+        }
+    }
 
-                let pixels = [];
-                for (let a = 0; a < width; a++) {
-                    pixels[a] = [];
-                    for (let b = 0; b < height; b++) {
-                        pixels[a][b] = [];
-                        if (a % i === 0 && b % j === 0) {
-                            pixels[a][b][0] = getRandomInt(256); // Red channel
-                            pixels[a][b][1] = getRandomInt(256); // Green channel
-                            pixels[a][b][2] = getRandomInt(256); // Blue channel
-                            pixels[a][b][3] = 255; // Alpha channel
-                        }
-                        else {
-                            pixels[a][b][0] = 255; // Red channel
-                            pixels[a][b][1] = 255; // Green channel
-                            pixels[a][b][2] = 255; // Blue channel
-                            pixels[a][b][3] = 255; // Alpha channel
-                        }
-                    }
-                }
+    return (x, y) => {
+        if (x % rows === 0 && y % columns === 0) {
+            return [pixels[x][y][0],
+                    pixels[x][y][1],
+                    pixels[x][y][2],
+                    pixels[x][y][3]];
+        }
+        else {
+            // full square case
+            if (typeof (x) !== 'number' && typeof (y) !== 'number')
+                return [255, 255, 255, 255];
 
-                return (x, y) => {
-                    if (x % i === 0 && y % j === 0) {
-                        return [pixels[x][y][0],
-                        pixels[x][y][1],
-                        pixels[x][y][2],
-                        pixels[x][y][3]];
-                    }
-                    else {
-                        // full square case
-                        if (typeof (x) !== 'number' && typeof (y) !== 'number')
-                            return [255, 255, 255, 255];
+            let [top, bottom, left, right] = getFourInterpolateCoordinates(rows, columns, x, y);
 
-                        let [top, bottom, left, right] = getFourInterpolateCoordinates(i, j, x, y);
+            let redVal = 0;
+            let greVal = 0;
+            let bluVal = 0;
+            let alpVal = pixels[left][top][3];
 
-                        let redVal = 0;
-                        let greVal = 0;
-                        let bluVal = 0;
-                        let alpVal = pixels[left][top][3];
+            let neighboors = [];
 
-                        let neighboors = [];
+            neighboors.push({ x: left, y: top, dist: Math.abs(x - left) + Math.abs(y - top) });
 
-                        neighboors.push({ x: left, y: top, dist: Math.abs(x - left) + Math.abs(y - top) });
+            if (right < width) {
+                neighboors.push({ x: right, y: top, dist: Math.abs(x - right) + Math.abs(y - top) });
+            }
 
-                        if (right < width) {
-                            neighboors.push({ x: right, y: top, dist: Math.abs(x - right) + Math.abs(y - top) });
-                        }
+            if (bottom < height) {
+                neighboors.push({ x: left, y: bottom, dist: Math.abs(x - left) + Math.abs(y - bottom) });
+            }
 
-                        if (bottom < height) {
-                            neighboors.push({ x: left, y: bottom, dist: Math.abs(x - left) + Math.abs(y - bottom) });
-                        }
+            if (bottom < height && right < width) {
+                neighboors.push({ x: right, y: bottom, dist: Math.abs(x - right) + Math.abs(y - bottom) });
+            }
 
-                        if (bottom < height && right < width) {
-                            neighboors.push({ x: right, y: bottom, dist: Math.abs(x - right) + Math.abs(y - bottom) });
-                        }
-
-                        const distMax = neighboors.reduce((acc, el) => acc += el.dist, 0);
-                        neighboors.sort((el1, el2) => el1.dist - el2.dist);
+            const distMax = neighboors.reduce((acc, el) => acc += el.dist, 0);
+            neighboors.sort((el1, el2) => el1.dist - el2.dist);
 
 
-                        for (let k = 0; k < neighboors.length / 2; ++k) {
-                            let tmp = neighboors[k].dist;
-                            neighboors[k].dist = neighboors[neighboors.length - k - 1].dist;
-                            neighboors[neighboors.length - k - 1].dist = tmp;
-                        }
+            for (let k = 0; k < neighboors.length / 2; ++k) {
+                let tmp = neighboors[k].dist;
+                neighboors[k].dist = neighboors[neighboors.length - k - 1].dist;
+                neighboors[neighboors.length - k - 1].dist = tmp;
+            }
 
-                        neighboors.forEach(el => {
-                            redVal += pixels[el.x][el.y][0] * (el.dist) / distMax;
-                            greVal += pixels[el.x][el.y][1] * (el.dist) / distMax;
-                            bluVal += pixels[el.x][el.y][2] * (el.dist) / distMax;
-                        });
+            neighboors.forEach(el => {
+                redVal += pixels[el.x][el.y][0] * (el.dist) / distMax;
+                greVal += pixels[el.x][el.y][1] * (el.dist) / distMax;
+                bluVal += pixels[el.x][el.y][2] * (el.dist) / distMax;
+            });
 
-                        return [redVal, greVal, bluVal, alpVal];
+            return [redVal, greVal, bluVal, alpVal];
 
-                    }
-                };
-            };
-        };
+        }
     };
 }
 
@@ -903,3 +904,93 @@ function texture_Voronoi(nb_case) {
     };
 }
 
+
+function getMooreNeighborsState(forest, cell)
+{
+    const width = forest.length;
+    const height = forest[0].length;
+    
+    let neighs = [];
+
+    for(let x = Math.max(0, cell.i - 1); x < Math.min(cell.i + 1, width); x++) {
+        for(let y = Math.max(0, cell.j - 1); y < Math.min(cell.j + 1, height); y++) {
+            if(x !== cell.i || y !== cell.j) {
+                neighs.push(forest[x][y]);
+            }
+        }
+    }
+
+    return neighs;
+}
+
+function forestFire_nextStep(forest, treeP, lightP)
+{
+    let nextForest = [];
+    
+    for (let i = 0; i < forest.length; ++i)
+    {
+        nextForest[i]  = []; 
+        for (let j = 0; j < forest[0].length; ++j)
+        {
+            if (forest[i][j] === 2) // Burning : transform into an empty cell
+            {
+                nextForest[i][j] = 0;
+            } else if (forest[i][j] === 1) // Tree : tranform into a burning cell or do nothing
+            {    
+                let neighborsState = getMooreNeighborsState(forest, {i:i, j:j}).sort();
+                if (neighborsState[neighborsState.length - 1] === 2) // has at least one neighbor burning
+                {
+                    nextForest[i][j] = 2;
+                } else {
+                    nextForest[i][j] = (getRandomInt(100) < lightP) ? 2 : 1;
+                }
+            } else // forest[i][j] === 0 - Empty : transform into a tree cell or do nothing
+            {
+                nextForest[i][j] = (getRandomInt(100) < treeP) ? 1 : 0;
+            }
+        }
+    }
+
+    return nextForest;
+}
+
+function texture_forestFire(dict) {
+    const width =                dict['width']  || WIDTH;
+    const height =               dict['height'] || HEIGHT;
+    const treeProbability =      dict['treeP']  || 50;
+    const lightningProbability = dict['lightP'] || 5;
+    const steps =                dict['step'] || 100;
+    
+    // The forest is represented by :
+    //   * 0 : Empty
+    //   * 1 : Tree
+    //   * 2 : Burning
+    let forest = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        forest[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            forest[i][j] = (getRandomInt(100) < treeProbability) ? 1 : 0;
+        }
+    }
+
+    for (let k = 0; k < steps; ++k)
+    {
+        forest = forestFire_nextStep(forest, treeProbability, lightningProbability);
+    }
+    
+    return (x,y) => {
+        if (forest[x][y] === 0) // Empty
+        {
+            return COLORS.black;
+        } else if (forest[x][y] === 1) // Tree
+        {
+            return COLORS.green;
+        } else // Burning 
+        {
+            return COLORS.red;
+        }
+    };
+}
