@@ -202,6 +202,53 @@ function texture_caireTiling(dict) {
     };
 }
 
+function texture_pentagonTiling3(dict) {
+    const size = dict['size']       || 80;
+    const angle = dict['angle']     || 110;
+    const colors = dict['colors']   || [];
+    const colorU = dict['color1']   || colors[0] || COLORS.cyan;
+    const colorL = dict['color2']   || colors[1] || COLORS.black;
+    const colorR = dict['color3']   || colors[2] || COLORS.blue;
+
+    return function (i, j) {
+        const h = Math.sqrt(3) * size / 2;
+
+        const offset = get_offset(j, 3 * size, 0.5, h);
+        const [x, y] = ij2xy(i + offset, 2 * h, j, 3 * size / 2);
+
+        const realAngle = angle % 120;
+        const realColorU = angle % 360 < 240 ? angle % 360 < 120 ? colorU : colorR : colorL;
+        const realColorL = angle % 360 < 240 ? angle % 360 < 120 ? colorL : colorU : colorR;
+        const realColorR = angle % 360 < 240 ? angle % 360 < 120 ? colorR : colorL : colorU;
+
+        const alpha = realAngle * Math.PI / 180;
+
+        const p1 = (size / 2 - y) / Math.sin(alpha);
+        const p2 = (size / 2  - y) / Math.sin(alpha - 2 * Math.PI / 3);
+        const p3 = (size / 2  - y) / Math.sin(alpha + 2 * Math.PI / 3);
+        const p4 = (y - size) / (size / 2);
+        const p5 = (2 * size - y) / Math.sin(alpha);
+        const p6 = (2 * size - y) / Math.sin(alpha + 2 * Math.PI / 3);
+
+        const cond1 = x - h < p1 * Math.cos(alpha);
+        const cond2 = x - h < p2 * Math.cos(alpha - 2 * Math.PI / 3);
+        const cond3 = realAngle > 60 ? x - h < p3 * Math.cos(alpha + 2 * Math.PI / 3): x - h > p3 * Math.cos(alpha + 2 * Math.PI / 3);
+
+        const cond4 = x < p4 * h;
+        const cond5 = x - h > (1 - p4) * h;
+        const cond6 = x - 2 * h < p5 * Math.cos(alpha);
+        const cond7 = x < p5 * Math.cos(alpha);
+        const cond8 = realAngle > 60 ? false : x - 2 * h < p6 * Math.cos(alpha + 2 * Math.PI / 3);
+
+        if (cond1 && cond3 && !cond4 || cond5 && cond6 && !cond8 || cond4 && cond7)
+            return realColorU;
+        else if (!cond2 && !(cond8 && cond5)|| cond4 && !cond8 || cond5 && !cond6 && !cond8)
+            return realColorR;
+        else
+            return realColorL;
+    };
+}
+
 /* Texture : 
  *
  *
@@ -258,7 +305,7 @@ function texture_3Dcube(dict) {
     const colorR = dict['color3']   || colors[2] || COLORS.blue;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 3 * size, 0.5, h);
 
         const [x, y] = ij2xy(i + offset, 2 * h, j, 3 * size / 2);
@@ -289,7 +336,7 @@ function texture_3DgambarTiling(dict) {
     const colorR = dict['color3']   || colors[2] || COLORS.blue;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 3 * size, 0.5, 3 * h);
 
         const [x, y] = ij2xy(i + offset, 6 * h, j, 3 * size / 2);
@@ -321,7 +368,7 @@ function texture_elongatedTriangular(dict) {
     const colorS2 = dict['color4']  || colors[3] || COLORS.pink;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 2 * (h + size), 0.5, size / 2);
 
         const [x, y] = ij2xy(i + offset, size, j, h + size);
@@ -352,7 +399,7 @@ function texture_snubSquare(dict) {
     const colorS = dict['color3']   || colors[2] || COLORS.blue;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 2 * h + size, 0.5, h + size / 2);
 
         const [x, y] = ij2xy(i + offset, 2 * h + size, j, h + size / 2);
@@ -399,7 +446,7 @@ function texture_truncatedSquare(dict) {
     const colorH2 = dict['color3']  || colors[2] || COLORS.blue;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3   ) * size / 2;
         const p = j % (h + size) > h ? 1 : j % (h + size) / h;
 
         const offset = get_offset(j, 2 * (h + size), 0.5, h + size);
@@ -431,7 +478,7 @@ function texture_truncatedHexagon(dict) {
     const colorH3 = dict['color4']  || colors[3] || COLORS.pink;
 
     return function (i, j) {
-        const h = Math.sqrt(2) * size / 2;
+        const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 2 * (2 * h + (1 + Math.sin(Math.PI / 6)) * size), 0.5, size * (1 + Math.cos(Math.PI / 6)));
 
         // changing the color in order to match the pattern

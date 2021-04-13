@@ -215,7 +215,8 @@ let data =
     //generateTexture(CANVAS, texture_horizontalGradient({width: WIDTH, n: 2, colors: [] }));
     //generateTexture(CANVAS, texture_solid({}));
     //generateTexture(CANVAS, texture_pentagonTiling4({}));
-    generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
+    //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
+    generateTexture(CANVAS, texture_pentagonTiling3({}));
 
 // ========================================
 
@@ -232,7 +233,7 @@ let data =
 // ===================================================
 
 // !! Do not touch
-//generateImage(CANVAS, data);
+generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
@@ -241,4 +242,4 @@ let data =
 //generateAnimation(CANVAS, yin_yang({colors: [add_animation({texture: texture_hexagonTiling({size: 20, colors: [yin_yang({radius: 50}), COLORS.green, COLORS.grey]}), function: [((x, dt) => x + 100 * (1 + Math.cos(0.1*dt))), ((y, dt) => y + 100 * (1 + Math.sin(0.1*dt)))]}), chromatic_circle({}), add_animation({function: circle({}), texture:animated_caireTiling({})})]}));
 //generateAnimation(CANVAS, add_animation({function: translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), texture: add_animation({ texture: yin_yang({rotation: 1, colors: [chromatic_circle({radius: 500})]}), function: circle({}) }) }) );
 //generateAnimation(CANVAS, add_animation({function: translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), texture: add_animation({ texture: yin_yang({ colors: [[50, 150, 50, 255]]}), function: rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt}) }) }) );
-//generateAnimation(CANVAS, add_animation({ function: [rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt}), translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
+//generateAnimation(CANVAS, add_animation({ function: [translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
