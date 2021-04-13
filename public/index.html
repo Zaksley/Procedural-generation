@@ -95,7 +95,7 @@ input[type=color] {
 			</optgroup>
 			<optgroup label="Noise maps">
 				<option value="whiteNoise">White noise</option>
-				<option value="limitedWhiteNoise" disabled>Limited white noise</option>
+				<option value="limitedWhiteNoise">Limited white noise</option>
 				<option value="perlinNoise" disabled>Perlin noise</option>
 			</optgroup>
 			<optgroup label="Diagrams">
@@ -123,14 +123,14 @@ input[type=color] {
 		<!-- COLUMNS -->
 		<div class="textureOption columns" style="display:none">
 			<p>Columns : <b id="columns">3</b></p>
-			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('columns', this.value)"
+			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('columns', this.value)"
 			onchange="DICT['columns'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- ROWS -->
 		<div class="textureOption rows" style="display:none">
 			<p>Rows : <b id="rows">3</b></p>
-			<input type="range" min="1" max="15" value="3" oninput="updateSliderValue('rows', this.value)"
+			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
 			onchange="DICT['rows'] = parseInt(this.value); regenerateImage();">
 		</div>
 
@@ -239,7 +239,8 @@ input[type=color] {
 			case "squareTiling": 		options = ["rows", "columns"]; break;
 			case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
-			// Noise maps todo
+	                // Noise maps todo
+                        case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
 			// Diagrams todo
 			// Animations todo
 
