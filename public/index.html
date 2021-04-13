@@ -101,7 +101,10 @@ input[type=color] {
 			<optgroup label="Diagrams">
 				<option value="Voronoi" disabled>Voronoï diagram</option>
 			</optgroup>
-			<optgroup label="Animations">
+                        <optgroup label="Cellular Automata">
+                                <option value="forestFire">Forest Fire</option>
+                        </optgroup>
+                        <optgroup label="Animations">
 				<option disabled>Todo</option>
 			</optgroup>
 		</select><br><br>
@@ -134,6 +137,27 @@ input[type=color] {
 			onchange="DICT['rows'] = parseInt(this.value); regenerateImage();">
 		</div>
 
+		<!-- TREE PROBABILITY -->
+		<div class="textureOption treeP" style="display:none">
+			<p>Tree Probability : <b id="treeP">50</b></p>
+			<input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
+			onchange="DICT['treeP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- LIGHTNING PROBABILITY -->
+		<div class="textureOption lightP" style="display:none">
+			<p>Lightning Probability : <b id="lightP">5</b></p>
+			<input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
+			onchange="DICT['lightP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- STEP NUMBER -->
+		<div class="textureOption step" style="display:none">
+			<p>Step : <b id="step">30</b></p>
+			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
+			onchange="DICT['step'] = parseInt(this.value); regenerateImage();">
+		</div>
+                
 		<!-- ANGLE -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
@@ -241,7 +265,9 @@ input[type=color] {
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
 	                // Noise maps todo
                         case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
-			// Diagrams todo
+	                // Diagrams todo
+                        // Cellular Automata
+                        case "forestFire":              options = ["treeP", "lightP", "step"]; break;
 			// Animations todo
 
 			default: 					options = []; break;
