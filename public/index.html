@@ -61,17 +61,22 @@ input[type=color] {
 	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA">
 		
 		<!-- ========= Sliders & parameters ======== -->
-		<h2>Properties :</h2>
+		<h2>Base texture :</h2>
 
-		<label for="texture">Type de texture : </label>
+		<label for="texture">Select a texture : </label>
 
 		<script>
 			// Global vars
+			let BASEDATA = [];
+			let DATA = [];
 			let TEXTURE = "";
+			let FILTER = "filter_resize";
 			let DICT = {};
+			let FDICT = {};
 		</script>
 
 		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
+			<option selected>No texture selected</option>
 			<option value="solid">Solid color</option>
 			<option value="horizontalGradient">Color gradients</option>
 			<optgroup label="Regular Tilings">
@@ -87,7 +92,7 @@ input[type=color] {
 				<option value="truncatedHexagon">Truncated hexagon tiling</option>
 				<option value="smallRhombitrihexagonalTiling">Small rhombitrihexagonal tiling</option>
 				<option value="trihexagonal">Trihexagonal tiling</option>
-				<option value="pentagonTiling4">PentagonTiling4</option>
+				<option value="pentagonTiling4" disabled>PentagonTiling4</option>
 			</optgroup>
 			<optgroup label="Non-regular Tilings">
 				<option value="squareTiling">Checkboard</option>
@@ -101,7 +106,11 @@ input[type=color] {
 			<optgroup label="Diagrams">
 				<option value="Voronoi" disabled>Voronoï diagram</option>
 			</optgroup>
-			<optgroup label="Animations">
+                        <optgroup label="Cellular Automata">
+                                <option value="forestFire">Forest Fire</option>
+                                <option value="gameOfLife">Conway's Game Of Life</option>
+                        </optgroup>
+                        <optgroup label="Animations">
 				<option disabled>Todo</option>
 			</optgroup>
 		</select><br><br>
@@ -134,6 +143,27 @@ input[type=color] {
 			onchange="DICT['rows'] = parseInt(this.value); regenerateImage();">
 		</div>
 
+		<!-- TREE PROBABILITY -->
+		<div class="textureOption treeP" style="display:none">
+			<p>Tree Probability : <b id="treeP">50</b></p>
+			<input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
+			onchange="DICT['treeP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- LIGHTNING PROBABILITY -->
+		<div class="textureOption lightP" style="display:none">
+			<p>Lightning Probability : <b id="lightP">5</b></p>
+			<input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
+			onchange="DICT['lightP'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- STEP NUMBER -->
+		<div class="textureOption step" style="display:none">
+			<p>Step : <b id="step">30</b></p>
+			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
+			onchange="DICT['step'] = parseInt(this.value); regenerateImage();">
+		</div>
+                
 		<!-- ANGLE -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
@@ -175,6 +205,19 @@ input[type=color] {
 
 		<!-- ======= -->
 
+		<hr style="margin-top:18px;opacity:0">
+
+		<h2>Filters :</h2>
+
+		<!-- ZOOM -->
+		<div class="filterOption zoom" style="display:block">
+			<p>Zoom : <b id="zoom">1</b>00%</p>
+			<input type="range" min="1" max="10" value="1" oninput="updateSliderValue('zoom', this.value)"
+			onchange="FDICT['intensity'] = parseInt(this.value); regenerateFilters();">
+		</div>
+
+		<!-- ======= -->
+
 	</div>
 
 	<div style="grid-column: 2 / 3;">
@@ -195,7 +238,13 @@ input[type=color] {
 <script>
 
 	function regenerateImage(){
-		generateImage(CANVAS, generateTexture(CANVAS, window[TEXTURE](DICT)));
+		BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT));
+		generateImage(CANVAS, BASEDATA);
+	};
+
+	function regenerateFilters(){
+		DATA = window[FILTER](FDICT)(BASEDATA);
+		generateImage(CANVAS, DATA);
 	};
 
 	function updateSliderValue(sliderValueId, value){
@@ -241,7 +290,10 @@ input[type=color] {
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
 	                // Noise maps todo
                         case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
-			// Diagrams todo
+	                // Diagrams todo
+                        // Cellular Automata
+                        case "forestFire":              options = ["treeP", "lightP", "step"]; break;
+                        case "gameOfLife":              options = ["step"]; break;
 			// Animations todo
 
 			default: 					options = []; break;

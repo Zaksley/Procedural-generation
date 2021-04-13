@@ -951,3 +951,155 @@ function texture_Voronoi(nb_case) {
     };
 }
 
+
+function getMooreNeighborsState(grid, cell)
+{
+    const width = grid.length;
+    const height = grid[0].length;
+    
+    let neighs = [];
+
+    for(let x = Math.max(0, cell.i - 1); x < Math.min(cell.i + 1, width); x++) {
+        for(let y = Math.max(0, cell.j - 1); y < Math.min(cell.j + 1, height); y++) {
+            if(x !== cell.i || y !== cell.j) {
+                neighs.push(grid[x][y]);
+            }
+        }
+    }
+
+    return neighs;
+}
+
+function forestFire_nextStep(forest, treeP, lightP)
+{
+    let nextForest = [];
+    
+    for (let i = 0; i < forest.length; ++i)
+    {
+        nextForest[i]  = []; 
+        for (let j = 0; j < forest[0].length; ++j)
+        {
+            if (forest[i][j] === 2) // Burning : transform into an empty cell
+            {
+                nextForest[i][j] = 0;
+            } else if (forest[i][j] === 1) // Tree : tranform into a burning cell or do nothing
+            {    
+                let neighborsState = getMooreNeighborsState(forest, {i:i, j:j}).sort();
+                if (neighborsState[neighborsState.length - 1] === 2) // has at least one neighbor burning
+                {
+                    nextForest[i][j] = 2;
+                } else {
+                    nextForest[i][j] = (getRandomInt(100) < lightP) ? 2 : 1;
+                }
+            } else // forest[i][j] === 0 - Empty : transform into a tree cell or do nothing
+            {
+                nextForest[i][j] = (getRandomInt(100) < treeP) ? 1 : 0;
+            }
+        }
+    }
+
+    return nextForest;
+}
+
+function texture_forestFire(dict) {
+    const width =                dict['width']  || WIDTH;
+    const height =               dict['height'] || HEIGHT;
+    const treeProbability =      dict['treeP']  || 50;
+    const lightningProbability = dict['lightP'] || 5;
+    const steps =                dict['step']   || 30;
+    
+    // The forest is represented by :
+    //   * 0 : Empty
+    //   * 1 : Tree
+    //   * 2 : Burning
+    let forest = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        forest[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            forest[i][j] = (getRandomInt(100) < treeProbability) ? 1 : 0;
+        }
+    }
+
+    for (let k = 0; k < steps; ++k)
+    {
+        forest = forestFire_nextStep(forest, treeProbability, lightningProbability);
+    }
+    
+    return (x,y) => {
+        if (forest[x][y] === 0) // Empty
+        {
+            return COLORS.black;
+        } else if (forest[x][y] === 1) // Tree
+        {
+            return COLORS.green;
+        } else // Burning 
+        {
+            return COLORS.red;
+        }
+    };
+}
+
+function gameOfLife_nextStep(grid)
+{
+    let nextGrid = [];
+    
+    for (let i = 0; i < grid.length; ++i)
+    {
+        nextGrid[i]  = []; 
+        for (let j = 0; j < grid[0].length; ++j)
+        {
+            const aliveNeighbors = getMooreNeighborsState(grid, {i:i, j:j}).reduce((acc, el) => acc += el, 0);
+
+            if (grid[i][j] === 0 && aliveNeighbors === 3) // Dead -> Alive
+            {
+                nextGrid[i][j] = 1;
+            } else if (grid[i][j] === 1 && (aliveNeighbors === 2 || aliveNeighbors === 3)) // Alive -> Alive
+            {
+                nextGrid[i][j] = 1;
+            } else // Alive or Dead -> Dead
+            {
+                nextGrid[i][j] = 0;
+            }
+        }
+    }
+
+    return nextGrid;
+}
+
+function texture_gameOfLife(dict) {
+    const width =  dict['width']  || WIDTH;
+    const height = dict['height'] || HEIGHT;
+    const steps =  dict['step']   || 30;
+    
+    // The grid is represented by :
+    //   * 0 : Dead
+    //   * 1 : Alive
+    let grid = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        grid[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            grid[i][j] = (getRandomInt(100) < 80) ? 1 : 0; // 80% Alive cells
+        }
+    }
+
+    for (let k = 0; k < steps; ++k)
+    {
+        grid = gameOfLife_nextStep(grid);
+    }
+    
+    return (x,y) => {
+        if (grid[x][y] === 0) // Dead
+        {
+            return COLORS.white;
+        } else // Alive
+        {
+            return COLORS.black;
+        }
+    };
+}
