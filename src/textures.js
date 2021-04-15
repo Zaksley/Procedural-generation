@@ -32,6 +32,144 @@ function get_offset(coord, freq, percent, offset) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
+/* Function : is in shape (NOT FINISHED)
+ *
+ * @param coords array of points' coordonates in clockwise order
+ * @param (x, y) coordinates of the pixel
+ * @return a boolean corresponding to the appertenance to the shape
+ */
+function isInShape(coords, x, y) {
+    
+    /*console.log(isClockwise(coords));
+    if (!isClockwise(coords))
+        coords.reverse();*/
+    const [coords_prime, index_list] = removeInflexionPoint(coords);
+    if (convex(coords_prime, x, y) && removeConcave(coords, index_list, x, y))
+        return true;
+    else
+        return false;
+
+    /* Function : remove points that make the shape concave
+     * 
+     * @param array an array of coordinates
+     * @return an array of coordinates
+     */
+    function removeInflexionPoint(array) {
+        const N = array.length;
+        let a = array[N - 1];
+        let b = array[0];
+        let c = array[1];
+        const result = [];
+        const index_inf = [];
+        for(let i = 0; i < N; i++) {
+            const p = (a[1] - b[1]) / (c[1] - b[1])
+            if (b[1] > c[1] && a[0] - b[0] >= p * (c[0] - b[0]) || !(b[1] > c[1]) && a[0] - b[0] <= p * (c[0] - b[0]))
+                result.push(b);
+            else
+                index_inf.push(i);
+            a = b;
+            b = c;
+            c = array[(i + 2) % N];
+        }   
+        return [result, index_inf];
+    }
+
+    // ... WORK IN PROGRESS ...
+    /*function isClockwise(array) {
+        const N = array.length;
+        let min = 0;
+        for(let k = 1; k < N; k++) {
+            if (array[k][0] < array[min][0])
+                min = k;
+        }
+        console.log(array);
+        console.log(min);
+        console.log(array[(N + min - 1) % N]);
+        console.log(array[min]);
+        console.log(array[(min + 1) % N]);
+        const coef = (array[(min + 1) % N][0] - array[min][0]) / (array[(min + 1) % N][1] - array[min][1])
+        console.log(coef);
+        if (array[(N + min - 1) % N][1] < coef * (array[(N + min - 1) % N][0] - array[min][0]) + array[min][0])
+            return true;
+        else 
+            return false;
+    }*/
+    
+    /* Function : is in convex shape
+     *
+     * @param array an array of coordinates
+     * @param (x, y) coordinates of the pixel
+     * @return a boolean telling if the pixel is in the shape
+     */
+    function convex(array, x, y) {
+        const N = array.length;
+        function convexREC(n) {
+            if (n === N)
+                return true;
+            const p = (y - array[n][1]) / (array[(n + 1) % N][1] - array[n][1]);
+            if (array[n][1] > array[(n + 1) % N][1]) {
+                if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
+                    return convexREC(n + 1);
+            }   
+            else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
+                return convexREC(n + 1);
+            else 
+                return false;
+        }
+        return convexREC(0);
+    }
+      
+    /* Function : remove concave part of the shape
+     * 
+     * @param array an array of coordinates
+     * @param index an array of indexes
+     * @param (x, y) coordinates of the pixel
+     * @return a boolean telling if the pixel is NOT in one of the concave part
+     */
+    function removeConcave(array, index, x, y) {
+        const N = array.length;
+        const N_ind = index.length;
+        function removeConcaveREC(n) {
+            const ind = index[n];
+            if (n === N_ind)
+                return true;
+            else if (!convex([array[ind], array[(N + ind - 1) % N], array[(ind + 1) % N]], x, y))
+                return removeConcaveREC(n + 1);
+            else    
+                return false;
+        }
+        return removeConcaveREC(0);
+    }
+}
+
+/* Texture : texture star
+ *
+ * @param dict.n number of branches
+ * @param dict.size radius of the inner circle and 1/3 of the outer one
+ * @param dict.center center coordinates
+ * @return a colored pixel corresponding to (x,y) position
+ */
+function texture_star(dict) {
+    const n = dict['n'] || 5;
+    const r = dict['size'] || 50;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || WIDTH / 2;
+    const center_y = center[1]      || HEIGHT / 2;
+    const color1 = COLORS.cyan;
+    const color2 = COLORS.pink;
+    const coords = [];
+    coords.length = 2 * n;
+
+    for(let k = 0; k < n; k++) {
+        coords[2 * k] =     [3 * r * Math.cos(k / n * 2 * Math.PI) + center_x, 3 * r * Math.sin(k / n * 2 * Math.PI) + center_y];
+        coords[2 * k + 1] = [r * Math.cos((k + 1 / 2)/ n * 2 * Math.PI) + center_x, r * Math.sin((k + 1 / 2) / n * 2 * Math.PI) + center_y];
+    }
+    return function(x, y) {
+        if (isInShape(coords, x, y))
+            return color1;
+        return color2;
+    };
+}
 
 // Used in limitedWhiteNoise
 function getFourInterpolateCoordinates(i, j, x, y) {
@@ -1101,5 +1239,38 @@ function texture_gameOfLife(dict) {
         {
             return COLORS.black;
         }
+    };
+}
+
+function texture_fractal(dict) {
+    const width_init = dict['width']    || 500;
+    const height_init = dict['height']  || 500;
+    const n = dict['n']            || 5;
+    const colors = dict['colors']  || [];
+    const color = colors[0]        || COLORS.black;
+
+    return function (i, j) {
+        const offset = 125;
+        /*
+        if (x + d / 2 > p * width / 2 && x - d / 2 < p * width / 2 && x < width / 2 && x >= - d / 2 && y <= height + d / 2
+                || x - width / 2 - d / 2 < (1 - p) * width / 2 && x - width / 2 + d / 2 > (1 - p) * width / 2 && x >= width / 2 && x <= width + d / 2 && y <= height + d / 2
+                || x >= 0 &&  x <= width && y >= height - d / 2 && y <= height + d / 2)
+        */
+        function triangle(width, height, x_offset, y_offset) {
+            const x = i - x_offset;
+            const y = j - y_offset;
+            const p1 = 1 - y / (height / 2);
+            const p2 = 1 - (y - height / 2) / (height / 2);
+            if (width < width_init / (2 ** (n - 1)) || height < height_init / (2 ** (n - 1)))
+                return color;
+            if (x - width / 4 >= p1 * width / 4 && x - width / 2 <= (1 - p1) * width / 4 && y <= height / 2)
+                return triangle(width / 2, height / 2, x_offset + width / 4, y_offset);
+            if (x >= p2 * width / 4 && x - width / 4 <= (1 - p2) * width / 4 && y >= height / 2 && y <= height)
+                return triangle(width / 2, height / 2, x_offset, y_offset + height / 2);
+            if (x - width / 2 >= p2 * width / 4 && x - 3 * width / 4 <= (1 - p2) * width / 4 && y >= height / 2 && y <= height)
+                return triangle(width / 2, height / 2, x_offset + width / 2, y_offset + height / 2);
+            return COLORS.white;
+            }
+        return triangle(width_init, height_init, 0, 0);
     };
 }

@@ -216,7 +216,8 @@ let data =
     //generateTexture(CANVAS, texture_solid({}));
     //generateTexture(CANVAS, texture_pentagonTiling4({}));
     //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
-    generateTexture(CANVAS, texture_pentagonTiling3({}));
+    //generateTexture(CANVAS, texture_pentagonTiling3({}));
+    generateTexture(CANVAS, texture_star({n: 5}));
 
 // ========================================
 
