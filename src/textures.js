@@ -38,15 +38,13 @@ function getRandomInt(max) {
  * @param (x, y) coordinates of the pixel
  * @return a boolean corresponding to the appertenance to the shape
  */
-function isInShape(coords, x, y) {
-    
+function isInShape(coords) {
+    if (coords.length < 3)
+        return ((x, y) => false);
     if (!isClockwise(coords))
         coords.reverse();
     const [coords_prime, index_list] = removeInflexionPoint(coords);
-    if (convex(coords_prime, x, y) && removeConcave(coords, index_list, x, y))
-        return true;
-    else
-        return false;
+    const shapes = shapeRemoveList(coords, index_list);
 
     /* Function : remove points that make the shape concave
      * 
@@ -83,7 +81,7 @@ function isInShape(coords, x, y) {
         const N = array.length;
         let min = 0;
         for(let k = 1; k < N; k++) {
-            if (array[k][0] < array[min][0])
+            if (array[k][0] < array[min][0] || array[k][0] === array[min][0] && array[k][1] < array[min][1])
                 min = k;
         }
         const p1 = (array[(min + 1) % N][1] - array[min][1]) / (array[(min + 1) % N][0] - array[min][0])
@@ -94,51 +92,86 @@ function isInShape(coords, x, y) {
             return false;
     }
     
-    /* Function : is in convex shape
-     *
-     * @param array an array of coordinates
-     * @param (x, y) coordinates of the pixel
-     * @return a boolean telling if the pixel is in the shape
-     */
-    function convex(array, x, y) {
-        const N = array.length;
-        function convexREC(n) {
-            if (n === N)
-                return true;
-            const p = (y - array[n][1]) / (array[(n + 1) % N][1] - array[n][1]);
-            if (array[n][1] > array[(n + 1) % N][1]) {
-                if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
-                    return convexREC(n + 1);
-            }   
-            else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
-                return convexREC(n + 1);
-            else 
-                return false;
-        }
-        return convexREC(0);
-    }
-      
-    /* Function : remove concave part of the shape
+    /* Function shapes that should be remove
      * 
      * @param array an array of coordinates
      * @param index an array of indexes
-     * @param (x, y) coordinates of the pixel
-     * @return a boolean telling if the pixel is NOT in one of the concave part
+     * @return a list of shapes
      */
-    function removeConcave(array, index, x, y) {
+    function shapeRemoveList(array, index) {
+        const shapeList = [];
         const N = array.length;
         const N_ind = index.length;
-        function removeConcaveREC(n) {
+        for(let n = 0, nbPoints; n < N_ind; n += nbPoints) {
             const ind = index[n];
-            if (n === N_ind)
-                return true;
-            else if (!convex([array[ind], array[(N + ind - 1) % N], array[(ind + 1) % N]], x, y))
-                return removeConcaveREC(n + 1);
-            else    
-                return false;
+            const shapeToRemove = [array[(N + ind - 1) % N], array[ind], array[(ind + 1) % N]];
+            for(nbPoints = 1; index[(n + nbPoints) % N_ind] === (ind + nbPoints) % N; nbPoints++)
+                shapeToRemove.push(array[(ind + 1 + nbPoints) % N]);
+            shapeList.push(shapeToRemove.reverse());
         }
-        return removeConcaveREC(0);
+        return shapeList;
     }
+
+    return function testShape(x, y) {
+        if (convex(coords_prime, x, y) && removeConcave(shapes, x, y))
+            return true;
+        else
+            return false;
+
+        /* Function : is in convex shape
+        *
+        * @param array an array of coordinates
+        * @param (x, y) coordinates of the pixel
+        * @return a boolean telling if the pixel is in the shape
+        */
+        function convex(array, x, y) {
+            const N = array.length;
+            function convexREC(n) {
+                if (n === N)
+                    return true;
+                const p = (y - array[n][1]) / (array[(n + 1) % N][1] - array[n][1]);
+                if (array[n][1] > array[(n + 1) % N][1]) {
+                    if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
+                        return convexREC(n + 1);
+                }   
+                else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
+                    return convexREC(n + 1);
+                else 
+                    return false;
+            }
+            return convexREC(0);
+        }
+        
+        /* Function : remove concave part of the shape
+        * 
+        * @param shapeList an array of shapes
+        * @param (x, y) coordinates of the pixel
+        * @return a boolean telling if the pixel is NOT in one of the concave part
+        */
+        function removeConcave(shapeList, x, y) {
+            const N = shapeList.length;
+            function removeConcaveREC(n) {
+                if (n === N)
+                    return true;
+                else if (!convex(shapeList[n], x, y))
+                    return removeConcaveREC(n + 1);
+                else    
+                    return false;
+            }
+            return removeConcaveREC(0);
+        }
+    }
+}
+
+function testInShape(dict) {
+    //const coords = [[100, 100], [200, 125], [300, 125], [400, 100], [375, 200], [375, 300],  [400, 400], [300, 375], [200, 375], [100, 400], [125, 300], [125, 200]];
+    const coords = [[100, 100], [225, 200], [250, 150], [275, 200], [400, 100], [300, 225], [350, 250], [300, 275], [400, 400], [275, 300], [250, 350], [225, 300], [100, 400], [200, 275], [150, 250], [200, 225]];
+    const testIsInShape = isInShape(coords);
+    return function(x, y) {
+        if (testIsInShape(x, y))
+            return COLORS.black;
+        return COLORS.grey;
+    };
 }
 
 /* Texture : texture star
@@ -154,17 +187,42 @@ function texture_star(dict) {
     const center = dict['center']   || [];
     const center_x = center[0]      || WIDTH / 2;
     const center_y = center[1]      || HEIGHT / 2;
-    const color1 = COLORS.cyan;
-    const color2 = COLORS.pink;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
+    const color2 = dict['color2']   || colors[1] || COLORS.pink;
     const coords = [];
-    coords.length = 2 * n;
 
     for(let k = 0; k < n; k++) {
-        coords[2 * k] =     [3 * r * Math.cos(k / n * 2 * Math.PI) + center_x, 3 * r * Math.sin(k / n * 2 * Math.PI) + center_y];
-        coords[2 * k + 1] = [r * Math.cos((k + 1 / 2)/ n * 2 * Math.PI) + center_x, r * Math.sin((k + 1 / 2) / n * 2 * Math.PI) + center_y];
+        coords.push([3 * r * Math.cos(k / n * 2 * Math.PI) + center_x, 3 * r * Math.sin(k / n * 2 * Math.PI) + center_y]);
+        coords.push([r * Math.cos((k + 1 / 2)/ n * 2 * Math.PI) + center_x, r * Math.sin((k + 1 / 2) / n * 2 * Math.PI) + center_y]);
     }
+
+    const testIsInShape = isInShape(coords);
     return function(x, y) {
-        if (isInShape(coords, x, y))
+        if (testIsInShape(x, y))
+            return color1;
+        return color2;
+    };
+}
+
+function texture_regularShape(dict) {
+    const n = dict['n']             || 4;
+    const r = dict['r']             || dict['size'] / (2 * Math.sin(Math.PI / n)) || 100;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || WIDTH / 2;
+    const center_y = center[1]      || HEIGHT / 2;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
+    const color2 = dict['color2']   || colors[1] || COLORS.pink;
+
+    const coords = [];
+
+    for(let k = 0; k < n; k++) 
+        coords.push([r * Math.cos(k / n * 2 * Math.PI) + center_x, r * Math.sin(k / n * 2 * Math.PI) + center_y]);
+
+    const testIsInShape = isInShape(coords);
+    return function(x, y) {
+        if (testIsInShape(x, y))
             return color1;
         return color2;
     };
