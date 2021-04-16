@@ -40,9 +40,8 @@ function getRandomInt(max) {
  */
 function isInShape(coords, x, y) {
     
-    /*console.log(isClockwise(coords));
     if (!isClockwise(coords))
-        coords.reverse();*/
+        coords.reverse();
     const [coords_prime, index_list] = removeInflexionPoint(coords);
     if (convex(coords_prime, x, y) && removeConcave(coords, index_list, x, y))
         return true;
@@ -74,26 +73,26 @@ function isInShape(coords, x, y) {
         return [result, index_inf];
     }
 
-    // ... WORK IN PROGRESS ...
-    /*function isClockwise(array) {
+    // ... WORK IN PROGRESS ... (NOT TESTED COMPLETELY)
+    /* Function is clockwise
+     * 
+     * @param array an array of coordinates
+     * @return a boolean according to the "orientation" of points
+     */
+    function isClockwise(array) {
         const N = array.length;
         let min = 0;
         for(let k = 1; k < N; k++) {
             if (array[k][0] < array[min][0])
                 min = k;
         }
-        console.log(array);
-        console.log(min);
-        console.log(array[(N + min - 1) % N]);
-        console.log(array[min]);
-        console.log(array[(min + 1) % N]);
-        const coef = (array[(min + 1) % N][0] - array[min][0]) / (array[(min + 1) % N][1] - array[min][1])
-        console.log(coef);
-        if (array[(N + min - 1) % N][1] < coef * (array[(N + min - 1) % N][0] - array[min][0]) + array[min][0])
+        const p1 = (array[(min + 1) % N][1] - array[min][1]) / (array[(min + 1) % N][0] - array[min][0])
+        const p2 = (array[(N + min - 1) % N][1] - array[min][1]) / (array[(N + min - 1) % N][0] - array[min][0])
+        if (p1 < p2)
             return true;
         else 
             return false;
-    }*/
+    }
     
     /* Function : is in convex shape
      *
@@ -150,8 +149,8 @@ function isInShape(coords, x, y) {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_star(dict) {
-    const n = dict['n'] || 5;
-    const r = dict['size'] || 50;
+    const n = dict['n']             || 5;
+    const r = dict['size']          || 50;
     const center = dict['center']   || [];
     const center_x = center[0]      || WIDTH / 2;
     const center_y = center[1]      || HEIGHT / 2;
