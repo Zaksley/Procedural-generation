@@ -32,7 +32,8 @@ function get_offset(coord, freq, percent, offset) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
-/* Function : is in shape (NOT FINISHED)
+/* Function : is in shape
+ * if not working properly try to split your shape into two
  *
  * @param coords array of points' coordonates in clockwise order
  * @param (x, y) coordinates of the pixel
@@ -43,8 +44,15 @@ function isInShape(coords) {
         return ((x, y) => false);
     if (!isClockwise(coords))
         coords.reverse();
-    const [coords_prime, index_list] = removeInflexionPoint(coords);
-    const shapes = shapeRemoveList(coords, index_list);
+    let nbShapes = -1;
+    let shapes = [];
+    let [coords_prime, index_list] = []
+    while (shapes.length !== nbShapes) {
+        nbShapes = shapes.length;
+        [coords_prime, index_list] = removeInflexionPoint(coords);
+        shapes = shapes.concat(shapeRemoveList(coords, index_list));
+        coords = coords_prime;
+    }
 
     /* Function : remove points that make the shape concave
      * 
@@ -71,7 +79,6 @@ function isInShape(coords) {
         return [result, index_inf];
     }
 
-    // ... WORK IN PROGRESS ... (NOT TESTED COMPLETELY)
     /* Function is clockwise
      * 
      * @param array an array of coordinates
