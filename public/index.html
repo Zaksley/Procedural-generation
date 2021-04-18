@@ -54,11 +54,25 @@ input[type=range]::-moz-range-thumb {
 input[type=color] {
 	margin-left:18px;
 }
+textarea {
+	background-color:white;
+	width:calc(100% - 24px);
+	padding:12px;
+	resize:none;
+	font-size:1.2em;
+}
+#treebutton {
+	/*width:calc(100% + 2px);*/
+	padding:4px;
+	font-size:1.1em;
+	margin-top:12px;
+	float:right;
+}
 </style>
 
 <body>
 
-	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA">
+	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA; overflow-y:auto;">
 		
 		<!-- ========= Sliders & parameters ======== -->
 		<h2>Base texture :</h2>
@@ -67,18 +81,22 @@ input[type=color] {
 
 		<script>
 			// Global vars
-			let BASEDATA = [];
-			let DATA = [];
+			let DATA = [], BASEDATA = [];
 			let TEXTURE = "";
 			let FILTER = "filter_resize";
 			let DICT = {};
-			let FDICT = {};
+			let OPTDICT = {intensity:1, translation:0};
+			let XOFFSET = 0, YOFFSET = 0;
 		</script>
 
 		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
 			<option selected>No texture selected</option>
-			<option value="solid">Solid color</option>
-			<option value="horizontalGradient">Color gradients</option>
+			<optgroup label="Specific Textures">
+				<option value="solid">Solid color</option>
+				<option value="horizontalGradient">Color gradients</option>
+				<option value="star">Star pattern</option>
+				<option value="regularShape">Polygon pattern</option>
+			</optgroup>
 			<optgroup label="Regular Tilings">
 				<option value="triangleTiling">Triangular tiling</option>
 				<option value="hexagonTiling">Hexagonal tiling</option>
@@ -92,25 +110,30 @@ input[type=color] {
 				<option value="truncatedHexagon">Truncated hexagon tiling</option>
 				<option value="smallRhombitrihexagonalTiling">Small rhombitrihexagonal tiling</option>
 				<option value="trihexagonal">Trihexagonal tiling</option>
-				<option value="pentagonTiling4" disabled>PentagonTiling4</option>
 			</optgroup>
 			<optgroup label="Non-regular Tilings">
 				<option value="squareTiling">Checkboard</option>
 				<option value="caireTiling">Pentagonal tiling</option>
+				<option value="pentagonTiling3">Rotating pentagonal tiling</option>
+				<!-- PentagonTiling 4 : not yet fixed (offset issue) -->
+				<option value="pentagonTiling4" disabled>PentagonTiling4</option>
 			</optgroup>
 			<optgroup label="Noise maps">
 				<option value="whiteNoise">White noise</option>
 				<option value="limitedWhiteNoise">Limited white noise</option>
+				<!-- Perlin Noise : todo add support for unlimited colors -->
 				<option value="perlinNoise" disabled>Perlin noise</option>
 			</optgroup>
-			<optgroup label="Diagrams">
-				<option value="Voronoi" disabled>Voronoï diagram</option>
+			<optgroup label="Diagrams & Fractals">
+				<option value="Voronoi">Voronoï diagram</option>
+				<option value="squareFractal">Square fractal</option>
+				<option value="triangularFractal">Triangular fractal</option>
 			</optgroup>
-                        <optgroup label="Cellular Automata">
-                                <option value="forestFire">Forest Fire</option>
-                                <option value="gameOfLife">Conway's Game Of Life</option>
-                        </optgroup>
-                        <optgroup label="Animations">
+            <optgroup label="Cellular Automata">
+                    <option value="forestFire">Forest Fire</option>
+                    <option value="gameOfLife">Conway's Game Of Life</option>
+            </optgroup>
+            <optgroup label="Animations">
 				<option disabled>Todo</option>
 			</optgroup>
 		</select><br><br>
@@ -163,12 +186,47 @@ input[type=color] {
 			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
 			onchange="DICT['step'] = parseInt(this.value); regenerateImage();">
 		</div>
+
+		<!-- GERMS -->
+		<div class="textureOption germs" style="display:none">
+			<p>Germs : <b id="germs">10</b></p>
+			<input type="range" min="1" max="40" value="10" oninput="updateSliderValue('germs', this.value)"
+			onchange="DICT['germs'] = parseInt(this.value); regenerateImage();">
+		</div>
                 
 		<!-- ANGLE -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
 			<input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
 			onchange="DICT['angle'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- BRANCHES -->
+		<div class="textureOption branches" style="display:none">
+			<p>Branches : <b id="branches">5</b></p>
+			<input type="range" min="3" max="20" value="5" oninput="updateSliderValue('branches', this.value)"
+			onchange="DICT['branches'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- FRACTAL DEPTH -->
+		<div class="textureOption depth" style="display:none">
+			<p>Depth levels : <b id="depth">3</b></p>
+			<input type="range" min="1" max="8" value="3" oninput="updateSliderValue('depth', this.value)"
+			onchange="DICT['depth'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- CENTER X -->
+		<div class="textureOption centerx" style="display:none">
+			<p>Horizontal centering : <b id="centerx">250</b></p>
+			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centerx', this.value*10/WIDTH)"
+			onchange="DICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
+		</div>
+
+		<!-- CENTER Y -->
+		<div class="textureOption centery" style="display:none">
+			<p>Vertical centering : <b id="centery">0.5</b></p>
+			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centery', this.value*10/HEIGHT)"
+			onchange="DICT['centery'] = parseInt(this.value)*10; regenerateImage();">
 		</div>
 
 		<!-- COLOR 1 -->
@@ -207,26 +265,55 @@ input[type=color] {
 
 		<hr style="margin-top:18px;opacity:0">
 
-		<h2>Filters :</h2>
+		<h2>Display options :</h2>
 
 		<!-- ZOOM -->
 		<div class="filterOption zoom" style="display:block">
 			<p>Zoom : <b id="zoom">1</b>00%</p>
 			<input type="range" min="1" max="10" value="1" oninput="updateSliderValue('zoom', this.value)"
-			onchange="FDICT['intensity'] = parseInt(this.value); regenerateFilters();">
+			onchange="OPTDICT['intensity'] = parseInt(this.value); regenerateFilters();">
 		</div>
+
+		<!-- TRANSLATION X -->
+		<div class="filterOption xoffset" style="display:block">
+			<p>X-Offset : <b id="xoffset">0</b>px (<b id="xoffsetprc">0</b>%)</p>
+			<input type="range" min="0" max="500" value="0" oninput="updateSliderValue('xoffset', this.value); updateSliderValue('xoffsetprc', this.value*100/WIDTH);"
+			onchange="XOFFSET = parseInt(this.value); regenerateFilters();">
+		</div>
+
+		<!-- TRANSLATION Y -->
+		<div class="filterOption yoffset" style="display:block">
+			<p>Y-Offset : <b id="yoffset">0</b>px (<b id="yoffsetprc">0</b>%)</p>
+			<input type="range" min="0" max="500" value="0" oninput="updateSliderValue('yoffset', this.value); updateSliderValue('yoffsetprc', this.value*100/HEIGHT);"
+			onchange="YOFFSET = parseInt(this.value); regenerateFilters();">
+		</div>
+
+		<!-- <input type="button" id="regeneratebutton" onclick="regenerateImage(); regenerateFilters();" value="Regenerate with those options"><br><br><br> -->
 
 		<!-- ======= -->
 
+		<!-- =============== JSON DOC ============== -->
+
+		<hr style="margin-top:18px;opacity:0">
+
+		<h2>Tree generator :</h2>
+		<textarea placeholder="DO NOT USE YET&#x0a;'property': {&#x0a;&#x09;'subproperty':'value',&#x0a;&#x09;'subproperty_2':'value2'&#x0a;}" id="textarea" rows="10" spellcheck="false"></textarea>
+		<input type="button" id="treebutton" onclick="generateImageFromJson();" value="Generate image"><br><br><br>
+
+		<p id="jsonerror" style="display:none;color:red"></p>
+
+		<br style="margin-top:40px">
+
 	</div>
 
-	<div style="grid-column: 2 / 3;">
+	<div style="grid-column: 2 / 3;overflow-y: auto;overflow-x: hidden;padding-right:32px">
 		<!-- ================ Canvas =============== -->
 
 		<h2 style="margin-left:32px;margin-top:32px">Procedural textures</h2>
-		<canvas id="canvas" style="border:1px solid black;margin:32px"></canvas>
+		<canvas id="canvas" style="border:1px solid black;margin:32px;"></canvas>
 
 	</div>
+
 
 </body>
 
@@ -237,26 +324,60 @@ input[type=color] {
 
 <script>
 
+	// Updates the image displayed (with current canvas, texture & dictionnary)
 	function regenerateImage(){
 		BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT));
 		generateImage(CANVAS, BASEDATA);
 	};
 
+	// Updates the image displayed with the display filters
 	function regenerateFilters(){
-		DATA = window[FILTER](FDICT)(BASEDATA);
+		BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT), XOFFSET, YOFFSET);
+		DATA = option_resize(OPTDICT)(BASEDATA);
 		generateImage(CANVAS, DATA);
 	};
 
+	// Changes the label number to match the slider value 
 	function updateSliderValue(sliderValueId, value){
 		document.getElementById(sliderValueId).innerHTML = value;
 	};
 
+	// Converts a hexa string (#[0-9A-Fa-f]{6}) to a rgba array 
 	function hexaToRGBA(hexa){
 		let rgb = [hexa.substr(1,2),hexa.substr(3,2),hexa.substr(5,2)];
 		rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
 		rgba.push(255);
 		return rgba;
 	};
+
+	// Generates image from the textarea
+	function generateImageFromJson(){
+		// Parsing
+		let data = '{' + document.getElementById("textarea").value + '}';
+		let jsondata = {};
+		let error = false;
+		try {
+			JSON.parse(data);
+		} catch (e) {
+			error = true;
+			document.getElementById('jsonerror').innerHTML = "Parsing error: " + e;
+			document.getElementById('jsonerror').style.display = "block";
+		} finally {
+			if(error === false) {
+				jsondata = JSON.parse(data);
+				document.getElementById('jsonerror').style.display = "none";
+			} else {
+				return;
+			}
+		}
+
+		// Transformation
+		// TODO
+
+		// Image generation
+		// TODO
+		console.log(jsondata);
+	}
 
 	// TODO : add animation support
 	function showTextureOptions(value){
@@ -269,31 +390,37 @@ input[type=color] {
 		let options = [];
 		switch(value){
 			// General
-			case "solid": 				options = ["color1"]; break;
-			case "horizontalGradient": 	options = ["columns", "color1", "color2"]; break;
+				case "solid": 				options = ["color1"]; break;
+				case "horizontalGradient": 	options = ["columns", "color1", "color2"]; break;
+				case "star": 				options = ["size", "branches", "centerx", "centery", "color1", "color2"]; break;
+				case "regularShape": 		options = ["size", "branches", "centerx", "centery", "color1", "color2"]; break;
 			// Regular tilings
-			case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
-			case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+				case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
+				case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;
 			// Semi-regular tilings
-			case "3Dcube": 				options = ["size", "color1", "color2", "color3"]; break;
-			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
-			case "elongatedTriangular": options = ["size", "color1", "color2", "color3", "color4"]; break;
-			case "snubSquare": 			options = ["size", "color1", "color2", "color3"]; break;
-			case "truncatedSquare": 	options = ["size", "color1", "color2", "color3"]; break;
-			case "truncatedHexagon": 	options = ["size", "color1", "color2", "color3", "color4"]; break;
-			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
-			case "smallRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
-			case "trihexagonal": 		options = ["size", "color1", "color2"]; break;
+				case "3Dcube": 				options = ["size", "color1", "color2", "color3"]; break;
+				case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+				case "elongatedTriangular": options = ["size", "color1", "color2", "color3", "color4"]; break;
+				case "snubSquare": 			options = ["size", "color1", "color2", "color3"]; break;
+				case "truncatedSquare": 	options = ["size", "color1", "color2", "color3"]; break;
+				case "truncatedHexagon": 	options = ["size", "color1", "color2", "color3", "color4"]; break;
+				case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+				case "smallRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
+				case "trihexagonal": 		options = ["size", "color1", "color2"]; break;
 			// Non-regular tilings
-			case "squareTiling": 		options = ["rows", "columns"]; break;
-			case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
-			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
-	                // Noise maps todo
-                        case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
-	                // Diagrams todo
-                        // Cellular Automata
-                        case "forestFire":              options = ["treeP", "lightP", "step"]; break;
-                        case "gameOfLife":              options = ["step"]; break;
+				case "squareTiling": 		options = ["rows", "columns"]; break;
+				case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
+				case "pentagonTiling3":		options = ["size", "angle", "color1", "color2", "color3"]; break;
+				case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
+            // Noise maps todo
+                case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+            // Diagrams todo
+            	case "Voronoi":             options = ["germs"]; break;
+            	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
+            	case "triangularFractal":   options = ["depth", "color1"]; break;
+            // Cellular Automata
+                case "forestFire":          options = ["treeP", "lightP", "step"]; break;
+                case "gameOfLife":          options = ["step"]; break;
 			// Animations todo
 
 			default: 					options = []; break;
@@ -307,6 +434,33 @@ input[type=color] {
 			document.getElementsByClassName(e)[0].style.display = "block";
 		});
 	};
+
+	// Prevents usage of TAB to exit the textarea, indent code instead
+	// Todo add shift+tab ?
+	document.getElementById("textarea").addEventListener('keydown', function(e) {
+		if(e.key == 'Tab') {
+			e.preventDefault();
+			let start = this.selectionStart;
+			let end = this.selectionEnd;
+
+			// Indent whole block of code
+			let linesBetween = this.value.substring(start, end).split('\n');
+			let newBlock = "";
+			for(let i = 0; i < linesBetween.length; i++) {
+				if(i > 0) newBlock += '\n';
+				newBlock += "\t" + linesBetween[i];
+			};
+
+			// Updates value
+			this.value = this.value.substring(0, start) 
+				+ newBlock 
+				+ this.value.substring(end);
+
+			// Moves cursor
+			this.selectionStart = start + 1;
+			this.selectionEnd = end + linesBetween.length;
+		};
+	});
 
 </script>
 

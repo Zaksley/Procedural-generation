@@ -182,14 +182,14 @@ function testInShape(dict) {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_star(dict) {
-    const n = dict['n']             || 5;
+    const n = dict['branches']      || 5;
     const r = dict['size']          || 50;
     const center = dict['center']   || [];
-    const center_x = center[0]      || WIDTH / 2;
-    const center_y = center[1]      || HEIGHT / 2;
+    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
     const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.pink;
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
     const coords = [];
 
     for(let k = 0; k < n; k++) {
@@ -206,14 +206,14 @@ function texture_star(dict) {
 }
 
 function texture_regularShape(dict) {
-    const n = dict['n']             || 4;
+    const n = dict['branches']      || 4;
     const r = dict['r']             || dict['size'] / (2 * Math.sin(Math.PI / n)) || 100;
     const center = dict['center']   || [];
-    const center_x = center[0]      || WIDTH / 2;
-    const center_y = center[1]      || HEIGHT / 2;
+    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
     const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.pink;
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
 
     const coords = [];
 
@@ -1041,110 +1041,108 @@ function texture_limitedWhiteNoise(dict) {
  * @param (x,y) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position
  */
-function texture_Voronoi(nb_case) {
-    return function (width) {
-        return function (height) {
+function texture_Voronoi(dict) {
 
-            let count = 0;
-            let stock_germs = {};
-            for (let i = 0; i < nb_case; i++) {
-                stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
-            }
+    const width = dict['width']     || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const nb_case = dict['germs']   || 10;
 
-            // TODO Mettre fonctionnel
-            // Return indice of the minest one (min[0]) and the second minest one (min[1])
-            function get_two_closest(x, y) {
-                let min = [0, 0];
-                let gx = 0;
-                let gy = 0;
-                count += 1;
-                for (let i = 1; i < nb_case; i++) {
-
-                    gx = stock_germs[i][0];
-                    gy = stock_germs[i][1];
-
-                    // Distance smaller than min[0]
-                    if (distance(x, y, stock_germs[min[0]][0], stock_germs[min[0]][1]) >= distance(x, y, gx, gy)) {
-                        min[1] = min[0];
-                        min[0] = i;
-
-                    }
-                    else if (distance(x, y, stock_germs[min[1]][0], stock_germs[min[1]][1]) > distance(x, y, gx, gy)) {
-                        min[1] = i;
-                    }
-                }
-
-                return min;
-            }
-
-
-            function distance(x, y, gx, gy) {
-                return Math.sqrt((gx - x) ** 2 + (gy - y) ** 2);
-            }
-
-            function distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) {
-                let norme = Math.abs(Math.sqrt((gx_2 - gx_1) ** 2 + (gy_2 - gy_1) ** 2));
-                let scalar_x = (x - ((gx_1 + gx_2) / 2)) * ((gx_2 - gx_1) / norme);
-                let scalar_y = (y - ((gy_1 + gy_2) / 2)) * ((gy_2 - gy_1) / norme);
-                return scalar_x + scalar_y;
-            }
-
-            function smoothstep(dist_1, dist_2, epsilon) {
-                if (Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            // Voronoï calcul for (x, y) coordinate 
-            return (x, y) => {
-                let min = get_two_closest(x, y);
-
-                let gx_1 = stock_germs[min[0]][0];
-                let gy_1 = stock_germs[min[0]][1];
-                let dist_1 = distance(x, y, gx_1, gy_1);
-
-                let gx_2 = stock_germs[min[1]][0];
-                let gy_2 = stock_germs[min[1]][1];
-                let dist_2 = distance(x, y, gx_2, gy_2);
-
-                /*
-    if (x === 50 && y === 95)
-    {   
-        console.log(dist_1); 
-        console.log(dist_2);
-        console.log(stock_germs[min[0]]);
-        console.log(stock_germs[min[1]]); 
-        return colors.white;
+    let count = 0;
+    let stock_germs = {};
+    for (let i = 0; i < nb_case; i++) {
+        stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
     }
-                */
+
+    // TODO Mettre fonctionnel
+    // Return indice of the minest one (min[0]) and the second minest one (min[1])
+    function get_two_closest(x, y) {
+        let min = [0, 0];
+        let gx = 0;
+        let gy = 0;
+        count += 1;
+        for (let i = 1; i < nb_case; i++) {
+
+            gx = stock_germs[i][0];
+            gy = stock_germs[i][1];
+
+            // Distance smaller than min[0]
+            if (distance(x, y, stock_germs[min[0]][0], stock_germs[min[0]][1]) >= distance(x, y, gx, gy)) {
+                min[1] = min[0];
+                min[0] = i;
+
+            }
+            else if (distance(x, y, stock_germs[min[1]][0], stock_germs[min[1]][1]) > distance(x, y, gx, gy)) {
+                min[1] = i;
+            }
+        }
+
+        return min;
+    }
 
 
+    function distance(x, y, gx, gy) {
+        return Math.sqrt((gx - x) ** 2 + (gy - y) ** 2);
+    }
 
-                // It's a GERM 
-                let r = 4;
-                let bord = 2;
-                if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
+    function distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) {
+        let norme = Math.abs(Math.sqrt((gx_2 - gx_1) ** 2 + (gy_2 - gy_1) ** 2));
+        let scalar_x = (x - ((gx_1 + gx_2) / 2)) * ((gx_2 - gx_1) / norme);
+        let scalar_y = (y - ((gy_1 + gy_2) / 2)) * ((gy_2 - gy_1) / norme);
+        return scalar_x + scalar_y;
+    }
 
-                /*
-                else if (smoothstep(dist_1, dist_2, 2))
-                {
-                    return colors.black;    
-                }
-                
-                else if (smoothstep(dist_1*3, dist_2, bord))    
-                {
-                    return colors.green;
-                }  */
+    function smoothstep(dist_1, dist_2, epsilon) {
+        if (Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon) {
+            return true;
+        }
 
-                else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return [0, 0, 0, 255]; //colors.black;
+        return false;
+    }
 
-                else return [255, 0, 0, 255]; //colors.red;
-            };
-        };
+    // Voronoï calcul for (x, y) coordinate 
+    return (x, y) => {
+        let min = get_two_closest(x, y);
+
+        let gx_1 = stock_germs[min[0]][0];
+        let gy_1 = stock_germs[min[0]][1];
+        let dist_1 = distance(x, y, gx_1, gy_1);
+
+        let gx_2 = stock_germs[min[1]][0];
+        let gy_2 = stock_germs[min[1]][1];
+        let dist_2 = distance(x, y, gx_2, gy_2);
+
+        /*
+            if (x === 50 && y === 95)
+            {   
+            console.log(dist_1); 
+            console.log(dist_2);
+            console.log(stock_germs[min[0]]);
+            console.log(stock_germs[min[1]]); 
+            return colors.white;
+            }
+        */
+
+        // It's a GERM 
+        let r = 4;
+        let bord = 2;
+        if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
+
+        /*
+        else if (smoothstep(dist_1, dist_2, 2))
+        {
+            return colors.black;    
+        }
+        
+        else if (smoothstep(dist_1*3, dist_2, bord))    
+        {
+            return colors.green;
+        }  */
+
+        else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return [0, 0, 0, 255]; //colors.black;
+
+        else return [255, 0, 0, 255]; //colors.red;
     };
-}
+};
 
 
 function getMooreNeighborsState(grid, cell)
@@ -1299,12 +1297,12 @@ function texture_gameOfLife(dict) {
     };
 }
 
-function texture_fractal(dict) {
+function texture_triangularFractal(dict) {
     const width_init = dict['width']    || 500;
     const height_init = dict['height']  || 500;
-    const n = dict['n']            || 5;
-    const colors = dict['colors']  || [];
-    const color = colors[0]        || COLORS.black;
+    const n = dict['depth']             || 5;
+    const colors = dict['colors']       || [];
+    const color = colors[0]             || dict['color1'] || COLORS.black;
 
     return function (i, j) {
         const offset = 125;
@@ -1330,4 +1328,50 @@ function texture_fractal(dict) {
             }
         return triangle(width_init, height_init, 0, 0);
     };
-}
+};
+
+function texture_squareFractal(dict) {
+
+   const width_init = dict['width']    || WIDTH;
+   const height_init = dict['height']  || HEIGHT;
+   const n = dict['depth']             || 3;
+   const colors = dict['colors']       || [];
+   const color1 = colors[0]            || dict['color1'] || COLORS.black;
+   const color2 = colors[1]            || dict['color2'] || COLORS.white;
+
+   return function(x, y) {
+      
+      function square(width, height, x_offset, y_offset, lvl) {
+
+         let x_newoffset = x_offset;
+         let y_newoffset = y_offset;
+         let i = x - x_offset;
+         let j = y - y_offset;
+         let midx = false, midy = false;
+
+         if(i < width/(3))            x_newoffset += 0;
+         else if(i > (2*width)/(3))   x_newoffset += 2*(width/3);
+         else {
+            x_newoffset += width/3;
+            midx = true;
+         }                         
+
+         if(j < height/(3))           y_newoffset += 0;
+         else if(j > (2*height)/(3))  y_newoffset += 2*(height/3);
+         else {
+            y_newoffset += height/3;
+            midy = true;
+         }
+
+         if(midx && midy) return color2;
+         else if(lvl > 0) {
+            return square(width/(3), height/(3), x_newoffset, y_newoffset, lvl-1);
+         } else {
+            return color1;
+         };
+      };
+
+      return square(width_init, height_init, 0, 0, n-1);
+   };
+
+};

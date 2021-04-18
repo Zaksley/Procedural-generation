@@ -230,6 +230,7 @@ function filter_compose(dict) {
 
 	const operation = dict['operator'] || 'plus';
 	let op = (e) => (e);
+	let D = 1;
 	switch(operation) {
 		case 'plus': 
 			op = ((a,b) => (a + b < 255) ? a + b : 255); 
@@ -265,8 +266,11 @@ function filter_compose(dict) {
 			op = ((a,b) => (a < b) ? a : b);
 			break;
 		case 'hardlighten':
-		// Marche pô bien
-			op = ((a,b) => (a < 128) ? 2*(a*b)/255 : 1 - 2*(1-(a/255))*(1-(b/255))*255);
+			op = ((a,b) => (a < 128) ? 2*(a*b)/255 : (255 + (1 - (2*(1-a/255)*(1-b/255)*255)))%256 );
+			break;
+		case 'softlighten':
+			D = (a) => (a < 64) ? ((16*a/255 - 12) * a/255 + 4) * a : Math.sqrt(a) ;
+			op = ((a,b) => (a < 128) ? a - (1 - 2*b/255)*(a/255)*(1-a/255)*255 : a + (2*b/255 - 1)*(D(a) - a/255));
 			break;
 		default: 
 			op = ((a,b) => (a + b)%256); 
@@ -278,7 +282,7 @@ function filter_compose(dict) {
 	}; 
 };
 
-function filter_resize(dict) {
+function option_resize(dict) {
 
 	const width = dict['width']		|| WIDTH;
 	const height = dict['height']	|| HEIGHT;
@@ -288,23 +292,31 @@ function filter_resize(dict) {
 		let data = [];
 		data.length = img.length;
 
-		for (let i = 0; i < height/n; i++) {
-			for (let j = 0; j < width/n; j++) {
+		for (let i = 0; i < Math.floor(height/n)+1; i++) {
+			for (let j = 0; j < Math.floor(width/n)+1; j++) {
 
 				for (let i2 = 0; i2 < n; i2++) {
+					if(i*n + i2 >= height) break;
 					for (let j2 = 0; j2 < n; j2++) {
+						if(j*n + j2 >= width) break;
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4] = img[i*height*4 + j*4];
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 1] = img[i*height*4 + j*4 + 1];
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 2] = img[i*height*4 + j*4 + 2];
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 3] = img[i*height*4 + j*4 + 3];
 					};
 				};
-
 			};
 		};
 
 		return data;
 	};
+};
+
+function option_translate(dict) {
+
+	const width = dict['width'] 	|| WIDTH;
+	const height = dict['height']	|| HEIGHT;
+	const n = dict['translation']	|| 0.1;
 };
 
 /*
