@@ -1,3 +1,12 @@
+function node(_val, _children) {
+    return {val: _val, children: _children};
+}
+
+function nodeThaw(node) {
+    node.children = node.children();
+    return node;
+}
+
 /* Transformation : circle
  * 
  * @param dict.radius circle radius
@@ -171,4 +180,51 @@ function yin_yang(dict) {
     };
 }
 
-//exports.chromatic_circle = chromatic_circle;
+function animated_forestFire(dict) {
+
+    function makeInfiniteStates(forest, treeP, lightP) {
+        return node(forest, () => makeInfiniteStates(forestFire_nextStep(forest, treeP, lightP), treeP, lightP))
+    }
+
+    function init_state(dict) {
+        const width =                dict['width']  || WIDTH;
+        const height =               dict['height'] || HEIGHT;
+        const treeProbability =      dict['treeP']  || 50;
+        const lightningProbability = dict['lightP'] || 5;
+    
+        // The forest is represented by :
+        //   * 0 : Empty
+        //   * 1 : Tree
+        //   * 2 : Burning
+        let forest = [];
+    
+        for (let i = 0; i < width; ++i)
+        {
+            forest[i] = [];
+            for (let j = 0; j < height; ++j)
+            {
+                forest[i][j] = (getRandomInt(100) < treeProbability) ? 1 : 0;
+            }
+        }
+        return forest;
+    }
+
+    let States = makeInfiniteStates(init_state({}), 50, 5);
+    return function (x, y, dt) {
+        if (Math.round(dt) % 100 === 0)
+            States = nodeThaw(States).children;
+        const forest = States.val;
+
+        if (forest[x][y] === 0) // Empty
+        {
+            return COLORS.black;
+        } else if (forest[x][y] === 1) // Tree
+        {
+            return COLORS.green;
+        } else // Burning 
+        {
+            return COLORS.red;
+        }
+    };
+}
+    
