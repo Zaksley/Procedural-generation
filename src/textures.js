@@ -37,7 +37,7 @@ function getRandomInt(max) {
  *
  * @param coords array of points' coordonates in clockwise order
  * @param (x, y) coordinates of the pixel
- * @return a boolean corresponding to the appertenance to the shape
+ * @return a boolean corresponding to the belonging to the shape
  */
 function isInShape(coords) {
     if (coords.length < 3)
@@ -119,6 +119,11 @@ function isInShape(coords) {
         return shapeList;
     }
 
+    /* Function test shape, compute tests that determine the belonging to the shape
+     *
+     * @param (x, y) coordinates of the pixel
+     * @return a boolean corresponding to the belonging to the shape
+     */
     return function testShape(x, y) {
         if (convex(coords_prime, x, y) && removeConcave(shapes, x, y))
             return true;
@@ -183,7 +188,7 @@ function testInShape(dict) {
 
 /* Texture : texture star
  *
- * @param dict.n number of branches
+ * @param dict.branches number of branches
  * @param dict.size radius of the inner circle and 1/3 of the outer one
  * @param dict.center center coordinates
  * @return a colored pixel corresponding to (x,y) position
@@ -202,6 +207,40 @@ function texture_star(dict) {
     for(let k = 0; k < n; k++) {
         coords.push([3 * r * Math.cos(k / n * 2 * Math.PI) + center_x, 3 * r * Math.sin(k / n * 2 * Math.PI) + center_y]);
         coords.push([r * Math.cos((k + 1 / 2)/ n * 2 * Math.PI) + center_x, r * Math.sin((k + 1 / 2) / n * 2 * Math.PI) + center_y]);
+    }
+
+    const testIsInShape = isInShape(coords);
+    return function(x, y) {
+        if (testIsInShape(x, y))
+            return color1;
+        return color2;
+    };
+}
+
+/* Texture : texture star
+ *
+ * @param dict.branches number of branches
+ * @param dict.size radius of the inner circle and 1/3 of the outer one
+ * @param dict.center center coordinates
+ * @return a colored pixel corresponding to (x,y) position
+ */
+function texture_doubleStar(dict) {
+    const n = dict['branches']      || 5;
+    const r1 = dict['size']         || 50;
+    const r2 = dict['size2']        || 70;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+    const coords = [];
+
+    for(let k = 0; k < n; k++) {
+        coords.push([3 * r1 * Math.cos(k / n * 2 * Math.PI) + center_x, 3 * r1 * Math.sin(k / n * 2 * Math.PI) + center_y]);
+        coords.push([r1 * Math.cos((k + 1 / 4)/ n * 2 * Math.PI) + center_x, r1 * Math.sin((k + 1 / 4) / n * 2 * Math.PI) + center_y]);
+        coords.push([3 * r2 * Math.cos((k + 1 / 2) / n * 2 * Math.PI) + center_x, 3 * r2 * Math.sin((k + 1 / 2) / n * 2 * Math.PI) + center_y]);
+        coords.push([r1 * Math.cos((k + 3 / 4)/ n * 2 * Math.PI) + center_x, r1 * Math.sin((k + 3 / 4) / n * 2 * Math.PI) + center_y]);
     }
 
     const testIsInShape = isInShape(coords);
