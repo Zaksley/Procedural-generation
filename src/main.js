@@ -15,10 +15,12 @@ CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
  *
  * @param canvas the canvas used for sizing
  * @param texture a texture function to generate
+ * @param xOffset x-offset of the texture in pixels
+ * @param yOffset y-offset of the texture in pixels
  * @precond canvas must be a <canvas> html element
  * @return an image data array (of size width*height*4)
  */
-function generateTexture(canvas, texture) {
+function generateTexture(canvas, texture, xOffset=0, yOffset=0) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
@@ -27,9 +29,9 @@ function generateTexture(canvas, texture) {
     for (let n = 0, y = 0; y < canvas.height; y++) {
         for (let x = 0; x < canvas.width; x++, n += 4) {
             
-            let pixel = texture(x, y);
+            let pixel = texture(x+xOffset, y+yOffset);
             while (typeof (pixel) === 'function')
-                pixel = pixel(x, y);
+                pixel = pixel(x+xOffset, y+yOffset);
 
             image.data[n] = pixel[0]; // Red channel
             image.data[n + 1] = pixel[1]; // Green channel

@@ -999,13 +999,13 @@ function gameOfLife_nextStep(grid)
 {
     let nextGrid = [];
     
-    for (let i = 0; i < grid.length; ++i)
+    for (let i = 0; i < grid.length; i++)
     {
         nextGrid[i]  = []; 
-        for (let j = 0; j < grid[0].length; ++j)
+        for (let j = 0; j < grid[0].length; j++)
         {
             const aliveNeighbors = getMooreNeighborsState(grid, {i:i, j:j}).reduce((acc, el) => acc += el, 0);
-
+            
             if (grid[i][j] === 0 && aliveNeighbors === 3) // Dead -> Alive
             {
                 nextGrid[i][j] = 1;
