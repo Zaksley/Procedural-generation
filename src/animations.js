@@ -180,6 +180,57 @@ function yin_yang(dict) {
     };
 }
 
+// ... WORK IN PROGRESS ...
+function animated_randomFunction() {
+    function makeInfiniteStates(texture) {
+        return node(texture, () => makeInfiniteStates(nextTexture()))
+    }
+
+    function getColors(seed, n) {
+        const f = (w, x) => (Math.abs(w * x - 255) % 512);
+        let colors = [];
+        for(let k = 0; k < n; k++) {
+            colors.push([]);
+            for(let l = 0; l < 3; l++) {
+                colors[k][l] = f(4 * k + l, seed);
+            }
+            colors[k][3] = 255;
+        }
+        return colors; 
+    }
+
+    function nextTexture() {
+        const seed = getRandomInt(1000000);
+        const texturedict = {size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
+            branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
+        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
+
+        const textureList = [texture_3Dcube, texture_3DgambarTiling, texture_bigRhombitrihexagonalTiling,
+        texture_caireTiling, texture_elongatedTriangular, texture_hexagonTiling, texture_horizontalGradient, 
+        texture_pentagonTiling3, texture_regularShape, texture_smallRhombitrihexagonalTiling,
+        texture_snubHexagonal, texture_snubSquare, texture_solid, texture_squareFractal, texture_squareTiling,
+        texture_triangleTiling, texture_triangularFractal, texture_trihexagonal, texture_truncatedHexagon,
+        texture_truncatedSquare];
+        const funcList = [translation]; // [rotation, translation];
+
+        const texture = textureList[seed % textureList.length];
+        const func = [funcList[seed % funcList.length](funcdict)];
+        return add_animation({texture: texture(texturedict), function: func});
+    }
+
+    let States = makeInfiniteStates(nextTexture());
+    let state = 0;
+    let new_state = 0;
+    return function (x, y, dt) {
+        new_state = Math.round(dt / 100);
+        if (state !== new_state) {
+            state = new_state;
+            States = nodeThaw(States).children;
+        }
+        return States.val(x, y, dt);
+    };
+}
+
 function animated_forestFire(dict) {
 
     function makeInfiniteStates(forest, treeP, lightP) {
@@ -210,9 +261,14 @@ function animated_forestFire(dict) {
     }
 
     let States = makeInfiniteStates(init_state({}), 50, 5);
+    let state = 0;
+    let new_state = 0;
     return function (x, y, dt) {
-        if (Math.round(dt) % 100 === 0)
+        new_state = Math.round(dt / 100);
+        if (state !== new_state) {
+            state = new_state;
             States = nodeThaw(States).children;
+        }
         const forest = States.val;
 
         if (forest[x][y] === 0) // Empty
