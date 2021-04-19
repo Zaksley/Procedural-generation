@@ -22,14 +22,14 @@ function circle(dict) {
 
 /* Transformation : rotation
  * 
- * @param dict.borders canvas width and height
+ * @param dict.borders_rot canvas width and height
  * @param dict.center rotation center
  * @param dict.angle rotation starting angle
  * @param dict.function a function (angle, dt) returning an angle
  * @return a function (x, y, dt) returning an array of coordinates
  */
 function rotation(dict) {
-    const borders = dict['borders'] || [];
+    const borders = dict['borders_rot'] || [];
     const width = borders[0]        || 0;
     const height = borders[1]       || 0;
     const center = dict['center']   || [];
@@ -192,7 +192,7 @@ function animated_randomFunction() {
         for(let k = 0; k < n; k++) {
             colors.push([]);
             for(let l = 0; l < 3; l++) {
-                colors[k][l] = f(4 * k + l, seed);
+                colors[k][l] = f(4 * k + l + 1, seed);
             }
             colors[k][3] = 255;
         }
@@ -203,7 +203,7 @@ function animated_randomFunction() {
         const seed = getRandomInt(1000000);
         const texturedict = {size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
             branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
-        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
+        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 1, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
 
         const textureList = [texture_3Dcube, texture_3DgambarTiling, texture_bigRhombitrihexagonalTiling,
         texture_caireTiling, texture_elongatedTriangular, texture_hexagonTiling, texture_horizontalGradient, 
@@ -211,7 +211,7 @@ function animated_randomFunction() {
         texture_snubHexagonal, texture_snubSquare, texture_solid, texture_squareFractal, texture_squareTiling,
         texture_triangleTiling, texture_triangularFractal, texture_trihexagonal, texture_truncatedHexagon,
         texture_truncatedSquare];
-        const funcList = [translation]; // [rotation, translation];
+        const funcList = [rotation, translation];
 
         const texture = textureList[seed % textureList.length];
         const func = [funcList[seed % funcList.length](funcdict)];
