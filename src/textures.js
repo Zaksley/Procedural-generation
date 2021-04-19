@@ -906,6 +906,42 @@ function texture_bigRhombitrihexagonalTiling(dict) {
     };
 }
 
+/* Texture : snub hexagonal tiling
+ *
+ * @param dict.size     side size of triangles and hexagons
+ * @param dict.colors   triangle & hexagon colors
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (x,y) position 
+ */
+function texture_snubHexagonal(dict) {
+    const size = dict['size']       || 60;
+    const colors = dict['colors']   || [];
+    const colorH = dict['color1']   || colors[0] || COLORS.cyan;
+    const colorT1 = dict['color2']   || colors[1] || COLORS.orange;
+    const colorT2 = dict['color3']   || colors[2] || COLORS.blue;
+
+    return function(i, j) {
+        const h = Math.sqrt(3) * size / 2;
+        const offset = Math.floor(j / (3 * h)) * 6.5 * size;
+
+        const [x, y] = ij2xy(i + offset, 7 * size, j, 3 * h);
+
+        const p1 = y / h;
+        const p2 = (y - h) / h;
+        const p3 = (y - 2 * h) / h;
+
+        if (x > (1 - p1) * size / 2 && x - 3 / 2 * size < p1 * size / 2 && x > p2 * size / 2 && x - 3 / 2 * size < (1 - p2) * size / 2 && y < 2 * h)
+            return colorH;
+        else if (x - 5 / 2 * size > (1 - p2) * size / 2 && x - 4 * size < p2 * size / 2 && x - 5 / 2 * size > p3 * size / 2 && x - 4 * size < (1 - p3) * size / 2 && y >= h)
+            return colorH;
+        else if (x - 5 * size > (1 - p3) * size / 2 && x - 6.5 * size < p3 * size / 2 && y >= 2 * h || x - 4.5 * size > p1 * size / 2 && x - 6 * size < (1 - p1) * size / 2 && y < h)
+            return colorH;
+        else
+            return texture_triangleTiling({size: size, colors: [colorT1, colorT2]})(x + size / 2, y);
+    };
+}
+
 /* Texture : trihexagonal tiling
  *
  * @param dict.size     side size of hexagons and triangles

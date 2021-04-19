@@ -220,7 +220,8 @@ let data =
     //generateTexture(CANVAS, texture_3DgambarTiling({size: 50, colors: [texture_hexagonTiling({size: 20, colors: [COLORS.blue, COLORS.green, COLORS.grey]}), texture_caireTiling({size: 20}) ,texture_perlinNoise(6)(3)(4)([COLORS.black, COLORS.white, COLORS.red, COLORS.pink])]}));
     //generateTexture(CANVAS, texture_pentagonTiling3({}));
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
-    generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({})); 
+    //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
+    generateTexture(CANVAS, texture_snubHexagonal({}));
 
 // ========================================
 
