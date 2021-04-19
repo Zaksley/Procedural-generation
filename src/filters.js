@@ -75,7 +75,7 @@ function filter_rotation(dict) {
 		};
 		return data;
 	};
-};
+}
 
 /* Filter : horizontal flip
  *
@@ -178,7 +178,7 @@ function filter_blur(dict) {
 		}
 		return s;
 	};
-};
+}
 
 /* Filter : detect outline
  *
@@ -280,7 +280,7 @@ function filter_compose(dict) {
 	return function(img, img2) {
 		return img.map((e,i) => (i%4 == 3) ? 255 : op(e, img2[i]));
 	}; 
-};
+}
 
 function option_resize(dict) {
 
@@ -310,14 +310,14 @@ function option_resize(dict) {
 
 		return data;
 	};
-};
+}
 
 function option_translate(dict) {
 
 	const width = dict['width'] 	|| WIDTH;
 	const height = dict['height']	|| HEIGHT;
 	const n = dict['translation']	|| 0.1;
-};
+}
 
 /*
 exports.filter_cyanColoration = filter_cyanColoration;
