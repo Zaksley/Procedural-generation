@@ -747,6 +747,92 @@ function filter_unsharp_masking(dict) {
 	};
 };
 
+/* Filter : Adjust luminosity
+ * 
+ * @param width image width
+ * @param height image height
+ * @param intensity the luminosity multiplicator
+ * @return the filtered image
+ */
+function filter_luminosity(dict) {
+
+	const l = dict['intensity']		|| 1.2;
+	const width = dict['width'] 	|| WIDTH;
+	const height = dict['height'] 	|| HEIGHT;
+
+	return function(img) {
+		const H = filter_getHSLChannel({c:'h'})(img);
+		const S = filter_getHSLChannel({c:'s'})(img);
+		const L = filter_getHSLChannel({c:'l'})(img);
+		const Lp = L.map((e,i) => (i%4===3) ? 255 : Math.min(255, l*e));
+		return gatherHSLChannels(H,S,Lp);
+	};
+};
+
+/* Filter : Adjust saturation
+ * 
+ * @param width image width
+ * @param height image height
+ * @param intensity the saturation multiplicator
+ * @return the filtered image
+ */
+function filter_saturation(dict) {
+
+	const s = dict['intensity']		|| 1.2;
+	const width = dict['width'] 	|| WIDTH;
+	const height = dict['height'] 	|| HEIGHT;
+
+	return function(img) {
+		const H = filter_getHSLChannel({c:'h'})(img);
+		const S = filter_getHSLChannel({c:'s'})(img);
+		const L = filter_getHSLChannel({c:'l'})(img);
+		const Sp = S.map((e,i) => (i%4===3) ? 255 : Math.min(255, s*e));
+		return gatherHSLChannels(H,Sp,L);
+	};
+};
+
+/* Filter : Hue shift
+ * 
+ * @param width image width
+ * @param height image height
+ * @param intensity the shift
+ * @return the filtered image
+ */
+function filter_hueShift(dict) {
+
+	const h = dict['intensity']		|| 1.2;
+	const width = dict['width'] 	|| WIDTH;
+	const height = dict['height'] 	|| HEIGHT;
+
+	return function(img) {
+		const H = filter_getHSLChannel({c:'h'})(img);
+		const S = filter_getHSLChannel({c:'s'})(img);
+		const L = filter_getHSLChannel({c:'l'})(img);
+		const Hp = H.map((e,i) => (i%4===3) ? 255 : Math.min(255, h*e));
+		return gatherHSLChannels(Hp,S,L);
+	};
+};
+
+/* Filter : Adjust contrast
+ * 
+ * @param width image width
+ * @param height image height
+ * @param intensity contrast shift
+ * @return the filtered image
+ */
+function filter_contrast(dict) {
+
+	const c = dict['intensity']		|| 1.2;
+	const width = dict['width'] 	|| WIDTH;
+	const height = dict['height'] 	|| HEIGHT;
+
+	return function(img) {
+		const cp = (c-1)*255;
+		const F = 259*(cp + 255)/(255*(259 - cp));
+		return img.map((e,i) => (i%4===3) ? 255 : (F*(e-128) + 128) );
+	};
+};
+
 /* Filter : zoom
  *
  * @param width image width
