@@ -75,7 +75,7 @@ function filter_rotation(dict) {
 		};
 		return data;
 	};
-};
+}
 
 /* Filter : horizontal flip
  *
@@ -178,7 +178,7 @@ function filter_blur(dict) {
 		}
 		return s;
 	};
-};
+}
 
 /* Filter : detect outline
  *
@@ -280,7 +280,7 @@ function filter_compose(dict) {
 	return function(img, img2) {
 		return img.map((e,i) => (i%4 == 3) ? 255 : op(e, img2[i]));
 	}; 
-};
+}
 
 /* Filter : gray scale
  *
@@ -781,7 +781,7 @@ function option_resize(dict) {
 
 		return data;
 	};
-};
+}
 
 /*
 exports.filter_cyanColoration = filter_cyanColoration;

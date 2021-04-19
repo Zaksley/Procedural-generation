@@ -32,6 +32,22 @@ function get_offset(coord, freq, percent, offset) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
+
+// Used in limitedWhiteNoise
+function getFourInterpolateCoordinates(i, j, x, y) {
+    let top = y - j + 1;
+    let bottom = y + j - 1;
+    let left = x - i + 1;
+    let right = x + i - 1;
+
+    while (top % j !== 0) top++;
+    while (bottom % j !== 0) bottom--;
+    while (left % i !== 0) left++;
+    while (right % i !== 0) right--;
+
+    return [top, bottom, left, right];
+}
+
 /* Function : is in shape
  * if not working properly try to split your shape into two
  *
@@ -274,22 +290,6 @@ function texture_regularShape(dict) {
     };
 }
 
-// Used in limitedWhiteNoise
-function getFourInterpolateCoordinates(i, j, x, y) {
-    let top = y - j + 1;
-    let bottom = y + j - 1;
-    let left = x - i + 1;
-    let right = x + i - 1;
-
-    while (top % j !== 0) top++;
-    while (bottom % j !== 0) bottom--;
-    while (left % i !== 0) left++;
-    while (right % i !== 0) right--;
-
-    return [top, bottom, left, right];
-}
-
-
 /* Texture : full black square
  * 
  * @param dict.colors    the color to fill (1-element array)
@@ -402,10 +402,28 @@ function texture_hexagonTiling(dict) {
             return realcolor3;
     };
 }
+// Used in limitedWhiteNoise
+function getFourInterpolateCoordinates(i, j, x, y) {
+    let top = y - j + 1;
+    let bottom = y + j - 1;
+    let left = x - i + 1;
+    let right = x + i - 1;
 
-/* Texture :
+    while (top % j !== 0) top++;
+    while (bottom % j !== 0) bottom--;
+    while (left % i !== 0) left++;
+    while (right % i !== 0) right--;
+
+    return [top, bottom, left, right];
+}
+/* Texture : Caire Tiling
  *
- *
+ * @param dict.size     side size of pentagons
+ * @param dict.angle    angle of the pentagon paving
+ * @param dict.colors   tiling colors (4-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_caireTiling(dict) {
 
@@ -443,6 +461,15 @@ function texture_caireTiling(dict) {
     };
 }
 
+/* Texture pentagon tiling 3 (WORK IN PROGRESS)
+ *
+ * @param dict.size     side size of pentagons
+ * @param dict.angle    angle of the pentagon paving
+ * @param dict.colors   tiling colors (3-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
+ */
 function texture_pentagonTiling3(dict) {
     const size = dict['size']       || 80;
     const angle = dict['angle']     || 110;
@@ -490,9 +517,15 @@ function texture_pentagonTiling3(dict) {
     };
 }
 
-/* Texture : 
+/* Texture pentagon tiling 4
  *
- *
+ * @param dict.size     side first size of pentagons
+ * @param dict.size2    side second size of pentagons
+ * @param dict.angle    angle of the pentagon paving
+ * @param dict.colors   tiling colors (4-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_pentagonTiling4(dict) {
     const a = dict['size']         || 50;
@@ -533,9 +566,13 @@ function texture_pentagonTiling4(dict) {
 
 }
 
-/* Texture : 
+/* Texture : 3D cube (rhombile tiling)
  *
- *
+ * @param dict.size     side first size of shapes
+ * @param dict.colors   tiling colors (3-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_3Dcube(dict) {
 
@@ -563,10 +600,14 @@ function texture_3Dcube(dict) {
             return colorR;
     };
 }
-
-/* Texture : 
+ 
+/* Texture : 3D gambar tiling
  *
- *
+ * @param dict.size     side first size of shapes
+ * @param dict.colors   tiling colors (3-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_3DgambarTiling(dict) {
 
@@ -627,9 +668,13 @@ function texture_elongatedTriangular(dict) {
     };
 }
 
-/* Texture : 
+/* Texture : snub square tiling
  *
- *
+ * @param dict.size     side first size of shapes
+ * @param dict.colors   tiling colors (3-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_snubSquare(dict) {
 
@@ -705,9 +750,13 @@ function texture_truncatedSquare(dict) {
     };
 }
 
-/* Texture : 
+/* Texture : truncated hexagon tiling
  *
- *
+ * @param dict.size     side first size of shapes
+ * @param dict.colors   tiling colors (4-element array)
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_truncatedHexagon(dict) {
 
@@ -720,31 +769,31 @@ function texture_truncatedHexagon(dict) {
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
-        const offset = get_offset(j, 2 * (2 * h + (1 + Math.sin(Math.PI / 6)) * size), 0.5, size * (1 + Math.cos(Math.PI / 6)));
+        const offset = get_offset(j, 2 * (2 * h + 1.5 * size), 0.5, size + h);
 
         // changing the color in order to match the pattern
-        const cond1 = ((i + 3 * offset) % (3 * (2 * size * (1 + Math.cos(Math.PI / 6)))) > (2 * size * (1 + Math.cos(Math.PI / 6))));
-        const cond2 = ((i + 3 * offset) % (3 * (2 * size * (1 + Math.cos(Math.PI / 6)))) > 2 * (2 * size * (1 + Math.cos(Math.PI / 6))));
+        const cond1 = ((i + 3 * offset) % (3 * (2 * (size + h))) > (2 * (size + h)));
+        const cond2 = ((i + 3 * offset) % (3 * (2 * (size + h))) > 2 * (2 * (size + h)));
         const realcolorH1 = cond1 ? (cond2 ? colorH3 : colorH2) : colorH1;
         const realcolorH2 = cond1 ? (cond2 ? colorH1 : colorH3) : colorH2;
         const realcolorH3 = cond1 ? (cond2 ? colorH2 : colorH1) : colorH3;
 
-        const [x, y] = ij2xy(i + offset, 2 * size * (1 + Math.cos(Math.PI / 6)), j, (2 * h + (1 + Math.sin(Math.PI / 6)) * size));
-        if (y < Math.sin(Math.PI / 6) * size) {
-            const p1 = 1 - (y / (Math.sin(Math.PI / 6) * size));
-            if (x - size / 2 < p1 * Math.cos(Math.PI / 6) * size)
+        const [x, y] = ij2xy(i + offset, 2 * (size + h), j, (2 * h + 1.5 * size));
+        if (y < size / 2) {
+            const p1 = 1 - (y / (size / 2));
+            if (x - size / 2 < p1 * h)
                 return realcolorH1;
-            else if (x - (3 / 2 + Math.cos(Math.PI / 6)) * size > (1 - p1) * Math.cos(Math.PI / 6) * size)
+            else if (x - (3 / 2 * size + h) > (1 - p1) * h)
                 return realcolorH2;
         }
-        else if (y < Math.sin(Math.PI / 6) * size + h) {
-            const p2 = 1 - (y - Math.sin(Math.PI / 6) * size) / h;
-            if (x < p2 * size / 2 || x - 2 * size * (3 / 4 + Math.cos(Math.PI / 6)) > (1 - p2) * size / 2)
+        else if (y < size / 2 + h) {
+            const p2 = 1 - (y - size / 2) / h;
+            if (x < p2 * size / 2 || x - (size * 3 / 2 + 2 * h) > (1 - p2) * size / 2)
                 return colorT;
         }
-        else if (y > (1 + Math.sin(Math.PI / 6)) * size + h) {
-            const p3 = (y - ((1 + Math.sin(Math.PI / 6)) * size + h)) / h;
-            if (x < p3 * size / 2 || x - 2 * size * (3 / 4 + Math.cos(Math.PI / 6)) > (1 - p3) * size / 2)
+        else if (y > 1.5 * size + h) {
+            const p3 = (y - (1.5 * size + h)) / h;
+            if (x < p3 * size / 2 || x - (size * 3 / 2 + 2 * h) > (1 - p3) * size / 2)
                 return colorT;
         }
         return realcolorH3;
@@ -769,29 +818,29 @@ function texture_smallRhombitrihexagonalTiling(dict) {
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
-        const offset = get_offset(j, 2 * (h + size * (1 + Math.sin(Math.PI / 6))), 0.5, (Math.cos(Math.PI / 6) + 1 / 2) * size);
+        const offset = get_offset(j, 2 * (h + size * 1.5), 0.5, h + size / 2);
 
-        const [x, y] = ij2xy(i + offset, (2 * Math.cos(Math.PI / 6) + 1) * size, j, h + size * (1 + Math.sin(Math.PI / 6)));
+        const [x, y] = ij2xy(i + offset, 2 * h + size, j, h + size * 1.5);
         // top 
         if (y < size / 2) {
-            if (x > Math.cos(Math.PI / 6) * size && x < (1 + Math.cos(Math.PI / 6)) * size)
+            if (x > h && x < h + size)
                 return colorS;
             else
                 return colorH;
         }
         // middle
-        else if (y < h + size * (1 / 2 + Math.sin(Math.PI / 6))) {
+        else if (y < h + size) {
             // color triangle
             const p1 = y < h + size / 2 ? (y - size / 2) / h % 1 : 1;
-            const p2 = y > (1 / 2 + Math.sin(Math.PI / 6)) * size ? 1 - ((y - (1 / 2 + Math.sin(Math.PI / 6)) * size) / h % 1) : 1;
-            if (x - Math.cos(Math.PI / 6) * size > p1 * size / 2 && x - Math.cos(Math.PI / 6) * size < (1 - p1 / 2) * size
-                || x - (1 / 2 + 2 * Math.cos(Math.PI / 6)) * size > p2 * size / 2 || x < (1 - p2) * size / 2)
+            const p2 = y > size ? 1 - ((y - size) / h % 1) : 1;
+            if (x - h > p1 * size / 2 && x - h < (1 - p1 / 2) * size
+                || x - (2 * h + size / 2) > p2 * size / 2 || x < (1 - p2) * size / 2)
                 return colorT;
             // color hexagon 
-            const p3 = y < (1 / 2 + Math.sin(Math.PI / 6)) * size ? ((y - size / 2) / (Math.sin(Math.PI / 6) * size)) % 1 : 1;
-            const p4 = y > h + size / 2 ? 1 - ((y - (h + size / 2)) / (Math.sin(Math.PI / 6) * size)) % 1 : 1;
-            if (x < (1 - p3) * size * Math.cos(Math.PI / 6) || x - (1 + Math.cos(Math.PI / 6)) * size > p3 * size * Math.cos(Math.PI / 6)
-                || x - size / 2 > p4 * size * Math.cos(Math.PI / 6) && x - size / 2 < (2 - p4) * Math.cos(Math.PI / 6) * size)
+            const p3 = y < size ? ((y - size / 2) / (size / 2)) % 1 : 1;
+            const p4 = y > h + size / 2 ? 1 - ((y - (h + size / 2)) / (size / 2)) % 1 : 1;
+            if (x < (1 - p3) * h || x - (h + size) > p3 * h
+                || x - size / 2 > p4 * h && x - size / 2 < (2 - p4) * h)
                 return colorH;
             // color square
             else
@@ -799,10 +848,97 @@ function texture_smallRhombitrihexagonalTiling(dict) {
         }
         // bottom
         else
-            if (x > size / 2 && x < (1 / 2 + 2 * Math.cos(Math.PI / 6)) * size)
+            if (x > size / 2 && x < 2 * h + size / 2)
                 return colorH;
             else
                 return colorS;
+    };
+}
+
+/* Texture : big rhombitrihexagonal tiling
+ *
+ * @param dict.size     side size of squares, hexagons and dodecagons
+ * @param dict.colors   square, hexagon & dodecagon colors
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (x,y) position 
+ */
+function texture_bigRhombitrihexagonalTiling(dict) {
+
+    const size = dict['size']       || 60;
+    const colors = dict['colors']   || [];
+    const colorS = dict['color1']   || colors[0] || COLORS.cyan;
+    const colorH = dict['color2']   || colors[1] || COLORS.orange;
+    const colorD = dict['color3']   || colors[2] || COLORS.blue;
+
+    return function(i, j) {
+        const h = Math.sqrt(3) * size / 2;
+        const offset = get_offset(j, 2 * (h + size * 1.5), 0.5, size * 1.5 + 3 * h);
+
+        const [x, y] = ij2xy(i + offset, 3 * size + 6 * h, j, h + size * 1.5);
+
+        // top 
+        if (y < size) {
+            if (x < size)
+                return colorS;
+            else if (x < size + 2 * h || x >= 3 * size + 4 * h)
+                return colorH;
+            else 
+                return colorD;
+        }
+        // bottom
+        else {
+            const p1 = (y - size) / (size / 2);
+            const p2 = (y - 3 / 2 * size) / h;
+            const p3 = (y - (size + h)) / (size / 2);
+            const p4 = (y - size) / h;
+            if (x - size > p1 * h && x - (size + h) < (1 - p1) * h || x - (3 * size + 4 * h) > p1 * h && x - (3 * size + 5 * h) < (1 - p1) * h)
+                return colorH;
+            else if (x - (3 / 2 * size + h) > (1 - p3) * h && x - (3 / 2 * size + 2 * h) < p3 * h || x - (5 / 2 * size + 3 * h) > (1 - p3) * h && x - (5 / 2 * size + 4 * h) < p3 * h)
+                return colorH;
+            else if (x - (size + h) < p2 * size / 2 || x - (5 / 2 * size + 5 * h) > (1 - p2) * size / 2)
+                return colorD;
+            else if (x - (size + 2 * h) > p4 * size / 2 && x - (5 / 2 * size + 4 * h) < (1 - p4) * size / 2)
+                return colorD;
+            else
+                return colorS;           
+        }
+    };
+}
+
+/* Texture : snub hexagonal tiling
+ *
+ * @param dict.size     side size of triangles and hexagons
+ * @param dict.colors   triangle & hexagon colors
+ * @param (i,j)         coordinates of the pixel
+ * @precond each color must be a 4-element array (rgba format)
+ * @return a colored pixel corresponding to (x,y) position 
+ */
+function texture_snubHexagonal(dict) {
+    const size = dict['size']       || 60;
+    const colors = dict['colors']   || [];
+    const colorH = dict['color1']   || colors[0] || COLORS.cyan;
+    const colorT1 = dict['color2']   || colors[1] || COLORS.orange;
+    const colorT2 = dict['color3']   || colors[2] || COLORS.blue;
+
+    return function(i, j) {
+        const h = Math.sqrt(3) * size / 2;
+        const offset = Math.floor(j / (3 * h)) * 6.5 * size;
+
+        const [x, y] = ij2xy(i + offset, 7 * size, j, 3 * h);
+
+        const p1 = y / h;
+        const p2 = (y - h) / h;
+        const p3 = (y - 2 * h) / h;
+
+        if (x > (1 - p1) * size / 2 && x - 3 / 2 * size < p1 * size / 2 && x > p2 * size / 2 && x - 3 / 2 * size < (1 - p2) * size / 2 && y < 2 * h)
+            return colorH;
+        else if (x - 5 / 2 * size > (1 - p2) * size / 2 && x - 4 * size < p2 * size / 2 && x - 5 / 2 * size > p3 * size / 2 && x - 4 * size < (1 - p3) * size / 2 && y >= h)
+            return colorH;
+        else if (x - 5 * size > (1 - p3) * size / 2 && x - 6.5 * size < p3 * size / 2 && y >= 2 * h || x - 4.5 * size > p1 * size / 2 && x - 6 * size < (1 - p1) * size / 2 && y < h)
+            return colorH;
+        else
+            return texture_triangleTiling({size: size, colors: [colorT1, colorT2]})(x + size / 2, y);
     };
 }
 
