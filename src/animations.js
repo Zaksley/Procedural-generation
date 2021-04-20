@@ -187,7 +187,7 @@ function animated_randomFunction() {
     }
 
     function getColors(seed, n) {
-        const f = (w, x) => (Math.abs(w * x - 255) % 512);
+        const f = (w, x) => ((w * x) % 256);
         let colors = [];
         for(let k = 0; k < n; k++) {
             colors.push([]);
@@ -203,7 +203,7 @@ function animated_randomFunction() {
         const seed = getRandomInt(1000000);
         const texturedict = {size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
             branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
-        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 1, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
+        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
 
         const textureList = [texture_3Dcube, texture_3DgambarTiling, texture_bigRhombitrihexagonalTiling,
         texture_caireTiling, texture_elongatedTriangular, texture_hexagonTiling, texture_horizontalGradient, 
@@ -215,19 +215,22 @@ function animated_randomFunction() {
 
         const texture = textureList[seed % textureList.length];
         const func = [funcList[seed % funcList.length](funcdict)];
-        return add_animation({texture: texture(texturedict), function: func});
+        const time = seed % 180 + 20;
+        return {time: time, func: add_animation({texture: texture(texturedict), function: func})};
     }
 
     let States = makeInfiniteStates(nextTexture());
     let state = 0;
     let new_state = 0;
+    let time = States.val.time;
     return function (x, y, dt) {
-        new_state = Math.round(dt / 100);
+        new_state = Math.round(dt / time);
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
+            time = States.val.time;
         }
-        return States.val(x, y, dt);
+        return States.val.func(x, y, dt);
     };
 }
 
