@@ -57,7 +57,7 @@ function getFourInterpolateCoordinates(i, j, x, y) {
  */
 function isInShape(coords) {
     if (coords.length < 3)
-        return ((x, y) => false);
+        return (() => false);
     if (!isClockwise(coords))
         coords.reverse();
     let nbShapes = -1;
@@ -192,14 +192,16 @@ function isInShape(coords) {
 }
 
 function testInShape(dict) {
-    //const coords = [[100, 100], [200, 125], [300, 125], [400, 100], [375, 200], [375, 300],  [400, 400], [300, 375], [200, 375], [100, 400], [125, 300], [125, 200]];
-    const coords = [[100, 100], [225, 200], [250, 150], [275, 200], [400, 100], [300, 225], [350, 250], [300, 275], [400, 400], [275, 300], [250, 350], [225, 300], [100, 400], [200, 275], [150, 250], [200, 225]];
-    const testIsInShape = isInShape(coords);
-    return function(x, y) {
-        if (testIsInShape(x, y))
-            return COLORS.black;
-        return COLORS.grey;
-    };
+
+   let coords = dict['coords']   || [];
+   //const coords = [[100, 100], [200, 125], [300, 125], [400, 100], [375, 200], [375, 300],  [400, 400], [300, 375], [200, 375], [100, 400], [125, 300], [125, 200]];
+   coords = [[100, 100], [225, 200], [250, 150], [275, 200], [400, 100], [300, 225], [350, 250], [300, 275], [400, 400], [275, 300], [250, 350], [225, 300], [100, 400], [200, 275], [150, 250], [200, 225]];
+   const testIsInShape = isInShape(coords);
+   return function(x, y) {
+      if (testIsInShape(x, y))  
+         return COLORS.black;
+      return COLORS.grey;
+   };
 }
 
 /* Texture : texture star
@@ -299,12 +301,14 @@ function texture_regularShape(dict) {
  */
 function texture_solid(dict) {
 
-    const colors = dict['colors']   || [];
-    const color = dict['color1']    || colors[0] || COLORS.cyan;
+   const colors = dict['colors']   || [];
+   const color = dict['color1']    || colors[0] || COLORS.cyan;
 
-    return function (x, y) {
-        return color;
-    };
+   return function (x, y) {
+      void(x);
+      void(y);
+      return color;
+   };
 }
 
 /* Texture : multiple horizontal color1-to-color2 gradients
@@ -326,6 +330,7 @@ function texture_horizontalGradient(dict) {
     const color2 = dict['color2']   || colors[1] || COLORS.cyan;
 
     return function (x, y) {
+        void(y);
         return [0, 0, 0, 0].map((e, i) =>
             Math.floor(color1[i] * ((n * (width - x)) % width) / width
                 + color2[i] * ((n * x) % width) / width));
@@ -402,20 +407,7 @@ function texture_hexagonTiling(dict) {
             return realcolor3;
     };
 }
-// Used in limitedWhiteNoise
-function getFourInterpolateCoordinates(i, j, x, y) {
-    let top = y - j + 1;
-    let bottom = y + j - 1;
-    let left = x - i + 1;
-    let right = x + i - 1;
 
-    while (top % j !== 0) top++;
-    while (bottom % j !== 0) bottom--;
-    while (left % i !== 0) left++;
-    while (right % i !== 0) right--;
-
-    return [top, bottom, left, right];
-}
 /* Texture : Caire Tiling
  *
  * @param dict.size     side size of pentagons
@@ -1115,10 +1107,14 @@ function texture_perlinNoise(row) {
 
 
 function texture_whiteNoise() {
-    return (x, y) => [getRandomInt(256),
-    getRandomInt(256),
-    getRandomInt(256),
-        255];
+   return function(x,y){
+      void(x);
+      void(y);
+      return [getRandomInt(256),
+      getRandomInt(256),
+      getRandomInt(256),
+      255];
+   }
 }
 
 
@@ -1229,7 +1225,7 @@ function texture_Voronoi(dict) {
     const height = dict['height']   || HEIGHT;
     const nb_case = dict['germs']   || 10;
 
-    let count = 0;
+    //let count = 0; //NOT USED
     let stock_germs = {};
     for (let i = 0; i < nb_case; i++) {
         stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
@@ -1241,7 +1237,7 @@ function texture_Voronoi(dict) {
         let min = [0, 0];
         let gx = 0;
         let gy = 0;
-        count += 1;
+        //count += 1; //NOT USED
         for (let i = 1; i < nb_case; i++) {
 
             gx = stock_germs[i][0];
@@ -1273,13 +1269,14 @@ function texture_Voronoi(dict) {
         return scalar_x + scalar_y;
     }
 
-    function smoothstep(dist_1, dist_2, epsilon) {
-        if (Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon) {
-            return true;
-        }
+    // NOT USED
+    // function smoothstep(dist_1, dist_2, epsilon) {
+    //     if (Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon) {
+    //         return true;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     // Voronoï calcul for (x, y) coordinate 
     return (x, y) => {
@@ -1291,7 +1288,7 @@ function texture_Voronoi(dict) {
 
         let gx_2 = stock_germs[min[1]][0];
         let gy_2 = stock_germs[min[1]][1];
-        let dist_2 = distance(x, y, gx_2, gy_2);
+        //let dist_2 = distance(x, y, gx_2, gy_2); //NOT USED
 
         /*
             if (x === 50 && y === 95)
@@ -1306,7 +1303,7 @@ function texture_Voronoi(dict) {
 
         // It's a GERM 
         let r = 4;
-        let bord = 2;
+        //let bord = 2; //NOT USED
         if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
 
         /*
@@ -1324,7 +1321,7 @@ function texture_Voronoi(dict) {
 
         else return [255, 0, 0, 255]; //colors.red;
     };
-};
+}
 
 
 function getMooreNeighborsState(grid, cell)
@@ -1487,7 +1484,7 @@ function texture_triangularFractal(dict) {
     const color = colors[0]             || dict['color1'] || COLORS.black;
 
     return function (i, j) {
-        const offset = 125;
+        //const offset = 125;
         /*
         if (x + d / 2 > p * width / 2 && x - d / 2 < p * width / 2 && x < width / 2 && x >= - d / 2 && y <= height + d / 2
                 || x - width / 2 - d / 2 < (1 - p) * width / 2 && x - width / 2 + d / 2 > (1 - p) * width / 2 && x >= width / 2 && x <= width + d / 2 && y <= height + d / 2
@@ -1510,7 +1507,7 @@ function texture_triangularFractal(dict) {
             }
         return triangle(width_init, height_init, 0, 0);
     };
-};
+}
 
 function texture_squareFractal(dict) {
 
@@ -1550,10 +1547,10 @@ function texture_squareFractal(dict) {
             return square(width/(3), height/(3), x_newoffset, y_newoffset, lvl-1);
          } else {
             return color1;
-         };
-      };
+         }
+      }
 
       return square(width_init, height_init, 0, 0, n-1);
    };
 
-};
+}

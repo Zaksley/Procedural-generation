@@ -196,7 +196,7 @@ exports.generateAnimation = generateAnimation;
 
 // ========== TEXTURE (only one) ==========
 // Usage : let data = generateTexture(CANVAS, [texture], <...args>);*/
-let data =
+//let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);

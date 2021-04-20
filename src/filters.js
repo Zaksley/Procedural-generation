@@ -69,10 +69,10 @@ function filter_rotation(dict) {
 						data[m + 1] = img[n + 1];
 						data[m + 2] = img[n + 2];
 						data[m + 3] = img[n + 3];
-					};
-				};
-			};
-		};
+					}
+				}
+			}
+		}
 		return data;
 	};
 }
@@ -302,12 +302,12 @@ function filter_greyScale(dict) {
 				for(let k = 0; k < 3; k++) {
 					data[(y*width + x)*4 + k] = val;
 					data[(y*width + x)*4 + 3] = 255; 
-				};
-			};
-		};
+				}
+			}
+		}
 		return data;
 	};
-};
+}
 
 /* Filter : color channel separation
  *
@@ -327,12 +327,12 @@ function filter_getRGBChannel(dict) {
 		case 'r': v = 0; break;
 		case 'g': v = 1; break;
 		case 'b': v = 2; break;
-	};
+	}
 
 	return function(img) {
 		return img.map((e,i) => (i%4===3) ? 255 : ((i%4===v) ? e : img[(i-i%4)+v]) );
 	};
-};
+}
 
 /* Gathers separate images and select RGB channel values
  *
@@ -346,9 +346,9 @@ function gatherRGBChannels(red, green, blue) {
 		if(i%4 === 0) return red[i];
 		if(i%4 === 1) return green[i];
 		return blue[i];
-	};
+	}
 	return red.map((e,i) => (i%4===3) ? 255 : selectChannel(i));
-};
+}
 
 /* Filter : HSL channel separation
  *
@@ -383,7 +383,7 @@ function filter_getHSLChannel(dict) {
 						case pixel[0]: val = ((pixel[1]-pixel[2])/(delta)); break;
 						case pixel[1]: val = 2 + (pixel[2]-pixel[0])/(delta); break;
 						case pixel[2]: val = 4 + (pixel[0]-pixel[1])/(delta); break;
-					};
+					}
 					val = ((val*60 + 360)%360)/360;
 				if(c === 's')
 					//val = (maxColor - minColor === 0) ? 0 : ((maxColor - minColor)/);
@@ -394,13 +394,12 @@ function filter_getHSLChannel(dict) {
 				for(let k = 0; k < 3; k++) {
 					data[(y*width + x)*4 + k] = val*255;
 					data[(y*width + x)*4 + 3] = 255; 
-				};
-
-			};
-		};
+				}
+			}
+		}
 		return data;
 	};
-};
+}
 
 /* Gathers separate images by recomputing RGB channel from HSL values
  *
@@ -424,7 +423,7 @@ function gatherHSLChannels(hue, sat, lum) {
 				Rp = X, Gp = C, Bp = 0;
 			}else{
 				Rp = 0, Gp = C, Bp = X;
-			};
+			}
 		}else{
 			if(H < 240){
 				Rp = 0, Gp = X, Bp = C;
@@ -432,18 +431,18 @@ function gatherHSLChannels(hue, sat, lum) {
 				Rp = X, Gp = 0, Bp = C;
 			}else{
 				Rp = C, Gp = 0, Bp = X;
-			};
-		};
+			}
+		}
 
 		switch(c) {
-			case 0: return 255*(Rp+m); break;
-			case 1: return 255*(Gp+m); break;
-			case 2: return 255*(Bp+m); break;
-		};
-	};
+			case 0: return 255*(Rp+m);
+			case 1: return 255*(Gp+m);
+			case 2: return 255*(Bp+m);
+		}
+	}
 
 	return hue.map((e,i) => (i%4===3) ? 255 : HSLtoRGB(360*e/256, sat[i]/256, lum[i]/256, i%4) );
-};
+}
 
 /* Generates a gaussian blur mask
  * @param r the mask radius
@@ -453,16 +452,16 @@ function gatherHSLChannels(hue, sat, lum) {
 function gaussianMask(r, stdev) {
 	const len = 2*r + 1;
 	const V = stdev**2;
-	let mask = new Array(len).fill().map(e => Array(len).fill(0));
+	let mask = new Array(len).fill().map(() => Array(len).fill(0));
 
 	for(let i = 0; i < len; i++) {
 		for(let j = 0; j < len; j++) {
 			mask[i][j] = Math.exp( -(((i-r)**2 + (j-r)**2) / (2*V) ) ) / (2*Math.PI*V);
-		};
-	};
+		}
+	}
 	const sum = mask.reduce((acc, e) => acc + e.reduce((acc2, e2) => acc2+e2), 0);
 	return mask.map(e => e.map(e2 => e2/sum));
-};
+}
 
 /* Applies a convolution filter to an image
  * 
@@ -508,8 +507,8 @@ function applyMask(img, width, height, mask, method="mirror") {
 				topHl = -yval;
 				bottomHl = 2*height-1-yval;
 			break;
-		};
-	};
+		}
+	}
 
 	for(let y = 0; y < height; y++) {
 		for(let x = 0; x < width; x++) {
@@ -524,31 +523,31 @@ function applyMask(img, width, height, mask, method="mirror") {
 
 						if(y+i-maskLenY >= 0) {
 							if(y+i-maskLenY < width)
-							 	col = y+i-maskLenY;
+								col = y+i-maskLenY;
 							else col = rightHl;
 						} else col = leftHl;
 
 						if(x+j-maskLenX >= 0) {
 							if(x+j-maskLenX < height)
-							 	row = x+j-maskLenX;
+								row = x+j-maskLenX;
 							else row = bottomHl;
 						} else row = topHl;
 
 						imgIndex = ((col)*width + row)*4 + k;
 						acc[k] += mask[i][j]*img[imgIndex];
-					};
-				};
-			};
+					}
+				}
+			}
 
 			data[(y*width + x)*4] 	  = Math.abs(acc[0]);
 			data[(y*width + x)*4 + 1] = Math.abs(acc[1]);
 			data[(y*width + x)*4 + 2] = Math.abs(acc[2]);
 			data[(y*width + x)*4 + 3] = 255;
 
-		};
-	};
+		}
+	}
 	return data;
-};
+}
 
 /* Filter : Sobel outline detection
  * 
@@ -569,8 +568,8 @@ function filter_sobel(dict) {
 		const Gx = applyMask(data, width, height, horizontalMask);
 		const Gy = applyMask(data, width, height, verticalMask);
 		return Gx.map((e,i) => (i%4 === 3) ? 255 : 255*Math.sqrt((e/255)**2 + (Gy[i]/255)**2));
-	};
-};
+	}
+}
 
 /* Filter : Canny outline detection
  * 
@@ -611,7 +610,7 @@ function filter_canny(dict) {
 			if(e >= G[i-4] && e >= G[i+4] && e >= G[i-(width)*4] && e >= G[i+(width)*4])
 				return true;
 			return false;
-		};
+		}
 		data = G.map((e,i) => (i%4 === 3) ? 255 : (isLocalMaxima(e, i) ? e : 0) );
 
 		// Outline tresholding (Hysteresis filter)
@@ -624,15 +623,14 @@ function filter_canny(dict) {
 				if(accepted[i-1] === 1 || accepted[i-width] === 1) {
 					accepted[i] = 1;
 					return 255;
-				};
-			} else {
-				return 0;
-			};
-		};
+				}
+			}
+			return 0;
+		}
 		const O = data.map((e,i) => (i%4 === 3) ? 255 : tresholding(e/255, (i-i%4)/4) );
 		return O;
-	};
-};
+	}
+}
 
 /* Filter : Sharpness enhancement
  * 
@@ -650,8 +648,8 @@ function filter_sharpness(dict) {
 	return function(img) {
 		const mask = [[0,-ity,0],[-ity,1+4*ity,-ity],[0,-ity,0]];
 		return applyMask(img, width, height, mask);
-	};
-};
+	}
+}
 
 /* Filter : Normalized box blur
  * 
@@ -668,10 +666,10 @@ function filter_box_blur(dict) {
 
 	return function(img) {
 		const len = 2*radius + 1;
-		const mask = new Array(len).fill().map(e => Array(len).fill(1/(len**2)));
+		const mask = new Array(len).fill().map(() => Array(len).fill(1/(len**2)));
 		return applyMask(img, width, height, mask);
-	};
-};
+	}
+}
 
 /* Filter : Gaussian blur
  * 
@@ -691,8 +689,8 @@ function filter_gaussian_blur(dict) {
 	return function(img) {
 		const mask = gaussianMask(radius, stdev);
 		return applyMask(img, width, height, mask);
-	};
-};
+	}
+}
 
 /* Filter : Unsharp masking (Gaussian method)
  * 
@@ -722,7 +720,7 @@ function filter_gaussian_unsharp_masking(dict) {
 		
 		return gatherHSLChannels(H, S, Lp);
 	};
-};
+}
 
 /* Filter : Unsharp masking (Linear method)
  * 
@@ -745,7 +743,7 @@ function filter_unsharp_masking(dict) {
 		// (see gaussian_unsharp_masking for more)
 		return applyMask(img, width, height, unsharpMask);
 	};
-};
+}
 
 /* Filter : Adjust luminosity
  * 
@@ -767,7 +765,7 @@ function filter_luminosity(dict) {
 		const Lp = L.map((e,i) => (i%4===3) ? 255 : Math.min(255, l*e));
 		return gatherHSLChannels(H,S,Lp);
 	};
-};
+}
 
 /* Filter : Adjust saturation
  * 
@@ -789,7 +787,7 @@ function filter_saturation(dict) {
 		const Sp = S.map((e,i) => (i%4===3) ? 255 : Math.min(255, s*e));
 		return gatherHSLChannels(H,Sp,L);
 	};
-};
+}
 
 /* Filter : Hue shift
  * 
@@ -811,7 +809,7 @@ function filter_hueShift(dict) {
 		const Hp = H.map((e,i) => (i%4===3) ? 255 : Math.min(255, h*e));
 		return gatherHSLChannels(Hp,S,L);
 	};
-};
+}
 
 /* Filter : Adjust contrast
  * 
@@ -830,8 +828,8 @@ function filter_contrast(dict) {
 		const cp = (c-1)*255;
 		const F = 259*(cp + 255)/(255*(259 - cp));
 		return img.map((e,i) => (i%4===3) ? 255 : (F*(e-128) + 128) );
-	};
-};
+	}
+}
 
 /* Filter : zoom
  *
@@ -860,13 +858,13 @@ function option_resize(dict) {
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 1] = img[i*height*4 + j*4 + 1];
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 2] = img[i*height*4 + j*4 + 2];
 						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 3] = img[i*height*4 + j*4 + 3];
-					};
-				};
-			};
-		};
+					}
+				}
+			}
+		}
 
 		return data;
-	};
+	}
 }
 
 /*
