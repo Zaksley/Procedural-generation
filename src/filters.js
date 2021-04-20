@@ -278,7 +278,7 @@ function filter_compose(dict) {
 	}
 
 	return function(img, img2) {
-		return img.map((e,i) => (i%4 == 3) ? 255 : op(e, img2[i]));
+		return img.map((e,i) => (i%4 === 3) ? 255 : op(e, img2[i]));
 	}; 
 }
 
@@ -568,7 +568,7 @@ function filter_sobel(dict) {
 		const Gx = applyMask(data, width, height, horizontalMask);
 		const Gy = applyMask(data, width, height, verticalMask);
 		return Gx.map((e,i) => (i%4 === 3) ? 255 : 255*Math.sqrt((e/255)**2 + (Gy[i]/255)**2));
-	}
+	};
 }
 
 /* Filter : Canny outline detection
@@ -629,7 +629,7 @@ function filter_canny(dict) {
 		}
 		const O = data.map((e,i) => (i%4 === 3) ? 255 : tresholding(e/255, (i-i%4)/4) );
 		return O;
-	}
+	};
 }
 
 /* Filter : Sharpness enhancement
@@ -648,7 +648,7 @@ function filter_sharpness(dict) {
 	return function(img) {
 		const mask = [[0,-ity,0],[-ity,1+4*ity,-ity],[0,-ity,0]];
 		return applyMask(img, width, height, mask);
-	}
+	};
 }
 
 /* Filter : Normalized box blur
@@ -668,7 +668,7 @@ function filter_box_blur(dict) {
 		const len = 2*radius + 1;
 		const mask = new Array(len).fill().map(() => Array(len).fill(1/(len**2)));
 		return applyMask(img, width, height, mask);
-	}
+	};
 }
 
 /* Filter : Gaussian blur
@@ -689,7 +689,7 @@ function filter_gaussian_blur(dict) {
 	return function(img) {
 		const mask = gaussianMask(radius, stdev);
 		return applyMask(img, width, height, mask);
-	}
+	};
 }
 
 /* Filter : Unsharp masking (Gaussian method)
@@ -755,8 +755,6 @@ function filter_unsharp_masking(dict) {
 function filter_luminosity(dict) {
 
 	const l = dict['intensity']		|| 1.2;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
 
 	return function(img) {
 		const H = filter_getHSLChannel({c:'h'})(img);
@@ -777,8 +775,6 @@ function filter_luminosity(dict) {
 function filter_saturation(dict) {
 
 	const s = dict['intensity']		|| 1.2;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
 
 	return function(img) {
 		const H = filter_getHSLChannel({c:'h'})(img);
@@ -799,8 +795,6 @@ function filter_saturation(dict) {
 function filter_hueShift(dict) {
 
 	const h = dict['intensity']		|| 1.2;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
 
 	return function(img) {
 		const H = filter_getHSLChannel({c:'h'})(img);
@@ -821,14 +815,12 @@ function filter_hueShift(dict) {
 function filter_contrast(dict) {
 
 	const c = dict['intensity']		|| 1.2;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
 
 	return function(img) {
 		const cp = (c-1)*255;
 		const F = 259*(cp + 255)/(255*(259 - cp));
 		return img.map((e,i) => (i%4===3) ? 255 : (F*(e-128) + 128) );
-	}
+	};
 }
 
 /* Filter : zoom
@@ -864,7 +856,7 @@ function option_resize(dict) {
 		}
 
 		return data;
-	}
+	};
 }
 
 /*
