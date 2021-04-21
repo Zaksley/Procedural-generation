@@ -186,6 +186,96 @@ function generateImage(canvas, data) {
     for (let i = 0; i < image.data.length; i++) image.data[i] = data[i];
     context.putImageData(image, 0, 0);
 }
+
+/* Generates an image array from a json dictionnary
+ * (Used in both HTML & Node generation functions)
+ *
+ * @param jsondata a json dictionnary with function names/parameters
+ * @return an image array
+ */
+function generateArrayFromJson(jsondata) {
+
+    // Texture functions
+    let textures_func = ["horizontalGradient",
+        "solid", "hexagonTiling", "triangleTiling","caireTiling","pentagonTiling3",
+        "3Dcube","3DgambarTiling","elongatedTriangular","sunbSquare","snubHexagonal",
+        "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
+        "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
+        "whiteNoise","Voronoi","forestFire","gameOfLife","triangularFractal","squareFractal",
+        "star","doubleStar","regularShape"];
+
+    // One-texture filters
+    let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
+    "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
+    "sharpness","box_blur","gaussian_blur","gaussian_unsharp_masking","unsharp_masking",
+    "luminosity","saturation","contrast","hueShift","resize"];
+
+    // Two-textures filters
+    let doublefilters_func = ["compose"];
+
+    // Textures & filters parameters
+    let params = ["size","size2","angle","columns","rows","treepP","lightP","step","germs","branches",
+    "depth","centerx","centery","color1","color2","color3","color4"];
+
+    /* Recursive function building a dictionnary for the current filter/texture
+     *
+     * @param dict the dictionnary to explore
+     * @param paramsOnly true if the function only searches for parameters (no filters/textures)
+     * @param searchModel searchs for or returns a second texture (see below)
+     * @return if searchModel === "search" then returns texture name, else returns parameters dictionnary
+     */
+    function generateLevel(dict, paramsOnly=false, searchModel="") {
+        /* searchModels :
+         * "" : No texture searching
+         * "--search" : Return first texture name found
+         * other : Search for a texture except "other"
+         */
+        let levelArgs = {};
+
+        for(let key in dict) {
+
+            // The key is a parameter
+            if(params.includes(key)){
+                //console.log("FOUND PARAMETER " + key);
+                let value = dict[key];
+                // A known color is found
+                if(key.substring(0,5) === "color" && !Array.isArray(dict[key])){
+                    value = getColor(dict[key]);
+                }
+                levelArgs[key] = value;
+                continue;
+            }
+
+            // The key is a texture function
+            if(paramsOnly === false && textures_func.includes(key) && searchModel != key){
+                //console.log("FOUND TEXTURE " + key);
+                if(searchModel === "--search") return key;
+                return generateTexture(CANVAS, window["texture_" + key](generateLevel(dict[key])));
+            }
+
+            // The key is a 1-image filter
+            if(paramsOnly === false && filters_func.includes(key)){
+                //console.log("FOUND FILTER " + key);
+                return window["filter_" + key](generateLevel(dict[key], true))(generateLevel(dict[key], false));
+            }
+
+            // The key is a 2-image filter
+            if(paramsOnly === false && doublefilters_func.includes(key)){
+                //console.log("FOUND COMPOSING FILTER " + key);
+                let firstImg = generateLevel(dict[key], false, "--search");
+                return window["filter_" + key](generateLevel(dict[key], true))
+                    (generateLevel(dict[key], false), generateLevel(dict[key], false, firstImg));
+            }
+
+            // Unrecognized key
+            //else throw new Error("Invalid key (filter, texture or parameter not recognized).");
+        }
+        return levelArgs;
+    }
+    return generateLevel(jsondata);
+}
+
+
 /*
 exports.generateTexture = generateTexture;
 exports.generateImage = generateImage;
@@ -249,4 +339,4 @@ exports.generateAnimation = generateAnimation;
 //generateAnimation(CANVAS, add_animation({function: translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), texture: add_animation({ texture: yin_yang({ colors: [[50, 150, 50, 255]]}), function: rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt}) }) }) );
 //generateAnimation(CANVAS, add_animation({ function: [translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
 //generateAnimation(CANVAS, animated_forestFire({}));
-generateAnimation(CANVAS, animated_randomFunction());
+//generateAnimation(CANVAS, animated_randomFunction());

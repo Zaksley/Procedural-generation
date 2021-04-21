@@ -829,7 +829,7 @@ function filter_contrast(dict) {
  * @param height image height
  * @param n zoom intensity
  */
-function option_resize(dict) {
+function filter_resize(dict) {
 
 	const width = dict['width']		|| WIDTH;
 	const height = dict['height']	|| HEIGHT;
