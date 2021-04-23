@@ -348,18 +348,39 @@ function texture_solid(dict) {
 // updated
 function texture_horizontalGradient(dict) {
 
-    const width = dict['width']     || WIDTH;
-    const n = dict['columns']       || 3;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.blue;
-    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+   const width = dict['width']     || WIDTH;
+   const n = dict['columns']       || 3;
+   const a = dict['angle']         || 0;
+   const colors = dict['colors']   || [];
+   const color1 = dict['color1']   || colors[0] || COLORS.blue;
+   const color2 = dict['color2']   || colors[1] || COLORS.cyan;
 
-    return function (x, y) {
-        void(y);
-        return [0, 0, 0, 0].map((e, i) =>
-            Math.floor(color1[i] * ((n * (width - x)) % width) / width
-                + color2[i] * ((n * x) % width) / width));
-    };
+   return function (x, y) {
+      function mod(n,m){
+         let r = n%m;
+         return (r >= 0 ? r : mod(r+m,m));
+      }
+      const ap = mod(a,360);
+      const th = 2*Math.PI*ap/360;
+      const length = (ap%90 === 0) ? width : width*Math.sqrt(2);
+      let pos = (Math.cos(th)*x - Math.sin(th)*(y-width));
+      if(ap >= 180){
+         if(ap >= 270){
+            pos = pos - width*Math.sin(th);
+         }else{
+            pos = pos - width*(Math.cos(th)+Math.sin(th));
+         }
+      }else{
+         if(ap >= 90){
+            pos = pos - width*Math.cos(th);
+         }
+      }
+      //console.log(length);
+      return [0,0,0].map((e,i) => Math.floor(
+            color1[i]* ((n*(length-pos))%(length+1)) / length
+          + color2[i]* ((n*(pos))%(length+1)) / length
+         )).concat(255);
+   };
 }
 
 /* Texture : paving of color1 and color2 triangles

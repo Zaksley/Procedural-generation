@@ -198,7 +198,7 @@ function generateArrayFromJson(jsondata) {
     // Texture functions
     let textures_func = ["horizontalGradient",
         "solid", "hexagonTiling", "triangleTiling","caireTiling","pentagonTiling3",
-        "3Dcube","3DgambarTiling","elongatedTriangular","sunbSquare","snubHexagonal",
+        "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","triangularFractal","squareFractal",
@@ -215,14 +215,15 @@ function generateArrayFromJson(jsondata) {
 
     // Textures & filters parameters
     let params = ["size","size2","angle","columns","rows","treepP","lightP","step","germs","branches",
-    "depth","centerx","centery","color1","color2","color3","color4"];
+    "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
+    "operation"];
 
     /* Recursive function building a dictionnary for the current filter/texture
      *
      * @param dict the dictionnary to explore
      * @param paramsOnly true if the function only searches for parameters (no filters/textures)
      * @param searchModel searchs for or returns a second texture (see below)
-     * @return if searchModel === "search" then returns texture name, else returns parameters dictionnary
+     * @return if searchModel === "--search" then returns texture name, else returns parameters dictionnary
      */
     function generateLevel(dict, paramsOnly=false, searchModel="") {
         /* searchModels :

@@ -228,7 +228,7 @@ function filter_detectOutline(dict) {
 
 function filter_compose(dict) {
 
-	const operation = dict['operator'] || 'plus';
+	const operation = dict['operation'] || 'plus';
 	let op = (e) => (e);
 	let D = 1;
 	switch(operation) {
@@ -472,7 +472,7 @@ function gaussianMask(r, stdev) {
  * @param method the edge management method
  * @return the filtered image
  */
-function applyMask(img, width, height, mask, method="mirror") {
+function applyMask(img, width, height, mask, method="extension") {
 	let data = img.slice();
 	const maskLenX = Math.floor(mask.length/2);
 	const maskLenY = Math.floor(mask[0].length/2);
