@@ -92,7 +92,7 @@ function showTextureOptions(value){
 	switch(value){
 		// General
 			case "solid": 				options = ["color1"]; break;
-			case "horizontalGradient": 	options = ["columns", "color1", "color2"]; break;
+			case "horizontalGradient": 	options = ["columns", "fullangle", "color1", "color2"]; break;
 			case "star": 				options = ["size", "branches", "centerx", "centery", "color1", "color2"]; break;
 			case "regularShape": 		options = ["size", "branches", "centerx", "centery", "color1", "color2"]; break;
 		// Regular tilings

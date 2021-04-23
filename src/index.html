@@ -91,7 +91,7 @@ textarea {
 		</script>
 
 		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
-			<option selected>No texture selected</option>
+			<option value="none" selected>No texture selected</option>
 			<optgroup label="Specific Textures">
 				<option value="solid">Solid color</option>
 				<option value="horizontalGradient">Color gradients</option>
@@ -197,11 +197,18 @@ textarea {
 			onchange="DICT['germs'] = parseInt(this.value); regenerateImage();">
 		</div>
                 
-		<!-- ANGLE -->
+		<!-- ANGLE (90-180) -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
 			<input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
 			onchange="DICT['angle'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- ANGLE (0-360) -->
+		<div class="textureOption fullangle" style="display:none">
+			<p>Angle : <b id="fullangle">45</b>°</p>
+			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle', this.value*15)"
+			onchange="DICT['angle'] = parseInt(this.value*15); regenerateImage();">
 		</div>
 
 		<!-- BRANCHES -->
@@ -220,7 +227,7 @@ textarea {
 
 		<!-- CENTER X -->
 		<div class="textureOption centerx" style="display:none">
-			<p>Horizontal centering : <b id="centerx">250</b></p>
+			<p>Horizontal centering : <b id="centerx">0.5</b></p>
 			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centerx', this.value*10/WIDTH)"
 			onchange="DICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
 		</div>

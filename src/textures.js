@@ -317,7 +317,17 @@ function texture_regularShape(dict) {
     };
 }
 
-/* Texture : full black square
+/* Texture : transparent image
+ *
+ * @return a transparent pixel
+ */
+function texture_none() {
+   return function() {
+      return [0,0,0,0];
+   };
+}
+
+/* Texture : colored image
  * 
  * @param dict.colors    the color to fill (1-element array)
  * @param (x,y)         coordinates of the pixel
@@ -329,9 +339,7 @@ function texture_solid(dict) {
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || COLORS.cyan;
 
-   return function (x, y) {
-      void(x);
-      void(y);
+   return function () {
       return color;
    };
 }
