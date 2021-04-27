@@ -1067,92 +1067,97 @@ function texture_squareTiling(dict) {
  * @param (i,j) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
  */
-function texture_perlinNoise(row) {
+function texture_perlinNoise(dict) {
+
+    const row = dict['rows']       || 5
+    const column = dict['columns']  || 5
+    const colors = dict['colors']   || [COLORS.blue, COLORS.green, COLORS.red]
+
+    /*
+    row
     return function (column) {
         return function (nb_colors) {
             return function (colors) {
+    */
 
-                let stock_gradient = {};
+    let stock_gradient = {};
 
-                // =====================================================
+    // =====================================================
 
-                // Fade interpolation 
-                function interpolate(smoothstep) {
-                    return (v0, v1, t) => (v1 - v0) * smoothstep(t) + v0;
-                }
+    // Fade interpolation 
+    function interpolate(smoothstep) {
+        return (v0, v1, t) => (v1 - v0) * smoothstep(t) + v0;
+    }
 
-                const fade_Interpolation = interpolate(t => t * t * t * (10 - 15 * t + 6 * t * t));
+    const fade_Interpolation = interpolate(t => t * t * t * (10 - 15 * t + 6 * t * t));
 
-                /*
-                *   Create random direction vector 
-                *   Used for the Grid 
-                */
-                function random_Vector() {
-                    const random = Math.random() * 2 * Math.PI;
-                    return [Math.cos(random), Math.sin(random)];
-                }
+    /*
+    *   Create random direction vector 
+    *   Used for the Grid 
+    */
+    function random_Vector() {
+        const random = Math.random() * 2 * Math.PI;
+        return [Math.cos(random), Math.sin(random)];
+    }
 
-                /*
-                * Computes the dot product of the distance and gradient vectors
-                */
-                function dot_Product(vector, distance) {
-                    return (distance[0] * vector[0] + distance[1] * vector[1]);
-                }
+    /*
+    * Computes the dot product of the distance and gradient vectors
+    */
+    function dot_Product(vector, distance) {
+        return (distance[0] * vector[0] + distance[1] * vector[1]);
+    }
 
-                function get_Dot(ix, iy, x_grid, y_grid) {
-                    // Get a vector
-                    if (!stock_gradient[[ix, iy]])
-                        stock_gradient[[ix, iy]] = random_Vector(ix, iy);
+    function get_Dot(ix, iy, x_grid, y_grid) {
+        // Get a vector
+        if (!stock_gradient[[ix, iy]])
+            stock_gradient[[ix, iy]] = random_Vector(ix, iy);
 
-                    // Calculate distance 
-                    const dx = x_grid - ix;
-                    const dy = y_grid - iy;
+        // Calculate distance 
+        const dx = x_grid - ix;
+        const dy = y_grid - iy;
 
-                    return dot_Product(stock_gradient[[ix, iy]], [dx, dy]);
-                }
+        return dot_Product(stock_gradient[[ix, iy]], [dx, dy]);
+    }
 
-                // Return a color depending of the value and the colors permited 
-                function get_Colors(nb_colors, value) {
-                    return Math.floor(value / ([1, 2, 3, 4, 5].map((x) => 1 / x))[nb_colors - 1]);
-                }
+    // Return a color depending of the value and the colors permited 
+    function get_Colors(value) {
+        return Math.floor(value / ([1, 2, 3, 4, 5].map((x) => 1 / x))[colors.length - 1]);
+    }
 
-                // =====================================================
+    // =====================================================
 
-                /*
-                * Compute Perlin noise at coordinates x,y 
-                */
-                return (x, y) => {
-                    // Determine precise coordinates in the grid
-                    const x_grid = x / row;
-                    const y_grid = y / column;
+    /*
+    * Compute Perlin noise at coordinates x,y 
+    */
+    return (x, y) => {
+        // Determine precise coordinates in the grid
+        const x_grid = x / row;
+        const y_grid = y / column;
 
-                    // Determine grid cell coordinates
-                    const x0 = Math.floor(x_grid);
-                    const x1 = x0 + 1;
-                    const y0 = Math.floor(y_grid);
-                    const y1 = y0 + 1;
+        // Determine grid cell coordinates
+        const x0 = Math.floor(x_grid);
+        const x1 = x0 + 1;
+        const y0 = Math.floor(y_grid);
+        const y1 = y0 + 1;
 
-                    // Determine interpolation weights
-                    const distance = [x_grid - x0, y_grid - y0];
+        // Determine interpolation weights
+        const distance = [x_grid - x0, y_grid - y0];
 
-                    // Interpolate between grid point gradients
-                    const Up_Left = get_Dot(x0, y0, x_grid, y_grid);
-                    const Up_Right = get_Dot(x1, y0, x_grid, y_grid);
-                    const Down_Left = get_Dot(x0, y1, x_grid, y_grid);
-                    const Down_Right = get_Dot(x1, y1, x_grid, y_grid);
+        // Interpolate between grid point gradients
+        const Up_Left = get_Dot(x0, y0, x_grid, y_grid);
+        const Up_Right = get_Dot(x1, y0, x_grid, y_grid);
+        const Down_Left = get_Dot(x0, y1, x_grid, y_grid);
+        const Down_Right = get_Dot(x1, y1, x_grid, y_grid);
 
-                    let value = fade_Interpolation(
-                        fade_Interpolation(Up_Left, Up_Right, distance[0]),
-                        fade_Interpolation(Down_Left, Down_Right, distance[0]),
-                        distance[1]
-                    );
+        let value = fade_Interpolation(
+            fade_Interpolation(Up_Left, Up_Right, distance[0]),
+            fade_Interpolation(Down_Left, Down_Right, distance[0]),
+            distance[1]
+        );
 
-                    // Making value between 0 and 1
-                    value = (value + 1) / 2;
-                    return colors[get_Colors(nb_colors, value)];
-                };
-            };
-        };
+        // Making value between 0 and 1
+        value = (value + 1) / 2;
+        return colors[get_Colors(value)];
     };
 }
 
@@ -1181,6 +1186,7 @@ function texture_whiteNoise() {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_limitedWhiteNoise(dict) {
+
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const rows = dict['rows']       || 5;
@@ -1278,8 +1284,15 @@ function texture_Voronoi(dict) {
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const nb_case = dict['germs']   || 10;
+    const colors = dict['colors']   || [COLORS.black, COLORS.red, COLORS.green]
 
-    //let count = 0; //NOT USED
+    let width_colors = new Array(); 
+    const width_case = 4; 
+    for(let i=0; i<colors.length; i++)
+    {
+       width_colors[i] = width_case * i; 
+    }
+
     let stock_germs = {};
     for (let i = 0; i < nb_case; i++) {
         stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
@@ -1320,7 +1333,7 @@ function texture_Voronoi(dict) {
         let norme = Math.abs(Math.sqrt((gx_2 - gx_1) ** 2 + (gy_2 - gy_1) ** 2));
         let scalar_x = (x - ((gx_1 + gx_2) / 2)) * ((gx_2 - gx_1) / norme);
         let scalar_y = (y - ((gy_1 + gy_2) / 2)) * ((gy_2 - gy_1) / norme);
-        return scalar_x + scalar_y;
+        return Math.abs(scalar_x + scalar_y);
     }
 
     // NOT USED
@@ -1331,6 +1344,17 @@ function texture_Voronoi(dict) {
 
     //     return false;
     // }
+
+    // Return a color depending of the value and the colors permited
+    function get_Colors(dist, width_colors, colors) {
+        for(let i=1; i<width_colors.length; i++)
+        {
+            if (dist <= width_colors[i]) return colors[i]; 
+        }
+
+        return undefined; 
+    }
+
 
     // Voronoï calcul for (x, y) coordinate 
     return (x, y) => {
@@ -1344,40 +1368,26 @@ function texture_Voronoi(dict) {
         let gy_2 = stock_germs[min[1]][1];
         //let dist_2 = distance(x, y, gx_2, gy_2); //NOT USED
 
-        /*
-            if (x === 50 && y === 95)
-            {   
-            console.log(dist_1); 
-            console.log(dist_2);
-            console.log(stock_germs[min[0]]);
-            console.log(stock_germs[min[1]]); 
-            return colors.white;
-            }
-        */
-
         // It's a GERM 
         let r = 4;
-        //let bord = 2; //NOT USED
         if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
 
-        /*
-        else if (smoothstep(dist_1, dist_2, 2))
-        {
-            return colors.black;    
-        }
-        
-        else if (smoothstep(dist_1*3, dist_2, bord))    
-        {
-            return colors.green;
-        }  */
+        let dist_smooth = distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2); 
+        let color = get_Colors(dist_smooth, width_colors, colors);
 
-        else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return [0, 0, 0, 255]; //colors.black;
+        if (color === undefined) return colors[0]; 
+        else return color; 
 
-        else return [255, 0, 0, 255]; //colors.red;
     };
 }
 
-
+/* Returns all neighboors of a cell, using the Moore specification.
+ * 
+ * @param grid the cellular automata grid
+ * @param cell a cell {i,j}
+ *
+ * @return the Moore neighboors array
+ */
 function getMooreNeighborsState(grid, cell)
 {
     const width = grid.length;
@@ -1385,17 +1395,43 @@ function getMooreNeighborsState(grid, cell)
     
     let neighs = [];
 
-    for(let x = Math.max(0, cell.i - 1); x < Math.min(cell.i + 1, width); x++) {
-        for(let y = Math.max(0, cell.j - 1); y < Math.min(cell.j + 1, height); y++) {
-            if(x !== cell.i || y !== cell.j) {
-                neighs.push(grid[x][y]);
-            }
-        }
+    /* 
+     * Testing neighboors in this specific order :
+     *
+     * 1  2  3
+     * 4  x  5
+     * 6  7  8
+     *
+     */
+    
+    if (cell.j - 1 >= 0)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j - 1]);
+        neighs.push(grid[cell.i][cell.j - 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j - 1]);
     }
+
+    if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j]);
+    if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j]);
+    
+    if (cell.j + 1 < height)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j + 1]);
+        neighs.push(grid[cell.i][cell.j + 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j + 1]);
+    }    
 
     return neighs;
 }
 
+/* Returns the next step of a forestFire cellular automata.
+ *
+ * @param forest the forest grid
+ * @param treeP the tree spawning probability
+ * @param lightP the lightning striking probability
+ *
+ * @return the next cellular automata grid
+ */
 function forestFire_nextStep(forest, treeP, lightP)
 {
     let nextForest = [];
@@ -1427,6 +1463,16 @@ function forestFire_nextStep(forest, treeP, lightP)
     return nextForest;
 }
 
+/* Texture : forestFire
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.treeP    tree spawning probability
+ * @param dict.lightP   lightning striking probability
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_forestFire(dict) {
     const width =                dict['width']  || WIDTH;
     const height =               dict['height'] || HEIGHT;
@@ -1468,6 +1514,12 @@ function texture_forestFire(dict) {
     };
 }
 
+/* Returns the next step of a gameOfLife cellular automata.
+ *
+ * @param grid the game of Life grid
+ *
+ * @return the next cellular automata grid
+ */
 function gameOfLife_nextStep(grid)
 {
     let nextGrid = [];
@@ -1479,15 +1531,13 @@ function gameOfLife_nextStep(grid)
         {
             const aliveNeighbors = getMooreNeighborsState(grid, {i:i, j:j}).reduce((acc, el) => acc += el, 0);
             
-            if (grid[i][j] === 0 && aliveNeighbors === 3) // Dead -> Alive
+            if (grid[i][j] === 0) // Dead
             {
-                nextGrid[i][j] = 1;
-            } else if (grid[i][j] === 1 && (aliveNeighbors === 2 || aliveNeighbors === 3)) // Alive -> Alive
+                nextGrid[i][j] = (aliveNeighbors === 3) ? 1 : 0;
+            }
+            else // Alive
             {
-                nextGrid[i][j] = 1;
-            } else // Alive or Dead -> Dead
-            {
-                nextGrid[i][j] = 0;
+                nextGrid[i][j] = (aliveNeighbors === 2 || aliveNeighbors === 3) ? 1 : 0;
             }
         }
     }
@@ -1495,10 +1545,19 @@ function gameOfLife_nextStep(grid)
     return nextGrid;
 }
 
+
+/* Texture : gameOfLife
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_gameOfLife(dict) {
     const width =  dict['width']  || WIDTH;
     const height = dict['height'] || HEIGHT;
-    const steps =  dict['step']   || 30;
+    const steps =  dict['step']   || 1;
     
     // The grid is represented by :
     //   * 0 : Dead
@@ -1510,10 +1569,10 @@ function texture_gameOfLife(dict) {
         grid[i] = [];
         for (let j = 0; j < height; ++j)
         {
-            grid[i][j] = (getRandomInt(100) < 80) ? 1 : 0; // 80% Alive cells
+            grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
         }
     }
-
+    
     for (let k = 0; k < steps; ++k)
     {
         grid = gameOfLife_nextStep(grid);
