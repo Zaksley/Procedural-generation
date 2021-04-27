@@ -1784,3 +1784,24 @@ function distTexture_squareTiling(dict) {
         }
     };
 }
+
+function sdfCircle(dict) {
+    const r = dict['radius']        || 100;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || WIDTH / 2;
+    const center_y = center[1]      || HEIGHT / 2;
+    const colors = dict['colors']   || [];
+    const color = dict['color1']   || colors[0] || COLORS.orange;
+
+    return function(x, y) {
+        const p = [x - center_x, y - center_y];
+        const d = Math.sqrt(p[0]**2 + p[1]**2) - r;
+        
+        let col = [color[0], color[1], color[2]];
+        col = col.map((x) => x * (1 - Math.exp(-3 * Math.abs(d))));
+        col = col.map((x) => x * (0.8 + 0.2 * Math.cos(0.5 * d)));
+        col[3] = color[3];
+
+        return col;
+    };
+}
