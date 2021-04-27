@@ -1284,7 +1284,7 @@ function texture_Voronoi(dict) {
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const nb_case = dict['germs']   || 10;
-    const colors = dict['colors']   || [COLORS.black, COLORS.red, COLORS.green]
+    const colors = dict['colors']   || [COLORS.black, COLORS.red]
 
     let width_colors = new Array(); 
     const width_case = 4; 
@@ -1298,13 +1298,12 @@ function texture_Voronoi(dict) {
         stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
     }
 
-    // TODO Mettre fonctionnel
     // Return indice of the minest one (min[0]) and the second minest one (min[1])
     function get_two_closest(x, y) {
         let min = [0, 0];
         let gx = 0;
         let gy = 0;
-        //count += 1; //NOT USED
+        
         for (let i = 1; i < nb_case; i++) {
 
             gx = stock_germs[i][0];
@@ -1336,15 +1335,6 @@ function texture_Voronoi(dict) {
         return Math.abs(scalar_x + scalar_y);
     }
 
-    // NOT USED
-    // function smoothstep(dist_1, dist_2, epsilon) {
-    //     if (Math.abs(Math.floor(dist_1) - Math.floor(dist_2)) < epsilon) {
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
-
     // Return a color depending of the value and the colors permited
     function get_Colors(dist, width_colors, colors) {
         for(let i=1; i<width_colors.length; i++)
@@ -1366,7 +1356,6 @@ function texture_Voronoi(dict) {
 
         let gx_2 = stock_germs[min[1]][0];
         let gy_2 = stock_germs[min[1]][1];
-        //let dist_2 = distance(x, y, gx_2, gy_2); //NOT USED
 
         // It's a GERM 
         let r = 4;
@@ -1588,6 +1577,234 @@ function texture_gameOfLife(dict) {
         }
     };
 }
+
+function Greenberg_Hastings_nextstep(grid)
+{
+    let new_grid = []; 
+
+        // Initialization new_grid 
+    for(let i=0; i < grid.length; i++)
+    {
+        new_grid[i] = []; 
+        for(let j=0; j < grid[0].length; j++)
+        {
+            new_grid[i][j] = grid[i][j]; 
+        }
+    }
+    
+    function excited_neighboor(grid, i, j)
+    {
+        for(let ni = -1; ni < 2; ni += 2)
+        {
+            let pos_x = i+ni; 
+            if (pos_x < 0 || pos_x >= grid.length)  continue;
+            
+                // Excited state
+            if (grid[pos_x][j] === 0) return true; 
+        }
+        
+        for(let nj = -1; nj < 2; nj += 2)
+        {
+            let pos_y = j+nj;
+            if (pos_y < 0 || pos_y >= grid[0].length)  continue;
+            
+                // Excited state
+            if (grid[i][pos_y] === 0) return true; 
+        }
+        
+
+        return false;
+    }
+
+        // Update grid
+    for(let i=0; i < grid.length; i++)
+    {
+        for(let j=0; j < grid[0].length; j++)
+        {
+                // Excited & Refractory state
+            if (grid[i][j] === 0 || grid[i][j] === 1)
+            {
+                new_grid[i][j] = grid[i][j] + 1; 
+            }
+            else
+            {
+                if (excited_neighboor(grid, i, j))
+                {
+                    new_grid[i][j] = 0; 
+                }
+            }
+        }
+    }
+    
+
+    return new_grid; 
+}
+
+function texture_Greenberg_Hastings(dict)
+{
+    const width =  dict['width']    || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const step = dict['step']       || 50; 
+    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green]; 
+
+        // Greenberg-Hastings
+    // 0 : Excited time
+    // 1 : Refractory time 
+    // 2 : Resting time 
+
+    let grid = []; 
+
+    
+        // Initialization grid 
+    for(let i=0; i < width; ++i)
+    {
+        grid[i] = []; 
+        for(let j = 0; j < height; ++j)
+        {
+            grid[i][j] = 2; 
+        }
+    }
+    
+        // Spicy game
+    // ================================
+    
+    const random = 30; 
+    for(let r=0; r<random; r++)
+    {
+        let ri = getRandomInt(width);
+        let rj = getRandomInt(height); 
+        grid[ri][rj] = 0; 
+    }
+    
+    
+    // ================================
+
+        // Running the game
+    for(let k=0; k < step; k++)
+    {
+        grid = Greenberg_Hastings_nextstep(grid); 
+    }
+
+    return (x, y) => {
+        return colors[grid[x][y]]; 
+    }
+}
+
+function getRule(rule)
+{
+    switch(rule)
+    {
+        case "73": return [rule73_initGrid, rule73_nextState];
+        case "73_rng": return [ruleDef_initGrid, rule73_nextState];
+        case "110": return [rule110_initGrid, rule110_nextState];
+        case "110_rng": return [ruleDef_initGrid, rule110_nextState];
+        default: return [rule73_initGrid, rule73_nextState];;
+    }
+}
+
+function ruleDef_initGrid(grid)
+{
+    for (let i = 0; i < grid.length; ++i)
+    {
+        grid[i][0] = (getRandomInt(100) < 20) ? 1 : 0; // 20% On cells
+    }
+    return grid;
+}
+
+function rule110_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 1;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 1;
+        case "001": return 1;
+        case "000": return 0;
+        default : return 0;
+    }
+}
+function rule110_initGrid(grid)
+{
+    grid[grid.length - 1][0] = 1;
+    return grid;
+}
+
+function rule73_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 0;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 0;
+        case "001": return 0;
+        case "000": return 1;
+        default : return 0;
+    }
+}
+function rule73_initGrid(grid)
+{
+    grid[Math.floor(grid.length/2)][0] = 1;
+    return grid;
+}
+
+function elem_nextStep(grid, rule, step) {
+    const width = grid.length;
+    
+    for (let i = 0; i < grid.length; ++i)
+    {
+        const left = (i === 0) ? grid[width - 1][step - 1] : grid[i - 1][step - 1];
+        const middle = grid[i][step - 1];
+        const right = (i === width - 1) ? grid[0][step - 1] : grid[i + 1][step - 1];
+
+        const neighs = [left, middle, right].reduce((acc, el) => acc += el.toString(), "");
+        grid[i][step] = rule(neighs);
+    }
+    return grid;
+}
+
+function texture_elementaryCellularAutomaton(dict) {
+    const width =  dict['width']  || WIDTH;
+    const height = dict['height'] || HEIGHT;
+    const [init,rule] =   dict['rule'] || [ruleDef_initGrid, rule73_nextState];
+    
+    // The grid is represented by :
+    //   * 0 : Off
+    //   * 1 : On
+    let grid = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        grid[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            grid[i][j] = 0;
+        }
+    }
+    
+    grid = init(grid);
+    
+    for (let k = 1; k <= height; ++k)
+    {
+        grid = elem_nextStep(grid, rule, k);
+    }
+    
+    return (x,y) => {
+        if (grid[x][y] === 0) // Off
+        {
+            return COLORS.white;
+        } else // On
+        {
+            return COLORS.black;
+        }
+    };
+}
+
 
 function texture_triangularFractal(dict) {
     const width_init = dict['width']    || 500;
