@@ -1673,7 +1673,6 @@ function texture_Greenberg_Hastings(dict)
     {
         let ri = getRandomInt(width);
         let rj = getRandomInt(height); 
-        //let c = getRandomInt(2);
         grid[ri][rj] = 0; 
     }
     
@@ -1683,24 +1682,8 @@ function texture_Greenberg_Hastings(dict)
         // Running the game
     for(let k=0; k < step; k++)
     {
-        console.log("step");
         grid = Greenberg_Hastings_nextstep(grid); 
     }
-    
-
-    let count=0; 
-    for(let i=0; i<width; i++)
-    {
-        for(let j=0; j<height; j++)
-        {
-            if (grid[i][j] === 0)
-            {
-                count++; 
-            }
-        }
-    }
-
-    console.log(count);
 
     return (x, y) => {
         return colors[grid[x][y]]; 
