@@ -1377,7 +1377,13 @@ function texture_Voronoi(dict) {
     };
 }
 
-
+/* Returns all neighboors of a cell, using the Moore specification.
+ * 
+ * @param grid the cellular automata grid
+ * @param cell a cell {i,j}
+ *
+ * @return the Moore neighboors array
+ */
 function getMooreNeighborsState(grid, cell)
 {
     const width = grid.length;
@@ -1385,17 +1391,43 @@ function getMooreNeighborsState(grid, cell)
     
     let neighs = [];
 
-    for(let x = Math.max(0, cell.i - 1); x < Math.min(cell.i + 1, width); x++) {
-        for(let y = Math.max(0, cell.j - 1); y < Math.min(cell.j + 1, height); y++) {
-            if(x !== cell.i || y !== cell.j) {
-                neighs.push(grid[x][y]);
-            }
-        }
+    /* 
+     * Testing neighboors in this specific order :
+     *
+     * 1  2  3
+     * 4  x  5
+     * 6  7  8
+     *
+     */
+    
+    if (cell.j - 1 >= 0)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j - 1]);
+        neighs.push(grid[cell.i][cell.j - 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j - 1]);
     }
+
+    if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j]);
+    if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j]);
+    
+    if (cell.j + 1 < height)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j + 1]);
+        neighs.push(grid[cell.i][cell.j + 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j + 1]);
+    }    
 
     return neighs;
 }
 
+/* Returns the next step of a forestFire cellular automata.
+ *
+ * @param forest the forest grid
+ * @param treeP the tree spawning probability
+ * @param lightP the lightning striking probability
+ *
+ * @return the next cellular automata grid
+ */
 function forestFire_nextStep(forest, treeP, lightP)
 {
     let nextForest = [];
@@ -1427,6 +1459,16 @@ function forestFire_nextStep(forest, treeP, lightP)
     return nextForest;
 }
 
+/* Texture : forestFire
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.treeP    tree spawning probability
+ * @param dict.lightP   lightning striking probability
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_forestFire(dict) {
     const width =                dict['width']  || WIDTH;
     const height =               dict['height'] || HEIGHT;
@@ -1468,6 +1510,12 @@ function texture_forestFire(dict) {
     };
 }
 
+/* Returns the next step of a gameOfLife cellular automata.
+ *
+ * @param grid the game of Life grid
+ *
+ * @return the next cellular automata grid
+ */
 function gameOfLife_nextStep(grid)
 {
     let nextGrid = [];
@@ -1479,15 +1527,13 @@ function gameOfLife_nextStep(grid)
         {
             const aliveNeighbors = getMooreNeighborsState(grid, {i:i, j:j}).reduce((acc, el) => acc += el, 0);
             
-            if (grid[i][j] === 0 && aliveNeighbors === 3) // Dead -> Alive
+            if (grid[i][j] === 0) // Dead
             {
-                nextGrid[i][j] = 1;
-            } else if (grid[i][j] === 1 && (aliveNeighbors === 2 || aliveNeighbors === 3)) // Alive -> Alive
+                nextGrid[i][j] = (aliveNeighbors === 3) ? 1 : 0;
+            }
+            else // Alive
             {
-                nextGrid[i][j] = 1;
-            } else // Alive or Dead -> Dead
-            {
-                nextGrid[i][j] = 0;
+                nextGrid[i][j] = (aliveNeighbors === 2 || aliveNeighbors === 3) ? 1 : 0;
             }
         }
     }
@@ -1495,10 +1541,19 @@ function gameOfLife_nextStep(grid)
     return nextGrid;
 }
 
+
+/* Texture : gameOfLife
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_gameOfLife(dict) {
     const width =  dict['width']  || WIDTH;
     const height = dict['height'] || HEIGHT;
-    const steps =  dict['step']   || 30;
+    const steps =  dict['step']   || 1;
     
     // The grid is represented by :
     //   * 0 : Dead
@@ -1510,10 +1565,10 @@ function texture_gameOfLife(dict) {
         grid[i] = [];
         for (let j = 0; j < height; ++j)
         {
-            grid[i][j] = (getRandomInt(100) < 80) ? 1 : 0; // 80% Alive cells
+            grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
         }
     }
-
+    
     for (let k = 0; k < steps; ++k)
     {
         grid = gameOfLife_nextStep(grid);
