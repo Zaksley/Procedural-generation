@@ -201,7 +201,7 @@ function generateArrayFromJson(jsondata) {
         "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
-        "whiteNoise","Voronoi","forestFire","gameOfLife","triangularFractal","squareFractal",
+        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","triangularFractal","squareFractal",
         "star","doubleStar","regularShape"];
 
     // One-texture filters
@@ -216,7 +216,7 @@ function generateArrayFromJson(jsondata) {
     // Textures & filters parameters
     let params = ["size","size2","angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
-    "operation"];
+    "operation","rule"];
 
     /* Recursive function building a dictionnary for the current filter/texture
      *
@@ -237,11 +237,14 @@ function generateArrayFromJson(jsondata) {
 
             // The key is a parameter
             if(params.includes(key)){
-                //console.log("FOUND PARAMETER " + key);
+                console.log("FOUND PARAMETER " + key);
                 let value = dict[key];
                 // A known color is found
                 if(key.substring(0,5) === "color" && !Array.isArray(dict[key])){
                     value = getColor(dict[key]);
+                }
+                if(key.substring(0,4) === "rule" && !Array.isArray(dict[key])){
+                    value = getRule(dict[key]);
                 }
                 levelArgs[key] = value;
                 continue;
