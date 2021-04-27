@@ -289,7 +289,7 @@ exports.generateAnimation = generateAnimation;
 
 // ========== TEXTURE (only one) ==========
 // Usage : let data = generateTexture(CANVAS, [texture], <...args>);*/
-//let data =
+let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
@@ -315,6 +315,8 @@ exports.generateAnimation = generateAnimation;
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
     //generateTexture(CANVAS, texture_snubHexagonal({}));
+    //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
+    generateTexture(CANVAS, sdfCircle({}));
 
 // ========================================
 
@@ -331,7 +333,7 @@ exports.generateAnimation = generateAnimation;
 // ===================================================
 
 // !! Do not touch
-//generateImage(CANVAS, data);
+generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);
