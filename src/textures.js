@@ -1278,8 +1278,15 @@ function texture_Voronoi(dict) {
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const nb_case = dict['germs']   || 10;
+    const colors = dict['colors']   || [COLORS.black, COLORS.red, COLORS.green]
 
-    //let count = 0; //NOT USED
+    let width_colors = new Array(); 
+    const width_case = 4; 
+    for(let i=0; i<colors.length; i++)
+    {
+       width_colors[i] = width_case * i; 
+    }
+
     let stock_germs = {};
     for (let i = 0; i < nb_case; i++) {
         stock_germs[i] = [getRandomInt(width), getRandomInt(height)];
@@ -1320,7 +1327,7 @@ function texture_Voronoi(dict) {
         let norme = Math.abs(Math.sqrt((gx_2 - gx_1) ** 2 + (gy_2 - gy_1) ** 2));
         let scalar_x = (x - ((gx_1 + gx_2) / 2)) * ((gx_2 - gx_1) / norme);
         let scalar_y = (y - ((gy_1 + gy_2) / 2)) * ((gy_2 - gy_1) / norme);
-        return scalar_x + scalar_y;
+        return Math.abs(scalar_x + scalar_y);
     }
 
     // NOT USED
@@ -1331,6 +1338,17 @@ function texture_Voronoi(dict) {
 
     //     return false;
     // }
+
+    // Return a color depending of the value and the colors permited
+    function get_Colors(dist, width_colors, colors) {
+        for(let i=1; i<width_colors.length; i++)
+        {
+            if (dist <= width_colors[i]) return colors[i]; 
+        }
+
+        return undefined; 
+    }
+
 
     // Voronoï calcul for (x, y) coordinate 
     return (x, y) => {
@@ -1344,36 +1362,16 @@ function texture_Voronoi(dict) {
         let gy_2 = stock_germs[min[1]][1];
         //let dist_2 = distance(x, y, gx_2, gy_2); //NOT USED
 
-        /*
-            if (x === 50 && y === 95)
-            {   
-            console.log(dist_1); 
-            console.log(dist_2);
-            console.log(stock_germs[min[0]]);
-            console.log(stock_germs[min[1]]); 
-            return colors.white;
-            }
-        */
-
         // It's a GERM 
         let r = 4;
-        //let bord = 2; //NOT USED
         if (dist_1 <= r) return [0, 0, 255, 255]; //colors.blue;
 
-        /*
-        else if (smoothstep(dist_1, dist_2, 2))
-        {
-            return colors.black;    
-        }
-        
-        else if (smoothstep(dist_1*3, dist_2, bord))    
-        {
-            return colors.green;
-        }  */
+        let dist_smooth = distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2); 
+        let color = get_Colors(dist_smooth, width_colors, colors);
 
-        else if (distance_smooth(x, y, gx_1, gy_1, gx_2, gy_2) <= 3) return [0, 0, 0, 255]; //colors.black;
+        if (color === undefined) return colors[0]; 
+        else return color; 
 
-        else return [255, 0, 0, 255]; //colors.red;
     };
 }
 
