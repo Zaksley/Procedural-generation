@@ -1067,9 +1067,10 @@ function texture_squareTiling(dict) {
  * @param (i,j) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
  */
-function texture_perlinNoise() {
-    const rows = dict['rows']       || 5
-    const colums = dict['columns']  || 5
+function texture_perlinNoise(dict) {
+
+    const row = dict['rows']       || 5
+    const column = dict['columns']  || 5
     const colors = dict['colors']   || [COLORS.blue, COLORS.green, COLORS.red]
 
     /*
@@ -1185,6 +1186,7 @@ function texture_whiteNoise() {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_limitedWhiteNoise(dict) {
+
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const rows = dict['rows']       || 5;
