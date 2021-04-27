@@ -124,6 +124,7 @@ function showTextureOptions(value){
         // Cellular Automata
             case "forestFire":          options = ["treeP", "lightP", "step"]; break;
             case "gameOfLife":          options = ["step"]; break;
+        case "elementaryCellularAutomaton":          options = ["rule"]; break;
 		// Animations todo
 
 		default: 					options = []; break;

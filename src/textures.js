@@ -1587,6 +1587,122 @@ function texture_gameOfLife(dict) {
     };
 }
 
+function getRule(rule)
+{
+    switch(rule)
+    {
+        case "73": return [rule73_initGrid, rule73_nextState];
+        case "73_rng": return [ruleDef_initGrid, rule73_nextState];
+        case "110": return [rule110_initGrid, rule110_nextState];
+        case "110_rng": return [ruleDef_initGrid, rule110_nextState];
+        default: return [rule73_initGrid, rule73_nextState];;
+    }
+}
+
+function ruleDef_initGrid(grid)
+{
+    for (let i = 0; i < grid.length; ++i)
+    {
+        grid[i][0] = (getRandomInt(100) < 20) ? 1 : 0; // 20% On cells
+    }
+    return grid;
+}
+
+function rule110_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 1;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 1;
+        case "001": return 1;
+        case "000": return 0;
+        default : return 0;
+    }
+}
+function rule110_initGrid(grid)
+{
+    grid[grid.length - 1][0] = 1;
+    return grid;
+}
+
+function rule73_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 0;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 0;
+        case "001": return 0;
+        case "000": return 1;
+        default : return 0;
+    }
+}
+function rule73_initGrid(grid)
+{
+    grid[Math.floor(grid.length/2)][0] = 1;
+    return grid;
+}
+
+function elem_nextStep(grid, rule, step) {
+    const width = grid.length;
+    
+    for (let i = 0; i < grid.length; ++i)
+    {
+        const left = (i === 0) ? grid[width - 1][step - 1] : grid[i - 1][step - 1];
+        const middle = grid[i][step - 1];
+        const right = (i === width - 1) ? grid[0][step - 1] : grid[i + 1][step - 1];
+
+        const neighs = [left, middle, right].reduce((acc, el) => acc += el.toString(), "");
+        grid[i][step] = rule(neighs);
+    }
+    return grid;
+}
+
+function texture_elementaryCellularAutomaton(dict) {
+    const width =  dict['width']  || WIDTH;
+    const height = dict['height'] || HEIGHT;
+    const [init,rule] =   dict['rule'] || [ruleDef_initGrid, rule73_nextState];
+    
+    // The grid is represented by :
+    //   * 0 : Off
+    //   * 1 : On
+    let grid = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        grid[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            grid[i][j] = 0;
+        }
+    }
+    
+    grid = init(grid);
+    
+    for (let k = 1; k <= height; ++k)
+    {
+        grid = elem_nextStep(grid, rule, k);
+    }
+    
+    return (x,y) => {
+        if (grid[x][y] === 0) // Off
+        {
+            return COLORS.white;
+        } else // On
+        {
+            return COLORS.black;
+        }
+    };
+}
+
+
 function texture_triangularFractal(dict) {
     const width_init = dict['width']    || 500;
     const height_init = dict['height']  || 500;

@@ -135,6 +135,7 @@ textarea {
             <optgroup label="Cellular Automata">
                     <option value="forestFire">Forest Fire</option>
                     <option value="gameOfLife">Conway's Game Of Life</option>
+                    <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
             </optgroup>
             <optgroup label="Animations">
 				<option disabled>Todo</option>
@@ -251,7 +252,7 @@ textarea {
 		<div class="textureOption color2" style="display:none">
 			<p>Color 2 : <b id="color2">#0000FF</b>
 			<input type="color" value="#0000FF" oninput="updateSliderValue('color2', this.value)"
-			onchange="DICT['color2'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			onchange="DICT['color2'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
@@ -259,7 +260,7 @@ textarea {
 		<div class="textureOption color3" style="display:none">
 			<p>Color 3 : <b id="color3">#ff8000</b>
 			<input type="color" value="#ff8000" oninput="updateSliderValue('color3', this.value)"
-			onchange="DICT['color3'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			onchange="DICT['color3'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
@@ -267,10 +268,33 @@ textarea {
 		<div class="textureOption color4" style="display:none">
 			<p>Color 4 : <b id="color4">#ef76ff</b>
 			<input type="color" value="#ef76ff" oninput="updateSliderValue('color4', this.value)"
-			onchange="DICT['color4'] = hexaToRGBA(this.value); this.value; regenerateImage();">
+			onchange="DICT['color4'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
+                <!-- RULE SELECTOR -->
+		<div class="textureOption rule" style="display:none">
+		  <p>Rule :
+                    <select name="ruleSelector" id="ruleSelector" oninput="(this.value)" onchange="DICT['rule'] = getRule(this.value); regenerateImage();">
+		      <option value="73" selected>73</option>
+                      <option value="73_rng">73 random</option>
+                      <option value="110">110</option>
+                      <option value="110_rng">110 random</option>
+                    </select>
+			</p>
+		</div>
+
+
+                
+		<!-- RESET -->
+		<div class="reset">
+			<p>
+			<input type="button" id="resetButton" value="Regenerate" onclick="regenerateImage();">
+			</p>
+		</div>
+
+
+                
 		<!-- ======= -->
 
 		<hr style="margin-top:18px;opacity:0">
@@ -307,7 +331,7 @@ textarea {
 		<hr style="margin-top:18px;opacity:0">
 
 		<h2>Tree generator :</h2>
-		<textarea placeholder="DO NOT USE YET&#x0a;'property': {&#x0a;&#x09;'subproperty':'value',&#x0a;&#x09;'subproperty_2':'value2'&#x0a;}" id="textarea" rows="20" spellcheck="false"></textarea>
+		<textarea placeholder="'property': {&#x0a;&#x09;'subproperty':'value',&#x0a;&#x09;'subproperty_2':'value2'&#x0a;}" id="textarea" rows="20" spellcheck="false"></textarea>
 		<input type="button" id="treebutton" onclick="generateHTMLImageFromJson();" value="Generate image"><br><br><br>
 
 		<p id="jsonerror" style="display:none;color:red"></p>
