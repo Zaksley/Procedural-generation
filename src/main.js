@@ -202,7 +202,7 @@ function generateArrayFromJson(jsondata) {
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","triangularFractal","squareFractal",
-        "star","doubleStar","regularShape"];
+        "star","doubleStar","regularShape", "Greenberg_Hastings"];
 
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
