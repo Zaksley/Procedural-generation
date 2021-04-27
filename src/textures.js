@@ -1067,9 +1067,10 @@ function texture_squareTiling(dict) {
  * @param (i,j) coordinates of the pixel
  * @return a colored pixel corresponding to (x,y) position   
  */
-function texture_perlinNoise() {
-    const rows = dict['rows']       || 5
-    const colums = dict['columns']  || 5
+function texture_perlinNoise(dict) {
+
+    const row = dict['rows']       || 5
+    const column = dict['columns']  || 5
     const colors = dict['colors']   || [COLORS.blue, COLORS.green, COLORS.red]
 
     /*
@@ -1185,6 +1186,7 @@ function texture_whiteNoise() {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_limitedWhiteNoise(dict) {
+
     const width = dict['width']     || WIDTH;
     const height = dict['height']   || HEIGHT;
     const rows = dict['rows']       || 5;
@@ -1368,7 +1370,13 @@ function texture_Voronoi(dict) {
     };
 }
 
-
+/* Returns all neighboors of a cell, using the Moore specification.
+ * 
+ * @param grid the cellular automata grid
+ * @param cell a cell {i,j}
+ *
+ * @return the Moore neighboors array
+ */
 function getMooreNeighborsState(grid, cell)
 {
     const width = grid.length;
@@ -1376,17 +1384,43 @@ function getMooreNeighborsState(grid, cell)
     
     let neighs = [];
 
-    for(let x = Math.max(0, cell.i - 1); x < Math.min(cell.i + 1, width); x++) {
-        for(let y = Math.max(0, cell.j - 1); y < Math.min(cell.j + 1, height); y++) {
-            if(x !== cell.i || y !== cell.j) {
-                neighs.push(grid[x][y]);
-            }
-        }
+    /* 
+     * Testing neighboors in this specific order :
+     *
+     * 1  2  3
+     * 4  x  5
+     * 6  7  8
+     *
+     */
+    
+    if (cell.j - 1 >= 0)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j - 1]);
+        neighs.push(grid[cell.i][cell.j - 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j - 1]);
     }
+
+    if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j]);
+    if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j]);
+    
+    if (cell.j + 1 < height)
+    {
+        if (cell.i - 1 >= 0) neighs.push(grid[cell.i - 1][cell.j + 1]);
+        neighs.push(grid[cell.i][cell.j + 1]);
+        if (cell.i + 1 < width) neighs.push(grid[cell.i + 1][cell.j + 1]);
+    }    
 
     return neighs;
 }
 
+/* Returns the next step of a forestFire cellular automata.
+ *
+ * @param forest the forest grid
+ * @param treeP the tree spawning probability
+ * @param lightP the lightning striking probability
+ *
+ * @return the next cellular automata grid
+ */
 function forestFire_nextStep(forest, treeP, lightP)
 {
     let nextForest = [];
@@ -1418,6 +1452,16 @@ function forestFire_nextStep(forest, treeP, lightP)
     return nextForest;
 }
 
+/* Texture : forestFire
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.treeP    tree spawning probability
+ * @param dict.lightP   lightning striking probability
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_forestFire(dict) {
     const width =                dict['width']  || WIDTH;
     const height =               dict['height'] || HEIGHT;
@@ -1459,6 +1503,12 @@ function texture_forestFire(dict) {
     };
 }
 
+/* Returns the next step of a gameOfLife cellular automata.
+ *
+ * @param grid the game of Life grid
+ *
+ * @return the next cellular automata grid
+ */
 function gameOfLife_nextStep(grid)
 {
     let nextGrid = [];
@@ -1470,15 +1520,13 @@ function gameOfLife_nextStep(grid)
         {
             const aliveNeighbors = getMooreNeighborsState(grid, {i:i, j:j}).reduce((acc, el) => acc += el, 0);
             
-            if (grid[i][j] === 0 && aliveNeighbors === 3) // Dead -> Alive
+            if (grid[i][j] === 0) // Dead
             {
-                nextGrid[i][j] = 1;
-            } else if (grid[i][j] === 1 && (aliveNeighbors === 2 || aliveNeighbors === 3)) // Alive -> Alive
+                nextGrid[i][j] = (aliveNeighbors === 3) ? 1 : 0;
+            }
+            else // Alive
             {
-                nextGrid[i][j] = 1;
-            } else // Alive or Dead -> Dead
-            {
-                nextGrid[i][j] = 0;
+                nextGrid[i][j] = (aliveNeighbors === 2 || aliveNeighbors === 3) ? 1 : 0;
             }
         }
     }
@@ -1486,10 +1534,19 @@ function gameOfLife_nextStep(grid)
     return nextGrid;
 }
 
+
+/* Texture : gameOfLife
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.step     step number
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_gameOfLife(dict) {
     const width =  dict['width']  || WIDTH;
     const height = dict['height'] || HEIGHT;
-    const steps =  dict['step']   || 30;
+    const steps =  dict['step']   || 1;
     
     // The grid is represented by :
     //   * 0 : Dead
@@ -1501,10 +1558,10 @@ function texture_gameOfLife(dict) {
         grid[i] = [];
         for (let j = 0; j < height; ++j)
         {
-            grid[i][j] = (getRandomInt(100) < 80) ? 1 : 0; // 80% Alive cells
+            grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
         }
     }
-
+    
     for (let k = 0; k < steps; ++k)
     {
         grid = gameOfLife_nextStep(grid);
@@ -1647,9 +1704,121 @@ function texture_Greenberg_Hastings(dict)
 
     return (x, y) => {
         return colors[grid[x][y]]; 
-    };
+        
+function getRule(rule)
+{
+    switch(rule)
+    {
+        case "73": return [rule73_initGrid, rule73_nextState];
+        case "73_rng": return [ruleDef_initGrid, rule73_nextState];
+        case "110": return [rule110_initGrid, rule110_nextState];
+        case "110_rng": return [ruleDef_initGrid, rule110_nextState];
+        default: return [rule73_initGrid, rule73_nextState];;
+    }
 }
 
+function ruleDef_initGrid(grid)
+{
+    for (let i = 0; i < grid.length; ++i)
+    {
+        grid[i][0] = (getRandomInt(100) < 20) ? 1 : 0; // 20% On cells
+    }
+    return grid;
+}
+
+function rule110_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 1;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 1;
+        case "001": return 1;
+        case "000": return 0;
+        default : return 0;
+    }
+}
+function rule110_initGrid(grid)
+{
+    grid[grid.length - 1][0] = 1;
+    return grid;
+}
+
+function rule73_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 0;
+        case "100": return 0;
+        case "011": return 1;
+        case "010": return 0;
+        case "001": return 0;
+        case "000": return 1;
+        default : return 0;
+    }
+}
+function rule73_initGrid(grid)
+{
+    grid[Math.floor(grid.length/2)][0] = 1;
+    return grid;
+}
+
+function elem_nextStep(grid, rule, step) {
+    const width = grid.length;
+    
+    for (let i = 0; i < grid.length; ++i)
+    {
+        const left = (i === 0) ? grid[width - 1][step - 1] : grid[i - 1][step - 1];
+        const middle = grid[i][step - 1];
+        const right = (i === width - 1) ? grid[0][step - 1] : grid[i + 1][step - 1];
+
+        const neighs = [left, middle, right].reduce((acc, el) => acc += el.toString(), "");
+        grid[i][step] = rule(neighs);
+    }
+    return grid;
+}
+
+function texture_elementaryCellularAutomaton(dict) {
+    const width =  dict['width']  || WIDTH;
+    const height = dict['height'] || HEIGHT;
+    const [init,rule] =   dict['rule'] || [ruleDef_initGrid, rule73_nextState];
+    
+    // The grid is represented by :
+    //   * 0 : Off
+    //   * 1 : On
+    let grid = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        grid[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            grid[i][j] = 0;
+        }
+    }
+    
+    grid = init(grid);
+    
+    for (let k = 1; k <= height; ++k)
+    {
+        grid = elem_nextStep(grid, rule, k);
+    }
+    
+    return (x,y) => {
+        if (grid[x][y] === 0) // Off
+        {
+            return COLORS.white;
+        } else // On
+        {
+            return COLORS.black;
+        }
+    };
+}
 
 
 function texture_triangularFractal(dict) {
@@ -1729,4 +1898,121 @@ function texture_squareFractal(dict) {
       return square(width_init, height_init, 0, 0, n-1);
    };
 
+}
+
+function colorFromDist(color, dist, size, func) {
+    return func([color[0], color[1], color[2], color[3]], dist, size);
+}
+
+function distTexture_triangleTiling(dict) {
+
+    const size = dict['size']       || 80;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+    
+    return function (i, j) {
+        const h = Math.sqrt(3) * size / 2;
+
+        const offset = get_offset(j, 2 * h, 0.5, size / 2);
+
+        const [x, y] = ij2xy((i + offset), size, j, h);
+        const p = y / h;
+
+        const dist1 = Math.abs(x - p * size / 2);
+        const dist2 = Math.abs(x - (2 - p) * size / 2);
+        const dist3 = y > h / 2 ? h - y : y;
+        const dist = Math.min(dist1, dist2, dist3);
+
+        const realcolor1 = colorFromDist(color1, dist, h * 1 / 3, func);
+        const realcolor2 = colorFromDist(color2, dist, h * 1 / 3, func);
+        if (x > p * size / 2 && x - size / 2 < (1 - p) * size / 2)
+            return realcolor1;
+        else
+            return realcolor2;
+    };
+}
+
+function distTexture_hexagonTiling(dict) {
+
+    const size = dict['size']       || 80;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
+    const color2 = dict['color2']   || colors[1] || COLORS.orange;
+    const color3 = dict['color3']   || colors[2] || COLORS.blue;
+    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+
+    return function (i, j) {
+        const h = Math.sqrt(3) * size / 2;
+
+        const offset = get_offset(i, 3 * size, 0.5, h);
+        const [x, y] = ij2xy(i, 3 * size / 2, (j + offset), 2 * h);
+
+        const cond1 = (j + 3 * offset) % (6 * h) > 2 * h;
+        const cond2 = (j + 3 * offset) % (6 * h) > 4 * h;
+
+        const p1 = 1 - y / h;
+        const p2 = (y - h) / h;
+
+        const dist1 = Math.abs(x - p1 * size / 2);
+        const dist2 = Math.abs(x - p2 * size / 2);
+        const dist3 = Math.abs(x - 3 * size / 2 - (1 - p1) * size / 2);
+        const dist4 = Math.abs(x - 3 * size / 2 - (1 - p2) * size / 2);
+        const dist5 = x > size / 2 ? y > h ? 2 * h - y : y : h;
+        const dist = Math.min(dist1, dist2, dist3, dist4, dist5);
+
+        const realcolor1 = colorFromDist(cond1 ? cond2 ? color3 : color2 : color1, dist, h / 2, func);
+        const realcolor2 = colorFromDist(cond1 ? cond2 ? color1 : color3 : color2, dist, h / 2, func);
+        const realcolor3 = colorFromDist(cond1 ? cond2 ? color2 : color1 : color3, dist, h / 2, func);
+
+        if (x > p1 * size / 2 && x > p2 * size / 2)
+            return realcolor1;
+        else if (y < h)
+            return realcolor2;
+        else
+            return realcolor3;
+    };
+}
+
+function distTexture_squareTiling(dict) {
+
+    const width = dict['width']     || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const rows = dict['rows']       || 5;
+    const columns = dict['columns'] || 5;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
+    const color2 = dict['color2']   || colors[1] || COLORS.orange;
+    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+
+    return function (i, j) {
+        const size_x = width / columns;
+        const size_y = height / rows;
+
+        const [x, y] = ij2xy(i, 2 * size_x, j, 2 * size_y);
+
+        const dist1 = Math.abs(x);
+        const dist2 = Math.abs(x - size_x);
+        const dist3 = Math.abs(x - 2 * size_x);
+        const dist4 = Math.abs(y);
+        const dist5 = Math.abs(y - size_y);
+        const dist6 = Math.abs(y - 2 * size_y);
+        const dist = Math.min(dist1, dist2, dist3, dist4, dist5, dist6);
+
+        const realcolor1 = colorFromDist(color1, dist, Math.min(size_x, size_y) / 2, func);
+        const realcolor2 = colorFromDist(color2, dist, Math.min(size_x, size_y) / 2, func);
+
+        if (y < size_y) {
+            if (x < size_x)
+                return realcolor1;
+            else
+                return realcolor2;
+        } else {
+            if (x < size_x)
+                return realcolor2;
+            else
+                return realcolor1;
+        }
+    };
 }
