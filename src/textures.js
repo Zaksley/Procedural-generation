@@ -1704,7 +1704,9 @@ function texture_Greenberg_Hastings(dict)
 
     return (x, y) => {
         return colors[grid[x][y]]; 
-        
+    }
+}
+
 function getRule(rule)
 {
     switch(rule)
