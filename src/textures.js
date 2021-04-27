@@ -1742,3 +1742,45 @@ function distTexture_hexagonTiling(dict) {
             return realcolor3;
     };
 }
+
+function distTexture_squareTiling(dict) {
+
+    const width = dict['width']     || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const rows = dict['rows']       || 5;
+    const columns = dict['columns'] || 5;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
+    const color2 = dict['color2']   || colors[1] || COLORS.orange;
+    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+
+    return function (i, j) {
+        const size_x = width / columns;
+        const size_y = height / rows;
+
+        const [x, y] = ij2xy(i, 2 * size_x, j, 2 * size_y);
+
+        const dist1 = Math.abs(x);
+        const dist2 = Math.abs(x - size_x);
+        const dist3 = Math.abs(x - 2 * size_x);
+        const dist4 = Math.abs(y);
+        const dist5 = Math.abs(y - size_y);
+        const dist6 = Math.abs(y - 2 * size_y);
+        const dist = Math.min(dist1, dist2, dist3, dist4, dist5, dist6);
+
+        const realcolor1 = colorFromDist(color1, dist, Math.min(size_x, size_y) / 2, func);
+        const realcolor2 = colorFromDist(color2, dist, Math.min(size_x, size_y) / 2, func);
+
+        if (y < size_y) {
+            if (x < size_x)
+                return realcolor1;
+            else
+                return realcolor2;
+        } else {
+            if (x < size_x)
+                return realcolor2;
+            else
+                return realcolor1;
+        }
+    };
+}
