@@ -183,7 +183,7 @@ function yin_yang(dict) {
 // ... WORK IN PROGRESS ...
 function animated_randomFunction() {
     function makeInfiniteStates(texture) {
-        return node(texture, () => makeInfiniteStates(nextTexture()))
+        return node(texture, () => makeInfiniteStates(nextTexture()));
     }
 
     function getColors(seed, n) {
@@ -224,7 +224,7 @@ function animated_randomFunction() {
     let new_state = 0;
     let time = States.val.time;
     return function (x, y, dt) {
-        new_state = Math.round(dt / time);
+        new_state = Math.floor(dt / time);
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
@@ -237,7 +237,7 @@ function animated_randomFunction() {
 function animated_forestFire(dict) {
 
     function makeInfiniteStates(forest, treeP, lightP) {
-        return node(forest, () => makeInfiniteStates(forestFire_nextStep(forest, treeP, lightP), treeP, lightP))
+        return node(forest, () => makeInfiniteStates(forestFire_nextStep(forest, treeP, lightP), treeP, lightP));
     }
 
     function init_state(dict) {
@@ -267,7 +267,7 @@ function animated_forestFire(dict) {
     let state = 0;
     let new_state = 0;
     return function (x, y, dt) {
-        new_state = Math.round(dt / 100);
+        new_state = Math.floor(dt / 100);
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
@@ -286,4 +286,58 @@ function animated_forestFire(dict) {
         }
     };
 }
-    
+
+function animated_Greenberg_Hastings(dict) {
+    const width =  dict['width']    || WIDTH;
+    const height = dict['height']   || HEIGHT;
+    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green];
+
+    function makeInfiniteStates(grid) {
+        return node(grid, () => makeInfiniteStates(Greenberg_Hastings_nextstep(grid)));
+    }
+
+    function init_state() {
+        // Greenberg-Hastings
+        // 0 : Excited time
+        // 1 : Refractory time 
+        // 2 : Resting time 
+
+        let grid = []; 
+   
+        // Initialization grid 
+        for(let i=0; i < width; ++i)
+        {
+            grid[i] = []; 
+            for(let j = 0; j < height; ++j)
+            {
+                grid[i][j] = 2; 
+            }
+        }
+        // Spicy game
+        // ================================
+
+        const random = 10; 
+        for(let r=0; r<random; r++)
+        {
+            let ri = getRandomInt(width);
+            let rj = getRandomInt(height); 
+            grid[ri][rj] = 0; 
+        }
+
+        return grid;
+    }
+
+    let States = makeInfiniteStates(init_state());
+    let state = 0;
+    let new_state = 0;
+    return function (x, y, dt) {
+        new_state = Math.floor(dt / 25);
+        if (state !== new_state) {
+            state = new_state;
+            States = nodeThaw(States).children;
+        }
+        const grid = States.val;
+        
+        return colors[grid[x][y]];
+    };
+}  

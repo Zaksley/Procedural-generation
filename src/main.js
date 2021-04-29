@@ -316,7 +316,7 @@ let data =
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
-    generateTexture(CANVAS, sdfCircle({}));
+    generateTexture(CANVAS, sdCircle({color1: [255*0.9,255*0.6,255*0.3,255]}));
 
 // ========================================
 
@@ -345,3 +345,4 @@ generateImage(CANVAS, data);
 //generateAnimation(CANVAS, add_animation({ function: [translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
 //generateAnimation(CANVAS, animated_forestFire({}));
 //generateAnimation(CANVAS, animated_randomFunction());
+//generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
