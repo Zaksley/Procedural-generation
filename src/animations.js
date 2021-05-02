@@ -180,7 +180,6 @@ function yin_yang(dict) {
     };
 }
 
-// ... WORK IN PROGRESS ...
 function animated_randomFunction() {
     function makeInfiniteStates(texture) {
         return node(texture, () => makeInfiniteStates(nextTexture()));
@@ -215,7 +214,7 @@ function animated_randomFunction() {
 
         const texture = textureList[seed % textureList.length];
         const func = [funcList[seed % funcList.length](funcdict)];
-        const time = seed % 180 + 20;
+        const time = 100;
         return {time: time, func: add_animation({texture: texture(texturedict), function: func})};
     }
 
@@ -225,6 +224,7 @@ function animated_randomFunction() {
     let time = States.val.time;
     return function (x, y, dt) {
         new_state = Math.floor(dt / time);
+        new_state = isNaN(new_state) ? 0 : new_state;
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
@@ -235,6 +235,8 @@ function animated_randomFunction() {
 }
 
 function animated_forestFire(dict) {
+    const treeProbability =      dict['treeP']  || 50;
+    const lightningProbability = dict['treeP']  || 5;
 
     function makeInfiniteStates(forest, treeP, lightP) {
         return node(forest, () => makeInfiniteStates(forestFire_nextStep(forest, treeP, lightP), treeP, lightP));
@@ -244,7 +246,6 @@ function animated_forestFire(dict) {
         const width =                dict['width']  || WIDTH;
         const height =               dict['height'] || HEIGHT;
         const treeProbability =      dict['treeP']  || 50;
-        const lightningProbability = dict['lightP'] || 5;
     
         // The forest is represented by :
         //   * 0 : Empty
@@ -263,16 +264,18 @@ function animated_forestFire(dict) {
         return forest;
     }
 
-    let States = makeInfiniteStates(init_state({}), 50, 5);
+    let States = makeInfiniteStates(init_state(dict), treeProbability, lightningProbability);
     let state = 0;
     let new_state = 0;
+    let forest = States.val;
     return function (x, y, dt) {
-        new_state = Math.floor(dt / 100);
+        new_state = Math.floor(dt / 5);
+        new_state = isNaN(new_state) ? 0 : new_state;
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
+            forest = States.val;
         }
-        const forest = States.val;
 
         if (forest[x][y] === 0) // Empty
         {
@@ -283,6 +286,55 @@ function animated_forestFire(dict) {
         } else // Burning 
         {
             return COLORS.red;
+        }
+    };
+}
+
+function animated_GameOfLife(dict) {
+
+    function makeInfiniteStates(grid) {
+        return node(grid, () => makeInfiniteStates(gameOfLife_nextStep(grid)));
+    }
+
+    function init_state(dict) {
+        const width =  dict['width']  || WIDTH;
+        const height = dict['height'] || HEIGHT;
+    
+        // The grid is represented by :
+        //   * 0 : Dead
+        //   * 1 : Alive
+        let grid = [];
+
+        for (let i = 0; i < width; ++i)
+        {
+            grid[i] = [];
+            for (let j = 0; j < height; ++j)
+            {
+                grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
+            }
+        }
+        return grid;
+    }
+    
+    let States = makeInfiniteStates(init_state(dict));
+    let state = 0;
+    let new_state = 0;
+    let grid = States.val;
+    return function (x, y, dt) {
+        new_state = Math.floor(dt / 5);
+        new_state = isNaN(new_state) ? 0 : new_state;
+        if (state !== new_state) {
+            state = new_state;
+            States = nodeThaw(States).children;
+            grid = States.val;
+        }
+
+        if (grid[x][y] === 1) // Dead
+        {
+            return COLORS.white;
+        } else // Alive
+        {
+            return COLORS.black;
         }
     };
 }
@@ -330,14 +382,64 @@ function animated_Greenberg_Hastings(dict) {
     let States = makeInfiniteStates(init_state());
     let state = 0;
     let new_state = 0;
+    let grid = States.val;
     return function (x, y, dt) {
-        new_state = Math.floor(dt / 25);
+        new_state = Math.floor(dt / 1);
+        new_state = isNaN(new_state) ? 0 : new_state;
         if (state !== new_state) {
             state = new_state;
-            States = nodeThaw(States).children;
+            States = (state % Math.floor((HEIGHT > WIDTH ? HEIGHT : WIDTH)) === 0) ? makeInfiniteStates(init_state()) : nodeThaw(States).children;
+            grid = States.val;
         }
-        const grid = States.val;
         
         return colors[grid[x][y]];
     };
-}  
+} 
+
+function animated_rain(dict) {
+    function makeInfiniteStates(state) {
+        return node(state, () => makeInfiniteStates(nextState(state)));
+    }
+
+    function rain(state) {
+        const rain_state = state;
+        return function(x, y) {
+            let droplet = rain_state[x]
+            return (y > droplet && y < droplet + 6) ? COLORS.white : COLORS.black;
+        };
+    }
+
+    function nextState(state) {
+        let new_state = [];
+        for(let i = 0; i < WIDTH; i++) {
+            let droplet = state[i];
+            droplet = (droplet >= HEIGHT && Math.random() > 0.995) ? 0 : droplet + 2;
+            new_state[i] = droplet;
+        }
+        return new_state;
+    }
+
+    function initState() {
+        let state = [];
+        for(let i = 0; i < WIDTH; i++) {
+            state[i] = getRandomInt(50) === 0 ? 0 : HEIGHT;
+        }
+        return state;
+    }
+
+    let States = makeInfiniteStates(initState());
+    let state = 0;
+    let new_state = 0;
+    let rain_state = rain(States.val);
+    return function (x, y, dt) {
+        new_state = Math.floor(dt / 0.1);
+        new_state = isNaN(new_state) ? 0 : new_state;
+        if (state !== new_state) {
+            state = new_state;
+            States = nodeThaw(States).children;
+            rain_state = rain(States.val);
+        }
+        
+        return rain_state(x, y);
+    };
+}
