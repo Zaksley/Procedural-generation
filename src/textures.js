@@ -216,6 +216,14 @@ function isInShape(coords) {
     }
 }
 
+function randomPolygon(n) {
+    let polygon = [];
+    for(let i = 0; i < n; i++) {
+        polygon[i] = [getRandomInt(WIDTH), getRandomInt(HEIGHT)];
+    }
+    return polygon;
+}
+
 function testInShape(dict) {
 
    let coords = dict['coords']   || [];
