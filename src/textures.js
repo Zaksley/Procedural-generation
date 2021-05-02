@@ -1421,7 +1421,7 @@ function getMooreNeighborsState(grid, cell)
     return neighs;
 }
 
-/* Returns the next step of a forestFire cellular automata.
+/* Returns the next step of a forestFire cellular automaton.
  *
  * @param forest the forest grid
  * @param treeP the tree spawning probability
@@ -1511,7 +1511,7 @@ function texture_forestFire(dict) {
     };
 }
 
-/* Returns the next step of a gameOfLife cellular automata.
+/* Returns the next step of a gameOfLife cellular automaton.
  *
  * @param grid the game of Life grid
  *
@@ -1698,18 +1698,21 @@ function texture_Greenberg_Hastings(dict)
     }
 }
 
+// Used to select a initialization setup and a next step rule for the tree generator
 function getRule(rule)
 {
     switch(rule)
     {
         case "73": return [rule73_initGrid, rule73_nextState];
         case "73_rng": return [ruleDef_initGrid, rule73_nextState];
+        case "90": return [rule90_initGrid, rule90_nextState];
+        case "90_rng": return [ruleDef_initGrid, rule90_nextState];
         case "110": return [rule110_initGrid, rule110_nextState];
         case "110_rng": return [ruleDef_initGrid, rule110_nextState];
         default: return [rule73_initGrid, rule73_nextState];;
     }
 }
-
+// Random initialization
 function ruleDef_initGrid(grid)
 {
     for (let i = 0; i < grid.length; ++i)
@@ -1719,6 +1722,7 @@ function ruleDef_initGrid(grid)
     return grid;
 }
 
+// Rule 110
 function rule110_nextState(neighboors)
 {
     switch(neighboors)
@@ -1740,6 +1744,7 @@ function rule110_initGrid(grid)
     return grid;
 }
 
+// Rule 73
 function rule73_nextState(neighboors)
 {
     switch(neighboors)
@@ -1761,6 +1766,36 @@ function rule73_initGrid(grid)
     return grid;
 }
 
+// Rule 90
+function rule90_nextState(neighboors)
+{
+    switch(neighboors)
+    {
+        case "111": return 0;
+        case "110": return 1;
+        case "101": return 0;
+        case "100": return 1;
+        case "011": return 1;
+        case "010": return 0;
+        case "001": return 1;
+        case "000": return 0;
+        default : return 0;
+    }
+}
+function rule90_initGrid(grid)
+{
+    grid[Math.floor(grid.length/2)][0] = 1;
+    return grid;
+}
+
+/* Creates the elementary cellular automaton next step
+ *
+ * @param grid the actual grid
+ * @param rule the defined rule
+ * @param step the next line
+ *
+ * @return the next grid
+ */
 function elem_nextStep(grid, rule, step) {
     const width = grid.length;
     
@@ -1776,6 +1811,14 @@ function elem_nextStep(grid, rule, step) {
     return grid;
 }
 
+/* Texture : elementaryCellularAutomaton
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.rule     initialization setup and next step rule
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_elementaryCellularAutomaton(dict) {
     const width =  dict['width']  || WIDTH;
     const height = dict['height'] || HEIGHT;
