@@ -147,7 +147,7 @@ textarea {
 				<option value="sdIsoscelesTrapezoid">Isosceles Trapezoid</option>
 				<option value="sdParallelogram">Parallelogram</option>
 				<option value="sdEquilateralTriangle">Equilateral Triangle</option>
-				<option value="sdIsocelesTriangle">Isoceles Triangle</option>
+				<option value="sdIsoscelesTriangle">Isosceles Triangle</option>
 				<option value="sdTriangle">Triangle</option>
 				<option value="sdUnevenCapsule">Uneven Capsule</option>
 				<option value="sdRegularPentagon">Regular Pentagon</option>
@@ -197,6 +197,13 @@ textarea {
 			<p>Pattern third size : <b id="size3">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size3', this.value)"
 			onchange="DICT['size3'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- DISTANCE -->
+		<div class="textureOption distance" style="display:none">
+			<p>Distance : <b id="distance">80</b></p>
+			<input type="range" min="-100" max="100" value="0" oninput="updateSliderValue('distance', this.value)"
+			onchange="DICT['distance'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- COLUMNS -->
@@ -255,11 +262,25 @@ textarea {
 			onchange="DICT['angle'] = parseInt(this.value*15); regenerateImage();">
 		</div>
 
+		<!-- ANGLE 2 (0-360) -->
+		<div class="textureOption fullangle2" style="display:none">
+			<p>Second Angle : <b id="fullangle2">45</b>°</p>
+			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle2', this.value*15)"
+			onchange="DICT['angle2'] = parseInt(this.value*15); regenerateImage();">
+		</div>
+
 		<!-- BRANCHES -->
 		<div class="textureOption branches" style="display:none">
 			<p>Branches : <b id="branches">5</b></p>
 			<input type="range" min="3" max="20" value="5" oninput="updateSliderValue('branches', this.value)"
 			onchange="DICT['branches'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- BRANCHES2 -->
+		<div class="textureOption branches2" style="display:none">
+			<p>Branches second option : <b id="branches2">5</b></p>
+			<input type="range" min="2" max="20" value="5" oninput="updateSliderValue('branches2', this.value)"
+			onchange="DICT['branches2'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- FRACTAL DEPTH -->
