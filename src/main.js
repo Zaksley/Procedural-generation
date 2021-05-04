@@ -292,7 +292,7 @@ exports.generateAnimation = generateAnimation;
 let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
-    //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
+    //generateTexture(CANVAS, texture_perlinNoise({}));
     //generateTexture(CANVAS, texture_trihexagonal, 25, colors.orange, colors.red);
     //generateTexture(CANVAS, texture_triangleTiling, 25, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_truncatedSquare, 25, colors.orange, colors.blue, colors.red);
@@ -314,9 +314,10 @@ let data =
     //generateTexture(CANVAS, texture_pentagonTiling3({}));
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
+    generateTexture(CANVAS, texture_Greenberg_Hastings({})); 
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
-    generateTexture(CANVAS, texture_sdCross({}));
+    //generateTexture(CANVAS, sdRoundedBox({}));
 
 // ========================================
 
@@ -345,6 +346,6 @@ generateImage(CANVAS, data);
 //generateAnimation(CANVAS, add_animation({ function: [translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
 //generateAnimation(CANVAS, animated_GameOfLife({}));
 //generateAnimation(CANVAS, animated_randomFunction());
-//generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
+generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
 //generateAnimation(CANVAS, animated_forestFire({}));

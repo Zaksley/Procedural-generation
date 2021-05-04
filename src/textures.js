@@ -1077,16 +1077,12 @@ function texture_squareTiling(dict) {
  */
 function texture_perlinNoise(dict) {
 
-    const row = dict['rows']       || 5
-    const column = dict['columns']  || 5
-    const colors = dict['colors']   || [COLORS.blue, COLORS.green, COLORS.red]
-
-    /*
-    row
-    return function (column) {
-        return function (nb_colors) {
-            return function (colors) {
-    */
+    const row = dict['rows']       || 75
+    const column = dict['columns']  || 75
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.green;
+    const color3 = dict['color3']   || colors[2] || COLORS.red;
 
     let stock_gradient = {};
 
@@ -1129,7 +1125,12 @@ function texture_perlinNoise(dict) {
 
     // Return a color depending of the value and the colors permited 
     function get_Colors(value) {
-        return Math.floor(value / ([1, 2, 3, 4, 5].map((x) => 1 / x))[colors.length - 1]);
+        if (value <= 1/3)   return color1; 
+        else if (value <= 2/3)  return color2; 
+        else return color3; 
+
+            // Enable infinite choice of colors (Maybe one day fix)
+        //return Math.floor(value / ([1, 2, 3].map((x) => 1 / x))[colors.length - 1]);
     }
 
     // =====================================================
@@ -1165,7 +1166,7 @@ function texture_perlinNoise(dict) {
 
         // Making value between 0 and 1
         value = (value + 1) / 2;
-        return colors[get_Colors(value)];
+        return get_Colors(value);
     };
 }
 
@@ -1648,17 +1649,26 @@ function Greenberg_Hastings_nextstep(grid)
     return new_grid; 
 }
 
+/* Texture : Greenberg_Hastings
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.step     step number
+ * @param dict.colors   colors used
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_Greenberg_Hastings(dict)
 {
     const width =  dict['width']    || WIDTH;
     const height = dict['height']   || HEIGHT;
     const step = dict['step']       || 50; 
-    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green]; 
+    const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green]; 
 
         // Greenberg-Hastings
-    // 0 : Excited time
-    // 1 : Refractory time 
-    // 2 : Resting time 
+    // 0 : Excited time (Red)
+    // 1 : Refractory time  (Yellow)
+    // 2 : Resting time    (Green)
 
     let grid = []; 
 
@@ -1676,15 +1686,20 @@ function texture_Greenberg_Hastings(dict)
         // Spicy game
     // ================================
     
-    const random = 30; 
-    for(let r=0; r<random; r++)
+    // Double line
+    const size_line = 10;
+    const random_x  = getRandomInt(width-30);
+    const random_y = getRandomInt(height-30); 
+    for(let r=0; r<size_line; r++)
     {
-        let ri = getRandomInt(width);
-        let rj = getRandomInt(height); 
-        grid[ri][rj] = 0; 
+        let ri = random_x + r;
+        let rj_1 = random_y;
+        let rj_2 = random_y + 1;
+
+        grid[ri][rj_1] = 1; 
+        grid[ri][rj_2] = 0; 
     }
-    
-    
+
     // ================================
 
         // Running the game
@@ -1692,6 +1707,7 @@ function texture_Greenberg_Hastings(dict)
     {
         grid = Greenberg_Hastings_nextstep(grid); 
     }
+
 
     return (x, y) => {
         return colors[grid[x][y]]; 

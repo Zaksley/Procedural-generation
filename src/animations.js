@@ -342,7 +342,7 @@ function animated_GameOfLife(dict) {
 function animated_Greenberg_Hastings(dict) {
     const width =  dict['width']    || WIDTH;
     const height = dict['height']   || HEIGHT;
-    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green];
+    const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green];
 
     function makeInfiniteStates(grid) {
         return node(grid, () => makeInfiniteStates(Greenberg_Hastings_nextstep(grid)));
@@ -368,12 +368,18 @@ function animated_Greenberg_Hastings(dict) {
         // Spicy game
         // ================================
 
-        const random = 10; 
-        for(let r=0; r<random; r++)
+            // Double line
+        const size_line = 10;
+        const random_x  = getRandomInt(width-30);
+        const random_y = getRandomInt(height-30); 
+        for(let r=0; r<size_line; r++)
         {
-            let ri = getRandomInt(width);
-            let rj = getRandomInt(height); 
-            grid[ri][rj] = 0; 
+            let ri = random_x + r;
+            let rj_1 = random_y;
+            let rj_2 = random_y + 1;
+
+            grid[ri][rj_1] = 1; 
+            grid[ri][rj_2] = 0; 
         }
 
         return grid;

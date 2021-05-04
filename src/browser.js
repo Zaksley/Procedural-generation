@@ -117,6 +117,7 @@ function showTextureOptions(value){
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
       // Noise maps todo
             case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+			case "perlinNoise": 		options = ["rows", "columns", "color1", "color2", "color3"]; break;
       // Diagrams todo
         	case "Voronoi":             options = ["germs"]; break;
         	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
@@ -124,6 +125,7 @@ function showTextureOptions(value){
       // Cellular Automata
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
+		 case "Greenberg_Hastings":	 options = ["step"]; break;
          case "elementaryCellularAutomaton":          options = ["rule"]; break;
 		// Signed Distance Textures
 			case "sdCircle": 					options = ["size", "centerx", "centery", "color1"]; break;
