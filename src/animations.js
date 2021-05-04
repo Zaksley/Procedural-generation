@@ -329,7 +329,7 @@ function animated_GameOfLife(dict) {
             grid = States.val;
         }
 
-        if (grid[x][y] === 1) // Dead
+        if (grid[x][y] === 0) // Dead
         {
             return COLORS.white;
         } else // Alive

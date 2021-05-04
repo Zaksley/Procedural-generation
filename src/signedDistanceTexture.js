@@ -198,7 +198,7 @@ function color_sdFunc(d, color) {
    return col;
 }
 
-function sdCircle(dict) {
+function texture_sdCircle(dict) {
    const r = dict['size']          || 100;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -215,7 +215,7 @@ function sdCircle(dict) {
    };
 }
 
-function sdRoundedBox(dict) {
+function texture_sdRoundedBox(dict) {
    const r = dict['init']          || [1, 4, 4, 1];
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
@@ -238,7 +238,7 @@ function sdRoundedBox(dict) {
    return function (x, y) {
       const p = [x - center_x, y - center_y];
       const si = [size1, size2];
-      const ra = r.map((x) => round * (1 + Math.cos(x)));
+      const ra = r.map((x) => min(round, size1, size2) * (1 + Math.cos(x)) / 2);
 
       const d = 2 * dist(p, si, ra) / WIDTH;
        
@@ -246,7 +246,7 @@ function sdRoundedBox(dict) {
    };
 }
 
-function sdBox(dict) {
+function texture_sdBox(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
    const center = dict['center']   || [];
@@ -271,7 +271,7 @@ function sdBox(dict) {
    };
 }
 
-function sdOrientedBox(dict) { 
+function texture_sdOrientedBox(dict) { 
    const angle = dict['angle']     || -30;
    const size1 = dict['size']      || 0.9 * WIDTH / 2;
    const size2 = dict['size2']     || 1 / 3 * size1;
@@ -303,7 +303,7 @@ function sdOrientedBox(dict) {
    };
 }
 
-function sdSegment(dict) { 
+function texture_sdSegment(dict) { 
    const angle = dict['angle']     || 30;
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const th = dict['size2']        || 10;
@@ -333,7 +333,7 @@ function sdSegment(dict) {
    };
 }
 
-function sdRhombus(dict) {
+function texture_sdRhombus(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
    const center = dict['center']   || [];
@@ -361,7 +361,7 @@ function sdRhombus(dict) {
    }; 
 }
 
-function sdIsoscelesTrapezoid(dict) {
+function texture_sdIsoscelesTrapezoid(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || size1 / 2;
    const height = dict['size3']    || 1.5 * size1;
@@ -392,10 +392,10 @@ function sdIsoscelesTrapezoid(dict) {
    }; 
 }
 
-function sdParallelogram(dict) {
+function texture_sdParallelogram(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || size1 / 2;
-   const sk = dict['size3']        || -50;
+   const sk = dict['distance']     || 0;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -426,7 +426,7 @@ function sdParallelogram(dict) {
    }; 
 }
 
-function sdEquilateralTriangle(dict) {
+function texture_sdEquilateralTriangle(dict) {
    const size = dict['size']       || 0.9 * WIDTH / 4;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -453,7 +453,7 @@ function sdEquilateralTriangle(dict) {
    };
 }
 
-function sdIsoscelesTriangle(dict) {
+function texture_sdIsoscelesTriangle(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 2;
    const size2 = dict['size2']     || size1 / 4;
    const center = dict['center']   || [];
@@ -484,7 +484,7 @@ function sdIsoscelesTriangle(dict) {
    };
 }
 
-function sdTriangle(dict) {
+function texture_sdTriangle(dict) {
    const points = dict['points']   || [[WIDTH / 4, HEIGHT / 5], [WIDTH / 5, 3 * HEIGHT / 5], [4 * WIDTH / 5, 7 * HEIGHT / 8]];
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
@@ -516,7 +516,7 @@ function sdTriangle(dict) {
    };
 }
 
-function sdUnevenCapsule(dict) {
+function texture_sdUnevenCapsule(dict) {
    const r1 = dict['size']         || WIDTH / 9;
    const r2 = dict['size2']        || r1 / 2.5;
    const height = dict['size3']    || 3 * r1;
@@ -546,7 +546,7 @@ function sdUnevenCapsule(dict) {
    };
 }
 
-function sdRegularPentagon(dict) {
+function texture_sdRegularPentagon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -574,7 +574,7 @@ function sdRegularPentagon(dict) {
    };
 }
 
-function sdRegularHexagon(dict) {
+function texture_sdRegularHexagon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -601,7 +601,7 @@ function sdRegularHexagon(dict) {
    };
 }
 
-function sdRegularOctogon(dict) {
+function texture_sdRegularOctogon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -629,7 +629,7 @@ function sdRegularOctogon(dict) {
    };
 }
 
-function sdHexagram(dict) {
+function texture_sdHexagram(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -657,7 +657,7 @@ function sdHexagram(dict) {
    };
 }
 
-function sdStar5(dict) {
+function texture_sdStar5(dict) {
    const r = dict['size']          || WIDTH / 5;
    const rf = dict['size2'] / r    || 1.7;
    const center = dict['center']   || [];
@@ -689,7 +689,7 @@ function sdStar5(dict) {
    };
 }
 
-function sdRegularStar(dict) {
+function texture_sdRegularStar(dict) {
    const r = dict['size']          || WIDTH / 5;
    const n = dict['branches']      || 7;
    const m = dict['branches2']     || 4;
@@ -701,7 +701,7 @@ function sdRegularStar(dict) {
    const fcolor = (d) => (color_sdFunc(d, color));
 
    const an = 3.141593 / n;
-   const en = 3.141593 / m;
+   const en = 3.141593 / max(2, min(m, n));
    const acs = [Math.cos(an), Math.sin(an)];
    const ecs = [Math.cos(en), Math.sin(en)];
 
@@ -724,9 +724,9 @@ function sdRegularStar(dict) {
    };
 }
 
-function sdPie(dict) {
+function texture_sdPie(dict) {
    const r = dict['size']          || WIDTH / 5;
-   const percent = dict['percent'] || 1 / 3;
+   const percent = dict['angle'] / 360 || 1 / 3;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -752,11 +752,11 @@ function sdPie(dict) {
    };
 }
 
-function sdArc(dict) {
+function texture_sdArc(dict) {
    const ra = dict['size']         || WIDTH / 5;
    const rb = dict['size2']        || ra / 4;
    const ana = dict['angle']*3.14/180  || 30 * 3.14 / 180;
-   const anb = dict['angle2']*3.14/360 || 250 * 3.14 / 360;
+   const anb = dict['angle2']*3.14/360 || 0 * 3.14 / 360;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -783,11 +783,11 @@ function sdArc(dict) {
    };
 }
 
-function sdHorseshoe(dict) {
+function texture_sdHorseshoe(dict) {
    const r = dict['size']          || WIDTH / 5;
    const th = dict['size2']        || WIDTH / 5;
    const size = dict['size3']      || WIDTH / 10;
-   const percent = dict['percent'] || 0.3;
+   const percent = dict['angle'] / 360 || 0.3;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -817,10 +817,10 @@ function sdHorseshoe(dict) {
    };
 }
 
-function sdVesica(dict) {
+function texture_sdVesica(dict) {
    const r1 = dict['size']         || WIDTH / 5;
-   const r2 = dict['size2']        || -r1 / 2;
-   const r3 = dict['size3']        || 0;
+   const r2 = dict['distance']     || -r1 / 2;
+   const r3 = dict['size2']        || 0;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -844,7 +844,7 @@ function sdVesica(dict) {
    };
 }
 
-function sdMoon(dict) {
+function texture_sdMoon(dict) {
    const ra = dict['size']         || WIDTH / 4;
    const rb = dict['size2']        || ra * 7 / 8;
    const di = dict['size3']        || WIDTH / 8;
@@ -874,7 +874,7 @@ function sdMoon(dict) {
 }
 
 // ... NEED TO BE FIXED ...
-function sdCircleCross(dict) {
+function texture_sdCircleCross(dict) {
    const height = dict['size']     || WIDTH / 5;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -900,7 +900,7 @@ function sdCircleCross(dict) {
    };
 }
 
-function sdSimpleEgg(dict) {
+function texture_sdSimpleEgg(dict) {
    const ra = dict['size']         || WIDTH / 4;
    const rb = dict['size2']        || 0;
    const center = dict['center']   || [];
@@ -928,7 +928,7 @@ function sdSimpleEgg(dict) {
    };
 }
 
-function sdHeart(dict) {
+function texture_sdHeart(dict) {
    const size = dict['size']       || WIDTH / 2;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -954,7 +954,7 @@ function sdHeart(dict) {
 }
 
 // ... NEED TO BE FIXED ...
-function sdCross(dict) {
+function texture_sdCross(dict) {
    const size = dict['size']       || WIDTH / 2;
    const r = dict['size2']         || size / 2; 
    const center = dict['center']   || [];
@@ -985,7 +985,7 @@ function sdCross(dict) {
    };
 }
 
-function sdRoundedX(dict) {
+function texture_sdRoundedX(dict) {
    const size = dict['size']       || WIDTH / 3;
    const r = dict['size2']         || size / 4; 
    const center = dict['center']   || [];
@@ -1009,7 +1009,7 @@ function sdRoundedX(dict) {
    };
 }
 
-function sdPolygon(dict) {
+function texture_sdPolygon(dict) {
    const nbp = dict['branches']    || getRandomInt(7) + 3;
    const polygon = dict['points']  || randomPolygon(nbp);
    const colors = dict['colors']   || [];
@@ -1041,7 +1041,7 @@ function sdPolygon(dict) {
    };
 }
 
-function sdEllipse(dict) {
+function texture_sdEllipse(dict) {
    const ra = dict['size']         || WIDTH / 4; 
    const rb = dict['size2']        || ra / 1.5; 
    const center = dict['center']   || [];
@@ -1100,7 +1100,7 @@ function sdEllipse(dict) {
    };
 }
 
-function sdParabola(dict) {
+function texture_sdParabola(dict) {
    const pk = dict['size']         || WIDTH / 4;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -1132,7 +1132,7 @@ function sdParabola(dict) {
    };
 }
 
-function sdParabolaSegment(dict) {
+function texture_sdParabolaSegment(dict) {
    const width = dict['size']      || WIDTH / 4;
    const height = dict['size2']    || HEIGHT / 4;
    const center = dict['center']   || [];
@@ -1166,7 +1166,7 @@ function sdParabolaSegment(dict) {
 }
 
 // ... NEED TO BE FIXED ...
-function sdQuadraticBezier(dict) {
+function texture_sdQuadraticBezier(dict) {
    const triPoints = dict['points']|| randomPolygon(3);
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
@@ -1221,7 +1221,7 @@ function sdQuadraticBezier(dict) {
 }
 
 // ... NEED TO BE FIXED ...
-function sdBobblyCross(dict) {
+function texture_sdBobblyCross(dict) {
    const height = dict['size']    || HEIGHT / 4;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;

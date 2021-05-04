@@ -316,7 +316,7 @@ let data =
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
-    generateTexture(CANVAS, sdRoundedBox({}));
+    generateTexture(CANVAS, texture_sdCross({}));
 
 // ========================================
 
