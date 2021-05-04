@@ -1557,7 +1557,73 @@ function texture_gameOfLife(dict) {
     const height = dict['height'] || HEIGHT;
     const steps =  dict['step']   || 1;
     
-    // The grid is represented by :
+    // ==============================
+    function gosper_glid(){
+
+        let gosper_glider = []; 
+        const gosp_x = 36; 
+        const gosp_y = 9; 
+
+            // Initialiaze
+        for(let i=0; i<gosp_x; i++)
+        {
+            gosper_glider[i] = [];
+            for(let j=0; j<gosp_y; j++)
+            {
+                gosper_glider[i][j] = 0;
+            }
+        }
+
+        const points = [
+                        [0, 4],
+                        [1, 4],
+                        [0, 5],
+                        [1, 5],
+                        [10, 4],
+                        [10, 5],
+                        [10, 6],
+                        [11, 3],
+                        [11, 7],
+                        [12, 2],
+                        [12, 8],
+                        [13, 2],
+                        [13, 8],
+                        [14, 5],
+                        [15, 3],
+                        [15, 7],
+                        [16, 4],
+                        [16, 5],
+                        [16, 6],
+                        [17, 5],
+                        [20, 2],
+                        [20, 3],
+                        [20, 4],
+                        [21, 2],
+                        [21, 3],
+                        [21, 4],
+                        [22, 5],
+                        [22, 1],
+                        [24, 0],
+                        [24, 1],
+                        [24, 5],
+                        [24, 6],
+                        [34, 2],
+                        [34, 3],
+                        [35, 2],
+                        [35, 3]
+                         ];
+
+            // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            gosper_glider[points[i][0]][points[i][1]] = 1; 
+        }
+
+        return gosper_glider;  
+    }
+    // ================================
+
+        // The grid is represented by :
     //   * 0 : Dead
     //   * 1 : Alive
     let grid = [];
@@ -1567,14 +1633,32 @@ function texture_gameOfLife(dict) {
         grid[i] = [];
         for (let j = 0; j < height; ++j)
         {
-            grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
+            grid[i][j] = 0; 
         }
     }
+
+    //Gosper glider run 
+    const gap_x = 36;
+    const gap_y = 9;
+    let x_start = getRandomInt(width - gap_x); 
+    let y_start = getRandomInt(height - gap_y); 
+
+    const gosper_glider = gosper_glid(); 
     
+    for(let i=0; i<gap_x; i++)
+    {
+        for(let j=0; j<gap_y; j++)
+        {
+            grid[x_start+i][y_start+j] = gosper_glider[i][j];
+        }
+    }
+
+        /*
     for (let k = 0; k < steps; ++k)
     {
         grid = gameOfLife_nextStep(grid);
     }
+        */
     
     return (x,y) => {
         if (grid[x][y] === 0) // Dead
