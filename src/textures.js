@@ -160,6 +160,49 @@ function isInShape(coords) {
         return shapeList;
     }
 
+    /* Function : is in convex shape
+        *
+        * @param array an array of coordinates
+        * @param (x, y) coordinates of the pixel
+        * @return a boolean telling if the pixel is in the shape
+        */
+    function convex(array, x, y) {
+        const N = array.length;
+        function convexREC(n) {
+            if (n === N)
+                return true;
+            const p = (y - array[n][1]) / (array[(n + 1) % N][1] - array[n][1]);
+            if (array[n][1] > array[(n + 1) % N][1]) {
+                if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
+                    return convexREC(n + 1);
+            }   
+            else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
+                return convexREC(n + 1);
+            else 
+                return false;
+        }
+        return convexREC(0);
+    }
+    
+    /* Function : remove concave part of the shape
+    * 
+    * @param shapeList an array of shapes
+    * @param (x, y) coordinates of the pixel
+    * @return a boolean telling if the pixel is NOT in one of the concave part
+    */
+    function removeConcave(shapeList, x, y) {
+        const N = shapeList.length;
+        function removeConcaveREC(n) {
+            if (n === N)
+                return true;
+            else if (!convex(shapeList[n], x, y))
+                return removeConcaveREC(n + 1);
+            else    
+                return false;
+        }
+        return removeConcaveREC(0);
+    }
+
     /* Function test shape, compute tests that determine the belonging to the shape
      *
      * @param (x, y) coordinates of the pixel
@@ -170,49 +213,6 @@ function isInShape(coords) {
             return true;
         else
             return false;
-
-        /* Function : is in convex shape
-        *
-        * @param array an array of coordinates
-        * @param (x, y) coordinates of the pixel
-        * @return a boolean telling if the pixel is in the shape
-        */
-        function convex(array, x, y) {
-            const N = array.length;
-            function convexREC(n) {
-                if (n === N)
-                    return true;
-                const p = (y - array[n][1]) / (array[(n + 1) % N][1] - array[n][1]);
-                if (array[n][1] > array[(n + 1) % N][1]) {
-                    if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
-                        return convexREC(n + 1);
-                }   
-                else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
-                    return convexREC(n + 1);
-                else 
-                    return false;
-            }
-            return convexREC(0);
-        }
-        
-        /* Function : remove concave part of the shape
-        * 
-        * @param shapeList an array of shapes
-        * @param (x, y) coordinates of the pixel
-        * @return a boolean telling if the pixel is NOT in one of the concave part
-        */
-        function removeConcave(shapeList, x, y) {
-            const N = shapeList.length;
-            function removeConcaveREC(n) {
-                if (n === N)
-                    return true;
-                else if (!convex(shapeList[n], x, y))
-                    return removeConcaveREC(n + 1);
-                else    
-                    return false;
-            }
-            return removeConcaveREC(0);
-        }
     }
 }
 

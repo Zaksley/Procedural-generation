@@ -115,16 +115,51 @@ function showTextureOptions(value){
 			case "caireTiling": 		options = ["size", "angle", "color1", "color2", "color3", "color4"]; break;
 			case "pentagonTiling3":		options = ["size", "angle", "color1", "color2", "color3"]; break;
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
-        // Noise maps todo
+      // Noise maps todo
             case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
-        // Diagrams todo
+      // Diagrams todo
         	case "Voronoi":             options = ["germs"]; break;
         	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
         	case "triangularFractal":   options = ["depth", "color1", "color2"]; break;
-        // Cellular Automata
-            case "forestFire":          options = ["treeP", "lightP", "step"]; break;
-            case "gameOfLife":          options = ["step"]; break;
-        case "elementaryCellularAutomaton":          options = ["rule"]; break;
+      // Cellular Automata
+         case "forestFire":          options = ["treeP", "lightP", "step"]; break;
+         case "gameOfLife":          options = ["step"]; break;
+         case "elementaryCellularAutomaton":          options = ["rule"]; break;
+		// Signed Distance Textures
+			case "sdCircle": 					options = ["size", "centerx", "centery", "color1"]; break;
+         case "sdBox":       				options = ["size", "size2", "centerx", "centery", "color1"]; break;
+         case "sdRoundedBox":        	options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
+			case "sdOrientedBox":       	options = ["size", "size2", "fullangle", "centerx", "centery", "color1"]; break;
+			case "sdSegment":      			options = ["size", "size2", "fullangle", "centerx", "centery", "color1"]; break;
+			case "sdRhombus":      			options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdIsoscelesTrapezoid":  options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
+			case "sdParallelogram": 		options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // size3 -> distance ? (negative and positive value)
+			case "sdEquilateralTriangle": options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdIsocelesTriangle":    options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdTriangle":    			options = ["color1"]; break;
+			case "sdUnevenCapsule":      	options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
+			case "sdRegularPentagon":     options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdRegularHexagon":      options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdRegularOctogon":      options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdHexagram":     			options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdStar5":     				options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdRegularStar":     		options = ["size", "branches", "centerx", "centery", "color1"]; break; // branches2 ?
+			case "sdPie":      				options = ["size", "centerx", "centery", "color1"]; break; // percent ?
+			case "sdArc":       				options = ["size", "size2", "fullangle", "centerx", "centery", "color1"]; break; // fullangle2 ? 
+			case "sdHorseshoe":      		options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // percent ?
+			case "sdVesica":      			options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // size2 -> distance ?
+			case "sdMoon":      				options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
+			case "sdSimpleEgg":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdHeart":      			options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdCross":       			options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdCircleCross":       	options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdBobblyCross":      	options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdRoundedX":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdPolygon":      			options = ["branches", "color1"]; break;
+			case "sdEllipse":      			options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdParabola":      		options = ["size", "centerx", "centery", "color1"]; break;
+			case "sdParabolaSegment":     options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
 
 		default: 					options = []; break;

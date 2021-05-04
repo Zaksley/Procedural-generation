@@ -132,12 +132,48 @@ textarea {
 				<option value="squareFractal">Square fractal</option>
 				<option value="triangularFractal">Triangular fractal</option>
 			</optgroup>
-            <optgroup label="Cellular Automata">
-                    <option value="forestFire">Forest Fire</option>
-                    <option value="gameOfLife">Conway's Game Of Life</option>
-                    <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
-            </optgroup>
-            <optgroup label="Animations">
+         <optgroup label="Cellular Automata">
+            <option value="forestFire">Forest Fire</option>
+            <option value="gameOfLife">Conway's Game Of Life</option>
+            <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
+         </optgroup>
+			<optgroup label="Signed distance Textures">
+            <option value="sdCircle">Circle</option>
+            <option value="sdBox">Rectangle</option>
+            <option value="sdRoundedBox">Rounded Rectangle</option>
+				<option value="sdOrientedBox">Oriented Rectangle</option>
+				<option value="sdSegment">Segment</option>
+				<option value="sdRhombus">Rhombus</option>
+				<option value="sdIsoscelesTrapezoid">Isosceles Trapezoid</option>
+				<option value="sdParallelogram">Parallelogram</option>
+				<option value="sdEquilateralTriangle">Equilateral Triangle</option>
+				<option value="sdIsocelesTriangle">Isoceles Triangle</option>
+				<option value="sdTriangle">Triangle</option>
+				<option value="sdUnevenCapsule">Uneven Capsule</option>
+				<option value="sdRegularPentagon">Regular Pentagon</option>
+				<option value="sdRegularHexagon">Regular Hexagon</option>
+				<option value="sdRegularOctogon">Regular Octogon</option>
+				<option value="sdHexagram">Hexagram</option>
+				<option value="sdStar5">Star 5</option>
+				<option value="sdRegularStar">Regular Star</option>
+				<option value="sdPie">Pie</option>
+				<option value="sdArc">Arc</option>
+				<option value="sdHorseshoe">Horseshoe</option>
+				<option value="sdVesica">Vesica</option>
+				<option value="sdMoon">Moon</option>
+				<option value="sdSimpleEgg">Simple Egg</option>
+				<option value="sdHeart">Heart</option>
+				<option value="sdCross" disabled>Cross</option>
+				<option value="sdCircleCross" disabled>Circle Cross</option>
+				<option value="sdBobblyCross" disabled>Bobbly Cross</option>
+				<option value="sdRoundedX">Rounded X</option>
+				<option value="sdPolygon">Polygon</option>
+				<option value="sdEllipse">Ellipse</option>
+				<option value="sdParabola">Parabola</option>
+				<option value="sdParabolaSegment">Parabola Segment</option>
+				<option value="sdQuadraticBezier" disabled>Quadratic Bezier</option>
+         </optgroup>
+         <optgroup label="Animations">
 				<option disabled>Todo</option>
 			</optgroup>
 		</select><br><br>
@@ -154,6 +190,13 @@ textarea {
 			<p>Pattern second size : <b id="size2">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size2', this.value)"
 			onchange="DICT['size2'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<!-- SIZE 3 -->
+		<div class="textureOption size3" style="display:none">
+			<p>Pattern third size : <b id="size3">80</b></p>
+			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size3', this.value)"
+			onchange="DICT['size3'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- COLUMNS -->

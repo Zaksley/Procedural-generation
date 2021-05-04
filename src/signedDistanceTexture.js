@@ -1,3 +1,8 @@
+/* Function : Absolute value
+ * 
+ * @param a a number or an array of numbers
+ * @return the absolute value of each component of a
+ */
 function abs(a) {
    if (Array.isArray(a))
       return a.map((x) => Math.abs(x));
@@ -5,57 +10,116 @@ function abs(a) {
       return Math.abs(a);
 }
 
+/* Function : minimum
+ * 
+ * @param v1 a number or an array of numbers
+ * @param v2 a number or an array of numbers (can't be an array if v1 is not) or undefined (can't be undefined if v1 is not an array)
+ * @return the minimum between each component of v1 and v2 or the minimum of v1
+ */
 function min(v1, v2) {
+   const m = (x, y) => x > y ? y : x;
+   if (v2 === undefined)
+      return v1.reduce((acc, e) => m(e, acc));
    if (!Array.isArray(v1))
-      return v1 > v2 ? v2 : v1;
+      return m(v1, v2);
    if (!Array.isArray(v2))
-      return v1.map((x) => x > v2    ? v2    : x);
-   return v1.map((x, i) => x > v2[i] ? v2[i] : x);
+      return v1.map((x) => m(x, v2));
+   return v1.map((x, i) => m(x, v2[i]));
 }
 
+/* Function : maximum
+ * 
+ * @param v1 a number or an array of numbers
+ * @param v2 a number or an array of numbers (can't be an array if v1 is not) or undefined (can't be undefined if v1 is not an array)
+ * @return the maximum between each component of v1 and v2 or the maximum of v1
+ */
 function max(v1, v2) {
+   const m = (x, y) => x < y ? y : x;
+   if (v2 === undefined)
+      return v1.reduce((acc, e) => m(e, acc));
    if (!Array.isArray(v1))
-      return v1 > v2 ? v2 : v1;
+      return m(v1, v2);
    if (!Array.isArray(v2))
-      return v1.map((x) => x < v2    ? v2    : x);
-   return v1.map((x, i) => x < v2[i] ? v2[i] : x);
+      return v1.map((x) => m(x, v2));
+   return v1.map((x, i) => m(x, v2[i]));
 }
 
+/* Function : all
+ * 
+ * @param v an array of booleans
+ * @return true if all component of v is true, esle false
+ */
 function all(v) {
    return v.reduce((acc, e) => acc && e);
 }
 
+/* Function : not
+ * 
+ * @param v an array of booleans
+ * @return an array of boolean corresponding to the inverted values of v
+ */
 function not(v) {
    return v.map((x) => !x);
 }
 
+/* Function : sign
+ * 
+ * @param v a number or an array of numbers
+ * @return the sign of v or an array of each component sign
+ */
 function sign(n) {
-   return n < 0 ? -1 : 1;
+   const s = (x) => x < 0 ? -1 : 1;
+   if (!Array.isArray(n))
+      return s(n);
+   return n.map((x) => s(x));
 }
 
+/* Function : clamp
+ * 
+ * @param mid a number
+ * @param min the minimum value
+ * @param max the maximum value
+ * @return mid if between min and max, else min if below or max if above
+ */
 function clamp(mid, min, max) {
    return mid > min ? mid < max ? mid : max : min;
 }
 
+/* Function : length
+ *
+ * @param array an array of numbers
+ * @return the length of the vector
+ */
 function length(array) {
    return Math.sqrt(array.map((x) => x*x).reduce((acc, e) => acc + e));
 }
 
-function length_max(array, n) {
-   return length(array.map((x) => x > n ? x : n));
-}
-
+/* Function : operation between two vectors
+ *
+ * @param v1 an array of numbers
+ * @param v2 a number or an array of numbers
+ * @param op an operation sign
+ * @return an array corresponding to (v1 op v2)
+ */
 function optwovec(v1, v2, op) {
    if (!Array.isArray(v2))
       v2 = v1.map(() => v2);
    switch(op) {
-      case '+': return v1.map((x, i) => x + v2[i]);
-      case '-': return v1.map((x, i) => x - v2[i]);
-      case '*': return v1.map((x, i) => x * v2[i]);
-      case '/': return v1.map((x, i) => x / v2[i]);
+      case '+':  return v1.map((x, i) => x + v2[i]);
+      case '-':  return v1.map((x, i) => x - v2[i]);
+      case '*':  return v1.map((x, i) => x * v2[i]);
+      case '/':  return v1.map((x, i) => x / v2[i]);
+      case '**': return v1.map((x, i) => x ** v2[i]);
+      default:   return v1;
    }
 }
 
+/* Function : operation between n vectors
+ *
+ * @param v an array of numbers
+ * @param args a list of arrays or numbers and operations
+ * @return an array corresponding to the operation described using a fold left method
+ */
 function opvec(v, ...args) {
    const l = args.length;
    if (l % 2 === 1)
@@ -66,31 +130,64 @@ function opvec(v, ...args) {
    return v;
 }
 
+/* Function : dot product
+ *
+ * @param a an array of numbers
+ * @param b an array of numbers
+ * @return the dot product of a and b
+ */
 function dot(a, b) {
    return optwovec(a,b,'*').reduce((acc, e) => acc + e);
 }
 
+/* Function : dot product
+ *
+ * @param a an array of numbers
+ * @return the dot product of a and a (length square)
+ */
 function dot2(a) {
    return dot(a, a);
 }
 
+/* Function : ndot product
+ *
+ * @param a an array of numbers
+ * @param b an array of numbers
+ * @return the ndot product of a and b (i.e. : a[0] * b[0] - a[1] * b[1])
+ */
 function ndot(a, b) {
    return optwovec(a,b,'*').reduce((acc, e, i) => acc + e * (-1)**(i%2));
 }
 
-function min_max(array, n) {
-   return Math.min(array.reduce((acc, e) => e > acc ? e : acc), n);
-}
-
+/* Function : mix OR linear interpolation
+ *
+ * @param array1 an array of numbers
+ * @param array2 an array of numbers
+ * @param a a percentage
+ * @return the linear interpolation between each component of array1 and array2
+ */
 function mix(array1, array2, a) {
    return array1.map((x,i) => x * (1 - a) + array2[i] * a);
 }
 
+/* Function : smoothstep
+ *
+ * @param edge1 the minimum value
+ * @param edge2 the maximum value
+ * @param step a value
+ * @return a value between 0 and 1 corresponding to the step 
+ */
 function smoothstep(edge1, edge2, step) {
-   const x = Math.max(0, Math.min(1, (step - edge1) / (edge2 - edge1)));
+   const x = max(0, min(1, (step - edge1) / (edge2 - edge1)));
    return x * x * (3 - 2 * x);
 }
 
+/* Function : signed distance color function
+ * 
+ * @param d the distance
+ * @param the base color
+ * @return a color corresponding to its distance
+ */
 function color_sdFunc(d, color) {
    let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
    col = col.map((x) => x * (1 - Math.exp(-3 * abs(d))));
@@ -102,12 +199,12 @@ function color_sdFunc(d, color) {
 }
 
 function sdCircle(dict) {
-   const r = dict['radius']        || 100;
+   const r = dict['size']          || 100;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
-   const color = dict['color1']   || colors[0] || [255*0.9,255*0.6,255*0.3,255];
+   const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
 
    return function(x, y) {
@@ -122,10 +219,10 @@ function sdRoundedBox(dict) {
    const r = dict['init']          || [1, 4, 4, 1];
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
-   const round = dict['radius']    || 1 / 3 * size1;
+   const round = dict['size3']     || 1 / 3 * size1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -135,7 +232,7 @@ function sdRoundedBox(dict) {
       r[0] = p[1] > 0 ? r[0] : r[1]; 
       const q = opvec(abs(p), '-', b, '+', r[0]);
        
-      return min_max(q, 0) + length_max(q, 0) - r[0];
+      return min(max(q), 0) + length(max(q, 0)) - r[0];
    }
 
    return function (x, y) {
@@ -153,15 +250,15 @@ function sdBox(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
 
    function dist(p, b) {
       const d = opvec(abs(p), '-', b);
-      return length_max(d, 0) + min_max(d, 0);
+      return length(max(d, 0)) + min(max(d), 0);
    }
 
    return function (x, y) {
@@ -179,8 +276,8 @@ function sdOrientedBox(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 2;
    const size2 = dict['size2']     || 1 / 3 * size1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -191,7 +288,7 @@ function sdOrientedBox(dict) {
       let q = opvec(p, '-', opvec(a, '+', b, '*', 0.5));
       q = [q[0] * d[0] - d[1] * q[1], q[0] * d[1] + q[1] * d[0]];
       q = opvec([l, th], '*', -0.5, '+' ,abs(q));
-      return length_max(q, 0) + min_max(q, 0);
+      return length(max(q, 0)) + min(max(q), 0);
    }
 
    return function (x, y) {
@@ -211,8 +308,8 @@ function sdSegment(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const th = dict['size2']        || 10;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -240,8 +337,8 @@ function sdRhombus(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 4;
    const size2 = dict['size2']     || 2 / 3 * size1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -269,8 +366,8 @@ function sdIsoscelesTrapezoid(dict) {
    const size2 = dict['size2']     || size1 / 2;
    const height = dict['size3']    || 1.5 * size1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -279,11 +376,11 @@ function sdIsoscelesTrapezoid(dict) {
       const k1 = [r2, he];
       const k2 = [r2 - r1, 2 * he];
       p[0] = abs(p[0]);
-      const ca = [Math.max(0, p[0] - ((p[1] < 0) ? r1 : r2)), abs(p[1]) - he];
+      const ca = [max(0, p[0] - ((p[1] < 0) ? r1 : r2)), abs(p[1]) - he];
       const cb = opvec(k2, '*', clamp(dot(optwovec(k1, p, '-'), k2) / dot2(k2), 0, 1), '+', p, '-', k1);
       const s = (cb[0] < 0 && ca[1] < 0) ? -1 : 1;
 
-      return s * Math.sqrt(Math.min(dot2(ca), dot2(cb)));
+      return s * Math.sqrt(min(dot2(ca), dot2(cb)));
    }
 
    return function (x, y) {
@@ -300,8 +397,8 @@ function sdParallelogram(dict) {
    const size2 = dict['size2']     || size1 / 2;
    const sk = dict['size3']        || -50;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -332,8 +429,8 @@ function sdParallelogram(dict) {
 function sdEquilateralTriangle(dict) {
    const size = dict['size']       || 0.9 * WIDTH / 4;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -360,8 +457,8 @@ function sdIsoscelesTriangle(dict) {
    const size1 = dict['size']      || 0.9 * WIDTH / 2;
    const size2 = dict['size2']     || size1 / 4;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -372,7 +469,7 @@ function sdIsoscelesTriangle(dict) {
       const b = opvec(q, '*', [-clamp(p[0] / q[0], 0, 1), -1], '+', p);
       const k = sign(q[1]);
       const d = min(dot2(a), dot2(b));
-      const s = Math.max(k * (p[0] * q[1] - p[1] * q[0]), k * (p[1] - q[1]));
+      const s = max(k * (p[0] * q[1] - p[1] * q[0]), k * (p[1] - q[1]));
 
       return Math.sqrt(d) * sign(s);
    }
@@ -424,8 +521,8 @@ function sdUnevenCapsule(dict) {
    const r2 = dict['size2']        || r1 / 2.5;
    const height = dict['size3']    || 3 * r1;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -452,8 +549,8 @@ function sdUnevenCapsule(dict) {
 function sdRegularPentagon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -480,8 +577,8 @@ function sdRegularPentagon(dict) {
 function sdRegularHexagon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -507,8 +604,8 @@ function sdRegularHexagon(dict) {
 function sdRegularOctogon(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -535,8 +632,8 @@ function sdRegularOctogon(dict) {
 function sdHexagram(dict) {
    const r = dict['size']          || WIDTH / 5;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -564,8 +661,8 @@ function sdStar5(dict) {
    const r = dict['size']          || WIDTH / 5;
    const rf = dict['size2'] / r    || 1.7;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -574,8 +671,8 @@ function sdStar5(dict) {
       const k1 = [0.809016994375, -0.587785252292];
       const k2 = [-k1[0], k1[1]];
       p[0] = abs(p[0]);
-      p = opvec(k1, '*', -2 * Math.max(dot(k1, p), 0), '+', p);
-      p = opvec(k2, '*', -2 * Math.max(dot(k2, p), 0), '+', p);
+      p = opvec(k1, '*', -2 * max(dot(k1, p), 0), '+', p);
+      p = opvec(k2, '*', -2 * max(dot(k2, p), 0), '+', p);
       p[0] = abs(p[0]);
       p[1] -= r;
       const ba = [rf * -k1[1], rf * k1[0] - 1];
@@ -595,10 +692,10 @@ function sdStar5(dict) {
 function sdRegularStar(dict) {
    const r = dict['size']          || WIDTH / 5;
    const n = dict['branches']      || 7;
-   const m = dict['init']          || 4;
+   const m = dict['branches2']     || 4;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -631,8 +728,8 @@ function sdPie(dict) {
    const r = dict['size']          || WIDTH / 5;
    const percent = dict['percent'] || 1 / 3;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -643,7 +740,7 @@ function sdPie(dict) {
       p[0] = abs(p[0]);
       const l = length(p) - r;
       const m = length(opvec(c, '*', -clamp(dot(p, c), 0, r), '+', p));
-      return Math.max(l, m * sign(c[1] * p[0] - c[0] * p[1]));
+      return max(l, m * sign(c[1] * p[0] - c[0] * p[1]));
    }
 
    return function (x, y) {
@@ -661,8 +758,8 @@ function sdArc(dict) {
    const ana = dict['angle']*3.14/180  || 30 * 3.14 / 180;
    const anb = dict['angle2']*3.14/360 || 250 * 3.14 / 360;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -692,8 +789,8 @@ function sdHorseshoe(dict) {
    const size = dict['size3']      || WIDTH / 10;
    const percent = dict['percent'] || 0.3;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -708,7 +805,7 @@ function sdHorseshoe(dict) {
       p = [(p[1] > 0) ? p[0] : l * sign(-c[0]), (p[0] > 0) ? p[1] : l];
       p = optwovec([p[0], abs(p[1] - r)], w, '-');
 
-      return length_max(p, 0) + min_max(p, 0);
+      return length(max(p, 0)) + min(max(p), 0);
    }
 
    return function (x, y) {
@@ -725,8 +822,8 @@ function sdVesica(dict) {
    const r2 = dict['size2']        || -r1 / 2;
    const r3 = dict['size3']        || 0;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -752,8 +849,8 @@ function sdMoon(dict) {
    const rb = dict['size2']        || ra * 7 / 8;
    const di = dict['size3']        || WIDTH / 8;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -761,10 +858,10 @@ function sdMoon(dict) {
    function dist(p, d, ra, rb) {
       p[1] = abs(p[1]);
       const a = (ra * ra - rb * rb + d * d) / (2 * d);
-      const b = Math.sqrt(Math.max(ra * ra - a * a, 0));
-      if (d * (p[0] * b - p[1] * a) > d * d * Math.max(b - p[1], 0))
+      const b = Math.sqrt(max(ra * ra - a * a, 0));
+      if (d * (p[0] * b - p[1] * a) > d * d * max(b - p[1], 0))
          return length(optwovec(p, [a, b], '-'));
-      return Math.max(length(p) - ra, -(length(optwovec(p, [d, 0], '-')) - rb));
+      return max(length(p) - ra, -(length(optwovec(p, [d, 0], '-')) - rb));
    }
 
    return function (x, y) {
@@ -780,8 +877,8 @@ function sdMoon(dict) {
 function sdCircleCross(dict) {
    const height = dict['size']     || WIDTH / 5;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -807,8 +904,8 @@ function sdSimpleEgg(dict) {
    const ra = dict['size']         || WIDTH / 4;
    const rb = dict['size2']        || 0;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -834,8 +931,8 @@ function sdSimpleEgg(dict) {
 function sdHeart(dict) {
    const size = dict['size']       || WIDTH / 2;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -844,7 +941,7 @@ function sdHeart(dict) {
       p[0] = abs(p[0]);
       if (p[1] + p[0] > s)
          return Math.sqrt(dot2([p[0] - 0.25 * s, p[1] - 0.75 * s])) - s * Math.sqrt(2) / 4;
-      return Math.sqrt(min(dot2([p[0], p[1] - s]), dot2([p[0] - 0.5 * Math.max(p[0] + p[1], 0), p[1] - 0.5 * Math.max(p[0] + p[1], 0)]))) * sign(p[0] - p[1]);
+      return Math.sqrt(min(dot2([p[0], p[1] - s]), dot2([p[0] - 0.5 * max(p[0] + p[1], 0), p[1] - 0.5 * max(p[0] + p[1], 0)]))) * sign(p[0] - p[1]);
    }
 
    return function (x, y) {
@@ -859,10 +956,10 @@ function sdHeart(dict) {
 // ... NEED TO BE FIXED ...
 function sdCross(dict) {
    const size = dict['size']       || WIDTH / 2;
-   const r = dict['radius']        || size / 2; 
+   const r = dict['size2']         || size / 2; 
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -873,10 +970,10 @@ function sdCross(dict) {
       p = abs(p);
       p = (p[1] > p[0]) ? [p[1], p[0]] : p;
       const q = optwovec(p, b, '-');
-      const k = Math.max(q[1], q[0]);
+      const k = max(q[1], q[0]);
       const w = (k > 0) ? q : [b[1] - p[0], -k];
 
-      return sign(k) * length_max(w, 0) + r;
+      return sign(k) * length(max(w, 0)) + r;
    }
 
    return function (x, y) {
@@ -890,10 +987,10 @@ function sdCross(dict) {
 
 function sdRoundedX(dict) {
    const size = dict['size']       || WIDTH / 3;
-   const r = dict['radius']        || size / 4; 
+   const r = dict['size2']         || size / 4; 
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -945,11 +1042,11 @@ function sdPolygon(dict) {
 }
 
 function sdEllipse(dict) {
-   const ra = dict['radius']       || WIDTH / 4; 
-   const rb = dict['radius']       || ra / 1.5; 
+   const ra = dict['size']         || WIDTH / 4; 
+   const rb = dict['size2']        || ra / 1.5; 
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -1006,8 +1103,8 @@ function sdEllipse(dict) {
 function sdParabola(dict) {
    const pk = dict['size']         || WIDTH / 4;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -1039,8 +1136,8 @@ function sdParabolaSegment(dict) {
    const width = dict['size']      || WIDTH / 4;
    const height = dict['size2']    || HEIGHT / 4;
    const center = dict['center']   || [];
-   const center_x = center[0]      || WIDTH / 2;
-   const center_y = center[1]      || HEIGHT / 2;
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
@@ -1063,6 +1160,100 @@ function sdParabolaSegment(dict) {
       const p = [x - center_x, center_y - y];
       
       const d = 2 * dist(p, width, height) / WIDTH;
+       
+      return fcolor(d);
+   };
+}
+
+// ... NEED TO BE FIXED ...
+function sdQuadraticBezier(dict) {
+   const triPoints = dict['points']|| randomPolygon(3);
+   const colors = dict['colors']   || [];
+   const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
+   const fcolor = (d) => (color_sdFunc(d, color));
+
+   const p0 = triPoints[0];
+   const p1 = triPoints[1];
+   const p2 = triPoints[2];
+
+   function dist(pos, A, B, C) {
+      const a = optwovec(B, A, '-');
+      const b = opvec(B, '*', -2, '+', A, '+', C);
+      const c = optwovec(a, 2, '*');
+      const d = optwovec(A, pos, '-');
+      const kk = 1 / dot2(b);
+      const kx = kk * dot(a, b);
+      const ky = kk * (2 * dot2(a) + dot(d, b)) / 3;
+      const kz = kk * dot(d, a);
+      let res = 0;
+      const p = ky - kx * kx;
+      const p3 = p * p * p;
+      const q = kx * (2 * kx * kx - 3 * ky) + kz;
+      let h = q * q + 4 * p3;
+      if(h >= 0) {
+         h = Math.sqrt(h);
+         const x = [(h - q[0]) / 2, -(h + q[1]) / 2];
+         const uv = opvec(abs(x), '**', 1 / 3, '*', sign(x));
+         const t = clamp(uv[0] + uv[1] - kx, 0, 1);
+         res = dot2(opvec(opvec(b, '*', t, '+', c), '*', t, '+', d));
+      }
+      else
+      {
+         const z = Math.sqrt(-p);
+         const v = Math.acos(q / (p * z * 2)) / 3;
+         const m = Math.cos(v);
+         const n = Math.sin(v) * 1.732050808;
+         const t = [clamp(2 * m * z - kx, 0, 1), clamp((-n - m) * z - kx, 0, 1), clamp((n - m) * z - kx, 0, 1)];
+         res = min(dot2(opvec(opvec(b, '*', t[0], '+', c), '*', t[0], '+', d)),
+                   dot2(opvec(opvec(b, '*', t[1], '+', c), '*', t[1], '+', d)));
+         //res = min(res, dot2(opvec(opvec(b, '*', t[2], '+', c), '*', t[2], '+', d)));
+      }
+      return Math.sqrt(res);
+   }
+
+   return function (x, y) {
+      const p = [x, y];
+      
+      const d = 2 * dist(p, p0, p1, p2) / WIDTH;
+       
+      return fcolor(d);
+   };
+}
+
+// ... NEED TO BE FIXED ...
+function sdBobblyCross(dict) {
+   const height = dict['size']    || HEIGHT / 4;
+   const center = dict['center']   || [];
+   const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+   const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
+   const colors = dict['colors']   || [];
+   const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
+   const fcolor = (d) => (color_sdFunc(d, color));
+
+   function dist(pos, he) {
+      pos = abs(pos);
+      pos = optwovec([abs(pos[0] - pos[1]), 1 - pos[0] - pos[1]], Math.sqrt(2), '/');
+
+      const p = (he - pos[1] - 0.25 / he) / (6 * he);
+      const q = pos[0] / (he * he * 16);
+      const h = q * q - p * p * p;
+      let x;
+      if(h >0) {
+         const r = Math.sqrt(h);
+         x = (q + r) ** (1 / 3) - (abs(q - r) ** (1 / 3)) * sign(r - q);
+      } else {
+         const r = Math.sqrt(p);
+         x = 2 * r * Math.cos(Math.acos(q / (p * r)) / 3);
+      }
+      x = min(x, Math.sqrt(2) / 2);
+      const z = optwovec([x, he * (1 - 2 * x * x)], pos, '-');
+      return length(z) * sign(z[1]);
+   }
+
+   return function (x, y) {
+      const p = [x - center_x, y - center_y];
+      
+      const d = 2 * dist(p, height) / WIDTH;
        
       return fcolor(d);
    };

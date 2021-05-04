@@ -202,7 +202,7 @@ function generateArrayFromJson(jsondata) {
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","triangularFractal","squareFractal",
-        "star","doubleStar","regularShape", "Greenberg_Hastings"];
+        "star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
@@ -213,7 +213,7 @@ function generateArrayFromJson(jsondata) {
     let doublefilters_func = ["compose"];
 
     // Textures & filters parameters
-    let params = ["size","size2","angle","columns","rows","treepP","lightP","step","germs","branches",
+    let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
     "operation","rule"];
 
@@ -316,7 +316,7 @@ let data =
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
-    generateTexture(CANVAS, sdParabolaSegment({}));
+    generateTexture(CANVAS, sdRoundedBox({}));
 
 // ========================================
 
@@ -347,3 +347,4 @@ generateImage(CANVAS, data);
 //generateAnimation(CANVAS, animated_randomFunction());
 //generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
+//generateAnimation(CANVAS, animated_forestFire({}));
