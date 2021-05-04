@@ -141,9 +141,9 @@ function animated_caireTiling(dict) {
     };                     
 }
 
-function yin_yang(dict) {
-    const r = dict['radius']      || 150;
-    const rot = dict['rotation']  || 0;
+function texture_yinyang(dict) {
+    const r = dict['size']        || 150;
+    const rot = dict['angle']     || 0;
     const center = dict['center'] || [];
     const center_x = center[0]    || 250;
     const center_y = center[1]    || 250;
@@ -152,15 +152,15 @@ function yin_yang(dict) {
     const color2 = colors[1]      || COLORS.white;
     const color_bg = colors[2]    || COLORS.cyan;
 
-    const square = (x) => x * x;
+    const alpha = rot * 3.14 / 180;
 
-    return function (x, y, dt) {
-        const time = rot * dt;
+    return function (x, y) {
+        const center_x_up = center_x + (r / 2) * Math.sin(alpha);
+        const center_y_up = center_y - (r / 2) * Math.cos(alpha);
+        const center_x_down = center_x - (r / 2) * Math.sin(alpha);
+        const center_y_down = center_y + (r / 2) * Math.cos(alpha);
 
-        const center_x_up = center_x + (r / 2) * Math.sin(time);
-        const center_y_up = center_y - (r / 2) * Math.cos(time);
-        const center_x_down = center_x - (r / 2) * Math.sin(time);
-        const center_y_down = center_y + (r / 2) * Math.cos(time);
+        const square = (x) => x*x;
 
         if(square(x - center_x) + square(y - center_y) < square(r)) {
             if (square(x - center_x_up) + square(y - center_y_up) < square(r / 4))
@@ -171,12 +171,22 @@ function yin_yang(dict) {
                 return color2;
             else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 2))
                 return color1;
-            else if (Math.sin(time) * (y - center_y) + Math.cos(time) * (x - center_x) > 0)
+            else if (Math.sin(alpha) * (y - center_y) + Math.cos(alpha) * (x - center_x) > 0)
                 return color1;
             else
                 return color2;
         }
         return color_bg; 
+    };
+}
+
+function animated_yinyang(dict) {
+    const angle = dict['angle'] = 10;
+
+    return function (x, y, dt) {
+        const new_angle = angle + 5 * dt;
+        dict['angle'] = new_angle;
+        return texture_yinyang(dict)(x, y);
     };
 }
 
@@ -296,6 +306,70 @@ function animated_GameOfLife(dict) {
         return node(grid, () => makeInfiniteStates(gameOfLife_nextStep(grid)));
     }
 
+    function gosper_glid(){
+
+        let gosper_glider = []; 
+        const gosp_x = 36; 
+        const gosp_y = 9; 
+
+            // Initialiaze
+        for(let i=0; i<gosp_x; i++)
+        {
+            gosper_glider[i] = [];
+            for(let j=0; j<gosp_y; j++)
+            {
+                gosper_glider[i][j] = 0;
+            }
+        }
+
+        const points = [
+                        [0, 4],
+                        [1, 4],
+                        [0, 5],
+                        [1, 5],
+                        [10, 4],
+                        [10, 5],
+                        [10, 6],
+                        [11, 3],
+                        [11, 7],
+                        [12, 2],
+                        [12, 8],
+                        [13, 2],
+                        [13, 8],
+                        [14, 5],
+                        [15, 3],
+                        [15, 7],
+                        [16, 4],
+                        [16, 5],
+                        [16, 6],
+                        [17, 5],
+                        [20, 2],
+                        [20, 3],
+                        [20, 4],
+                        [21, 2],
+                        [21, 3],
+                        [21, 4],
+                        [22, 5],
+                        [22, 1],
+                        [24, 0],
+                        [24, 1],
+                        [24, 5],
+                        [24, 6],
+                        [34, 2],
+                        [34, 3],
+                        [35, 2],
+                        [35, 3]
+                         ];
+
+            // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            gosper_glider[points[i][0]][points[i][1]] = 1; 
+        }
+
+        return gosper_glider;  
+    }
+
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
         const height = dict['height'] || HEIGHT;
@@ -305,14 +379,42 @@ function animated_GameOfLife(dict) {
         //   * 1 : Alive
         let grid = [];
 
-        for (let i = 0; i < width; ++i)
+        // === Initialization ===
+
+            // All grid => cells dead
+        for(let i=0; i<width; i++)
         {
             grid[i] = [];
-            for (let j = 0; j < height; ++j)
+            for(let j=0; j<height; j++)
             {
-                grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
+                grid[i][j] = 0; 
             }
         }
+
+            // Square
+        /*
+        grid[width/2][height/2] = 1;
+        grid[width/2][height/2+1] = 1;
+        grid[width/2+1][height/2] = 1;
+        grid[width/2+1][height/2+1] = 1;
+        */
+
+            //Gosper glider run 
+        gap_x = 36;
+        gap_y = 9;
+        let x_start = getRandomInt(width - gap_x); 
+        let y_start = getRandomInt(height - gap_y); 
+
+        const gosper_glider = gosper_glid(); 
+        
+        for(let i=0; i<gap_x; i++)
+        {
+            for(let j=0; j<gap_y; j++)
+            {
+                grid[x_start+i][y_start+j] = gosper_glider[i][j];
+            }
+        }
+
         return grid;
     }
     
@@ -369,17 +471,16 @@ function animated_Greenberg_Hastings(dict) {
         // ================================
 
             // Double line
-        const size_line = 10;
-        const random_x  = getRandomInt(width-30);
-        const random_y = getRandomInt(height-30); 
+        const size_line = 20;
+        const random_x  = getRandomInt(width-size_line);
+        const random_y = getRandomInt(height-size_line); 
         for(let r=0; r<size_line; r++)
         {
             let ri = random_x + r;
-            let rj_1 = random_y;
-            let rj_2 = random_y + 1;
+            let rj = random_y;
 
-            grid[ri][rj_1] = 1; 
-            grid[ri][rj_2] = 0; 
+            grid[ri][rj] = 1; 
+            grid[ri][rj + 1] = 0;
         }
 
         return grid;
