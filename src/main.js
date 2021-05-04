@@ -201,8 +201,8 @@ function generateArrayFromJson(jsondata) {
         "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
-        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","triangularFractal","squareFractal",
-        "star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
+        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
+        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",

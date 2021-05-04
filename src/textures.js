@@ -2210,6 +2210,83 @@ function texture_elementaryCellularAutomaton(dict) {
     };
 }
 
+/* Creates the cyclic one dimensional cellular automaton next step
+ *
+ * Note : in this case, 1 -> 2 -> 3 -> 0 -> 1
+ *
+ * @param grid the actual grid
+ * @param step the next line
+ *
+ * @return the next grid
+ */
+function cyclic1D_nextStep(grid, step) {
+    const width = grid.length;
+    
+    for (let i = 0; i < grid.length; ++i)
+    {
+        const left = (i === 0) ? grid[width - 1][step - 1] : grid[i - 1][step - 1];
+        const middle = grid[i][step - 1];
+        const right = (i === width - 1) ? grid[0][step - 1] : grid[i + 1][step - 1];
+
+        
+        grid[i][step] = (left === ((middle + 1) % 4) || right === ((middle + 1) % 4)) ? (middle + 1) % 4 : middle ;
+    }
+    return grid;
+}
+
+/* Texture : cyclic one dimensional cellular automaton
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.color1   first color
+ * @param dict.color2   second color
+ * @param dict.color3   third color
+ * @param dict.color4   fourth color
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
+function texture_cyclic1DCellularAutomaton(dict) {
+    const width =  dict['width']  || WIDTH;
+    const height = dict['height'] || HEIGHT;
+    const color1 = dict['color1'] || COLORS.blue;
+    const color2 = dict['color2'] || COLORS.red;
+    const color3 = dict['color3'] || COLORS.green;
+    const color4 = dict['color4'] || COLORS.orange;
+    
+    // The grid is represented by :
+    //   * 0 : Blue
+    //   * 1 : Red
+    //   * 2 : Green
+    //   * 3 : Orange
+    let grid = [];
+
+    for (let i = 0; i < width; ++i)
+    {
+        grid[i] = [];
+        for (let j = 0; j < height; ++j)
+        {
+            grid[i][j] = getRandomInt(4);
+        }
+    }
+    
+    for (let k = 1; k <= height; ++k)
+    {
+        grid = cyclic1D_nextStep(grid, k);
+    }
+    
+    return (x,y) => {
+        if (grid[x][y] === 0) // Blue
+            return color1;
+        else if (grid[x][y] === 1) // Red
+            return color2;
+        else if (grid[x][y] === 2) // Green
+            return color3;
+        else // Orange
+            return color4;
+    };
+}
+
+
 
 function texture_triangularFractal(dict) {
     const width_init = dict['width']    || 500;
