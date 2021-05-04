@@ -876,6 +876,7 @@ function texture_sdMoon(dict) {
 // ... NEED TO BE FIXED ...
 function texture_sdCircleCross(dict) {
    const height = dict['size']     || WIDTH / 5;
+   const r = dict['size2']         || 50;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -886,7 +887,7 @@ function texture_sdCircleCross(dict) {
    function dist(p, h) {
       const k = 0.5 * (h + 1 / h);
       p = abs(p);
-      if (p[0] < 1 && p[1] < p[0] * (k - h) + h)
+      if (p[0] < h && p[1] < p[0] * (k - h) + h)
          return k - Math.sqrt(dot2(optwovec(p, [1, k], '-')));
       return Math.sqrt(min(dot2(optwovec(p, [0, h], '-')), dot2(optwovec(p, [1, 0], '-'))))
    }
@@ -894,7 +895,7 @@ function texture_sdCircleCross(dict) {
    return function (x, y) {
       const p = [x - center_x, y - center_y];
       
-      const d = 2  *  dist(p, height) / WIDTH;
+      const d = 2  *  (dist(p, height) - r) / WIDTH;
        
       return fcolor(d);
    };
@@ -953,10 +954,10 @@ function texture_sdHeart(dict) {
    };
 }
 
-// ... NEED TO BE FIXED ...
 function texture_sdCross(dict) {
-   const size = dict['size']       || WIDTH / 2;
-   const r = dict['size2']         || size / 2; 
+   const size1 = dict['size']       || WIDTH / 5;
+   const size2 = dict['size2']      || size1 / 2;
+   const r = min(dict['size3'], size1) || size1 / 4; 
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
@@ -964,7 +965,7 @@ function texture_sdCross(dict) {
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
    const fcolor = (d) => (color_sdFunc(d, color));
 
-   const b = [0.5*size, 2*size];
+   const b = [2 * size1, 2 * min(size2, size1)];
 
    function dist(p, b, r) {
       p = abs(p);

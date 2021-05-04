@@ -153,7 +153,7 @@ function showTextureOptions(value){
 			case "sdMoon":      				options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdSimpleEgg":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdHeart":      			options = ["size", "centerx", "centery", "color1"]; break;
-			case "sdCross":       			options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdCross":       			options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdCircleCross":       	options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdBobblyCross":      	options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdRoundedX":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
