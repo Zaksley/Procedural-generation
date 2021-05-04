@@ -1648,17 +1648,26 @@ function Greenberg_Hastings_nextstep(grid)
     return new_grid; 
 }
 
+/* Texture : Greenberg_Hastings
+ *
+ * @param dict.width    canvas width
+ * @param dict.height   canvas height
+ * @param dict.step     step number
+ * @param dict.colors   colors used
+ *
+ * @return a colored pixel corresponding to (x,y) position
+ */
 function texture_Greenberg_Hastings(dict)
 {
     const width =  dict['width']    || WIDTH;
     const height = dict['height']   || HEIGHT;
     const step = dict['step']       || 50; 
-    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green]; 
+    const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green]; 
 
         // Greenberg-Hastings
-    // 0 : Excited time
-    // 1 : Refractory time 
-    // 2 : Resting time 
+    // 0 : Excited time (Red)
+    // 1 : Refractory time  (Yellow)
+    // 2 : Resting time    (Green)
 
     let grid = []; 
 
@@ -1676,15 +1685,20 @@ function texture_Greenberg_Hastings(dict)
         // Spicy game
     // ================================
     
-    const random = 30; 
-    for(let r=0; r<random; r++)
+    // Double line
+    const size_line = 10;
+    const random_x  = getRandomInt(width-30);
+    const random_y = getRandomInt(height-30); 
+    for(let r=0; r<size_line; r++)
     {
-        let ri = getRandomInt(width);
-        let rj = getRandomInt(height); 
-        grid[ri][rj] = 0; 
+        let ri = random_x + r;
+        let rj_1 = random_y;
+        let rj_2 = random_y + 1;
+
+        grid[ri][rj_1] = 1; 
+        grid[ri][rj_2] = 0; 
     }
-    
-    
+
     // ================================
 
         // Running the game
@@ -1692,6 +1706,7 @@ function texture_Greenberg_Hastings(dict)
     {
         grid = Greenberg_Hastings_nextstep(grid); 
     }
+
 
     return (x, y) => {
         return colors[grid[x][y]]; 

@@ -124,6 +124,7 @@ function showTextureOptions(value){
       // Cellular Automata
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
+		 case "Greenberg_Hastings":	 options = ["step"]; break;
          case "elementaryCellularAutomaton":          options = ["rule"]; break;
 		// Signed Distance Textures
 			case "sdCircle": 					options = ["size", "centerx", "centery", "color1"]; break;
