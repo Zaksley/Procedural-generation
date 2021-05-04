@@ -126,7 +126,8 @@ function showTextureOptions(value){
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
 		 case "Greenberg_Hastings":	 options = ["step"]; break;
-         case "elementaryCellularAutomaton":          options = ["rule"]; break;
+        case "elementaryCellularAutomaton":          options = ["rule"]; break;
+        case "cyclic1DCellularAutomaton":          options = ["color1", "color2", "color3", "color4"]; break;
 		// Signed Distance Textures
 			case "sdCircle": 					options = ["size", "centerx", "centery", "color1"]; break;
          case "sdBox":       				options = ["size", "size2", "centerx", "centery", "color1"]; break;

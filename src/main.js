@@ -201,8 +201,8 @@ function generateArrayFromJson(jsondata) {
         "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
-        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","triangularFractal","squareFractal",
-        "star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
+        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
+        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
@@ -346,6 +346,6 @@ generateImage(CANVAS, data);
 //generateAnimation(CANVAS, add_animation({ function: [translation({borders: [WIDTH, HEIGHT], x_speed: 25, y_speed: 10}), rotation({angle: 90, borders: [WIDTH, HEIGHT], function: (x, dt) => x + 10 * dt})], texture: yin_yang({ colors: [[50, 150, 50, 255]]})  }) );
 //generateAnimation(CANVAS, animated_GameOfLife({}));
 //generateAnimation(CANVAS, animated_randomFunction());
-generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
+//generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
 //generateAnimation(CANVAS, animated_forestFire({}));
