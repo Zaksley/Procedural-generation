@@ -314,11 +314,11 @@ let data =
     //generateTexture(CANVAS, texture_pentagonTiling3({}));
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
-    generateTexture(CANVAS, texture_gameOfLife({}));
     //generateTexture(CANVAS, texture_Greenberg_Hastings({})); 
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
     //generateTexture(CANVAS, sdRoundedBox({}));
+    generateTexture(CANVAS, texture_yinyang({angle: 90}));
 
 // ========================================
 
@@ -350,3 +350,4 @@ generateAnimation(CANVAS, animated_GameOfLife({}));
 //generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
 //generateAnimation(CANVAS, animated_forestFire({}));
+//generateAnimation(CANVAS, animated_yinyang({}));
