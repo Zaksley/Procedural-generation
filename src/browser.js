@@ -117,6 +117,7 @@ function showTextureOptions(value){
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
       // Noise maps todo
             case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+			case "perlinNoise": 		options = ["rows", "columns", "color1", "color2", "color3"]; break;
       // Diagrams todo
         	case "Voronoi":             options = ["germs"]; break;
         	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;

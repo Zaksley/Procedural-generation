@@ -1077,16 +1077,12 @@ function texture_squareTiling(dict) {
  */
 function texture_perlinNoise(dict) {
 
-    const row = dict['rows']       || 5
-    const column = dict['columns']  || 5
-    const colors = dict['colors']   || [COLORS.blue, COLORS.green, COLORS.red]
-
-    /*
-    row
-    return function (column) {
-        return function (nb_colors) {
-            return function (colors) {
-    */
+    const row = dict['rows']       || 75
+    const column = dict['columns']  || 75
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.green;
+    const color3 = dict['color3']   || colors[2] || COLORS.red;
 
     let stock_gradient = {};
 
@@ -1129,7 +1125,12 @@ function texture_perlinNoise(dict) {
 
     // Return a color depending of the value and the colors permited 
     function get_Colors(value) {
-        return Math.floor(value / ([1, 2, 3, 4, 5].map((x) => 1 / x))[colors.length - 1]);
+        if (value <= 1/3)   return color1; 
+        else if (value <= 2/3)  return color2; 
+        else return color3; 
+
+            // Enable infinite choice of colors (Maybe one day fix)
+        //return Math.floor(value / ([1, 2, 3].map((x) => 1 / x))[colors.length - 1]);
     }
 
     // =====================================================
@@ -1165,7 +1166,7 @@ function texture_perlinNoise(dict) {
 
         // Making value between 0 and 1
         value = (value + 1) / 2;
-        return colors[get_Colors(value)];
+        return get_Colors(value);
     };
 }
 
