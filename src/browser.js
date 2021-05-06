@@ -11,7 +11,7 @@ function regenerateImage(){
 	}
 	BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT));
 	generateImage(CANVAS, BASEDATA);
-};
+}
 
 /* Updates the image displayed with the display filters
  */
@@ -19,7 +19,7 @@ function regenerateFilters(){
 	BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT), XOFFSET, YOFFSET);
 	DATA = filter_resize(OPTDICT)(BASEDATA);
 	generateImage(CANVAS, DATA);
-};
+}
 
 /* Changes the label number to match the slider value 
  *
@@ -28,7 +28,7 @@ function regenerateFilters(){
  */
 function updateSliderValue(sliderValueId, value){
 	document.getElementById(sliderValueId).innerHTML = value;
-};
+}
 
 /* Converts a hexa string to a rgba array 
  *
@@ -40,7 +40,7 @@ function hexaToRGBA(hexa){
 	rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
 	rgba.push(255);
 	return rgba;
-};
+}
 
 /* Generates an image in the canvas from the textarea
  */
@@ -60,7 +60,7 @@ function generateHTMLImageFromJson(){
 			jsondata = JSON.parse(data);
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
-			return;
+			return "";
 		}
 	}
 
@@ -77,7 +77,7 @@ function generateHTMLImageFromJson(){
 			jsondata = JSON.parse(data);
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
-			return;
+			return "";
 		}
 	}
 
@@ -113,7 +113,6 @@ function showTextureOptions(value){
 			case "snubHexagonal": 		options = ["size", "color1", "color2", "color3"]; break;
 			case "truncatedSquare": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "truncatedHexagon": 	options = ["size", "color1", "color2", "color3", "color4"]; break;
-			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
 			case "smallRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "bigRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "trihexagonal": 		options = ["size", "color1", "color2"]; break;
@@ -123,13 +122,13 @@ function showTextureOptions(value){
 			case "pentagonTiling3":		options = ["size", "angle", "color1", "color2", "color3"]; break;
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
       // Noise maps todo
-            case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+			case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
 			case "perlinNoise": 		options = ["rows", "columns", "color1", "color2", "color3"]; break;
-      // Diagrams todo
-        	case "Voronoi":             options = ["germs"]; break;
+		// Diagrams todo
+			case "Voronoi":             options = ["germs"]; break;
         	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
         	case "triangularFractal":   options = ["depth", "color1", "color2"]; break;
-      // Cellular Automata
+		// Cellular Automata
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
 		 case "Greenberg_Hastings":	 options = ["step"]; break;
@@ -200,13 +199,13 @@ function showTextureOptions(value){
 		document.getElementsByClassName(e)[0].style.display = "block";
 	});
 	}, 100);
-};
+}
 
 /* Prevents usage of TAB to exit the textarea, indent code instead
  */
 // Todo add shift+tab ?
 document.getElementById("textarea").addEventListener('keydown', function(e) {
-	if(e.key == 'Tab') {
+	if(e.key === 'Tab') {
 		e.preventDefault();
 		let start = this.selectionStart;
 		let end = this.selectionEnd;

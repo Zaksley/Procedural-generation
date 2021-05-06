@@ -696,7 +696,7 @@ function animated_GreenbergHastings(dict) {
         // Initialization grid 
         for(let i=0; i < width; ++i)
         {
-            grid[i] = []; 
+            grid[i] = [];
             for(let j = 0; j < height; ++j)
             {
                 grid[i][j] = 2; 
@@ -746,7 +746,7 @@ function animated_rain(dict) {
     function rain(state) {
         const rain_state = state;
         return function(x, y) {
-            let droplet = rain_state[x]
+            let droplet = rain_state[x];
             return (y > droplet && y < droplet + 6) ? COLORS.white : COLORS.black;
         };
     }
