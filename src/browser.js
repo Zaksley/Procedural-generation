@@ -1,6 +1,13 @@
 /* Updates the image displayed (with current canvas, texture & dictionnary)
  */
 function regenerateImage(){
+	if (ANIMATION) {
+		ANIMATION = false;
+		setTimeout(() => {
+			ANIMATION = true;
+			generateAnimation(CANVAS, window[TEXTURE](DICT));
+		}, 100);
+	}
 	BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT));
 	generateImage(CANVAS, BASEDATA);
 };
@@ -82,10 +89,8 @@ function generateHTMLImageFromJson(){
  * @param value the texture function (without 'texture_')
  */
 function showTextureOptions(value){
-	TEXTURE = "texture_" + value;
-	console.log("Switching to " + value + " texture ...");
-	// Generating default texture
-	regenerateImage();
+	ANIMATION = false;
+	setTimeout(() => {
 
 	// Gathering options
 	let options = [];
@@ -164,9 +169,26 @@ function showTextureOptions(value){
 			case "sdParabolaSegment":     options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
-
+			case "chromaticCircle":      	ANIMATION = true; options = ["size", "centerx", "centery"]; break;
+			case "yinyang":      			ANIMATION = true; options = ["size", "fullangle", "centerx", "centery"]; break;
+			case "randomFunction": 			ANIMATION = true; options = []; break;
+			case "ForestFire":				ANIMATION = true; options = []; break;
+			case "GameOfLife":				ANIMATION = true; options = []; break;
+			case "GreenbergHastings":		ANIMATION = true; options = []; break;
+			case "rain":						ANIMATION = true; options = []; break;
 		default: 					options = []; break;
-	};
+	}
+
+	if (ANIMATION) {
+		TEXTURE = "animated_" + value;
+		console.log("Switching to " + value + " animation ...");
+		generateAnimation(CANVAS, window[TEXTURE](DICT));
+	} else {
+		TEXTURE = "texture_" + value;
+		console.log("Switching to " + value + " texture ...");
+		// Generating default texture
+		regenerateImage();
+	}
 
 	// Displaying options
 	Array.from(document.getElementsByClassName("textureOption")).forEach(function(e, i){
@@ -175,6 +197,7 @@ function showTextureOptions(value){
 	options.forEach(function(e, i){
 		document.getElementsByClassName(e)[0].style.display = "block";
 	});
+	}, 100);
 };
 
 /* Prevents usage of TAB to exit the textarea, indent code instead

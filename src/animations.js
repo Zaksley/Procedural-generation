@@ -106,11 +106,11 @@ function add_animation(dict) {
     };
 }
 
-function chromatic_circle(dict) {
-    const r = dict['radius']      || 150;
+function animated_chromaticCircle(dict) {
+    const r = dict['size']        || 150;
     const center = dict['center'] || [];
-    const center_x = center[0]    || 250;
-    const center_y = center[1]    || 250;
+    const center_x = center[0]    || dict['centerx'] || 250;
+    const center_y = center[1]    || dict['centery'] || 250;
     const colors = dict['colors'] || [];
     const color_bg = colors[0]    || COLORS.black;
 
@@ -244,7 +244,7 @@ function animated_randomFunction() {
     };
 }
 
-function animated_forestFire(dict) {
+function animated_ForestFire(dict) {
     const treeProbability =      dict['treeP']  || 50;
     const lightningProbability = dict['treeP']  || 5;
 
@@ -676,7 +676,7 @@ function animated_GameOfLife(dict) {
     };
 }
 
-function animated_Greenberg_Hastings(dict) {
+function animated_GreenbergHastings(dict) {
     const width =  dict['width']    || WIDTH;
     const height = dict['height']   || HEIGHT;
     const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green];

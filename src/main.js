@@ -2,6 +2,7 @@
 
 // Global variables
 let MAX_ARGUMENTS = 50;
+let ANIMATION = false;
 const WIDTH = 500, HEIGHT = 500;
 let CANVAS = document.getElementById('canvas');
 CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
@@ -76,6 +77,10 @@ function generateAnimation(canvas, texture) {
                 image.data[n + 2] = pixel[2]; // Blue channel
                 image.data[n + 3] = pixel[3]; // Alpha channel
             }
+        }
+
+        if (!ANIMATION) {
+            return;
         }
 
         context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
@@ -314,12 +319,12 @@ let data =
     //generateTexture(CANVAS, texture_pentagonTiling3({}));
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
-    generateTexture(CANVAS, texture_gameOfLife({}));
+    //generateTexture(CANVAS, texture_gameOfLife({}));
     //generateTexture(CANVAS, texture_Greenberg_Hastings({})); 
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
     //generateTexture(CANVAS, sdRoundedBox({}));
-    //generateTexture(CANVAS, texture_yinyang({angle: 90}));
+    generateTexture(CANVAS, texture_yinyang({angle: 90}));
 
 // ========================================
 
@@ -351,4 +356,4 @@ generateImage(CANVAS, data);
 //generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
 //generateAnimation(CANVAS, animated_forestFire({}));
-//generateAnimation(CANVAS, animated_yinyang({}));
+generateAnimation(CANVAS, animated_yinyang({}));
