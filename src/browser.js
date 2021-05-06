@@ -2,6 +2,7 @@
  */
 function regenerateImage(){
 	if (ANIMATION) {
+		// Stop the Animation and reapply the new one
 		ANIMATION = false;
 		setTimeout(() => {
 			ANIMATION = true;
@@ -89,6 +90,7 @@ function generateHTMLImageFromJson(){
  * @param value the texture function (without 'texture_')
  */
 function showTextureOptions(value){
+	// Stop the Animation and then continue
 	ANIMATION = false;
 	setTimeout(() => {
 
@@ -170,7 +172,7 @@ function showTextureOptions(value){
 			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
 			case "chromaticCircle":      	ANIMATION = true; options = ["size", "centerx", "centery"]; break;
-			case "yinyang":      			ANIMATION = true; options = ["size", "fullangle", "centerx", "centery"]; break;
+			case "yinyang":      			ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "randomFunction": 			ANIMATION = true; options = []; break;
 			case "ForestFire":				ANIMATION = true; options = []; break;
 			case "GameOfLife":				ANIMATION = true; options = []; break;

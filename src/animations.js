@@ -145,11 +145,11 @@ function texture_yinyang(dict) {
     const r = dict['size']        || 150;
     const rot = dict['angle']     || 0;
     const center = dict['center'] || [];
-    const center_x = center[0]    || 250;
-    const center_y = center[1]    || 250;
+    const center_x = center[0]    || dict['centerx'] || 250;
+    const center_y = center[1]    || dict['centery'] || 250;
     const colors = dict['colors'] || [];
-    const color1 = colors[0]      || COLORS.black;
-    const color2 = colors[1]      || COLORS.white;
+    const color1 = colors[0]      || dict['color1'] || COLORS.black;
+    const color2 = colors[1]      || dict['color2'] || COLORS.white;
     const color_bg = colors[2]    || COLORS.cyan;
 
     const alpha = rot * 3.14 / 180;
