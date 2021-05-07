@@ -2,7 +2,7 @@
 
 // Global Variables
 const globalVars = require('./vars.js');
-var COLORS = globalVars.COLORS;
+let COLORS = globalVars.COLORS;
 let ANIMATION = false;
 
 // Textures
@@ -210,7 +210,7 @@ function generateArrayFromJson(canvas, jsondata) {
             }
 
             // The key is a texture function
-            if(paramsOnly === false && textures_func.includes(key) && searchModel != key){
+            if(paramsOnly === false && textures_func.includes(key) && searchModel !== key){
                 //console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
                 // console.log(window["TEXTURES"][key](generateLevel(dict[key])) );
