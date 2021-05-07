@@ -12,7 +12,11 @@ const semiregular_tilings_textures = require('./textures/semiregular_tilings_tex
 const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
 const noise_textures = require('./textures/noise_textures.js');
 const cellular_automata_textures = require('./textures/cellular_automata_textures.js');
-const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures);
+const distance_textures = require('./textures/distance_textures.js');
+const signed_distance_textures = require('./textures/signed_distance_textures.js');
+const fractal_textures = require('./textures/fractal_textures.js');
+const shape_textures = require('./textures/shape_textures.js');
+const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures, distance_textures, signed_distance_textures, fractal_textures, shape_textures);
 
 // Filters
 const basic_filters = require('./filters/basic_filters.js');
@@ -209,14 +213,14 @@ function generateArrayFromJson(canvas, jsondata) {
             if(paramsOnly === false && textures_func.includes(key) && searchModel != key){
                 //console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
-                console.log(window["texture_" + key](generateLevel(dict[key])) );
-                return generateTexture(canvas, window["texture_" + key](generateLevel(dict[key])));
+                // console.log(window["TEXTURES"][key](generateLevel(dict[key])) );
+                return generateTexture(canvas, window["TEXTURES"][key](generateLevel(dict[key])));
             }
 
             // The key is a 1-image filter
             if(paramsOnly === false && filters_func.includes(key)){
                 //console.log("FOUND FILTER " + key);
-                return window["filter_" + key](generateLevel(dict[key], true))(generateLevel(dict[key], false));
+                return window["FILTERS"][key](generateLevel(dict[key], true))(generateLevel(dict[key], false));
             }
 
             // The key is a 2-image filter
@@ -225,7 +229,7 @@ function generateArrayFromJson(canvas, jsondata) {
                 const firstImg = generateLevel(dict[key], false, "--search");
                 const param1 = generateLevel(dict[key], false);
                 const param2 = generateLevel(dict[key], false, firstImg);
-                return window["filter_" + key](generateLevel(dict[key], true))(param1, param2);
+                return window["FILTERS"][key](generateLevel(dict[key], true))(param1, param2);
             }
 
             // Unrecognized key

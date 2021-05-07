@@ -1,3 +1,14 @@
+'use strict';
+
+// Global variables
+const globalVars = require('../vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+
+const tools = require("./tools_for_textures.js");
+const getRandomInt = tools.getRandomInt;
+const randomPolygon = tools.randomPolygon;
+
 /* Function : Absolute value
  * 
  * @param a a number or an array of numbers
@@ -705,7 +716,7 @@ function texture_sdRegularStar(dict) {
    const acs = [Math.cos(an), Math.sin(an)];
    const ecs = [Math.cos(en), Math.sin(en)];
 
-   function dist(p, r, n, m) {
+   function dist(p, r) { //(p, r, n, m)
       const bn = abs(Math.atan2(p[0], p[1])) % (2 * an) - an;
       p = [length(p) * Math.cos(bn), length(p) * abs(Math.sin(bn))];
 
@@ -1259,3 +1270,39 @@ function texture_sdBobblyCross(dict) {
       return fcolor(d);
    };
 }
+
+// Exports
+exports.sdCircle           = texture_sdCircle;
+exports.sdRoundedBox       = texture_sdRoundedBox;
+exports.sdBox              = texture_sdBox;
+exports.sdOrientedBox      = texture_sdOrientedBox;
+exports.sdRhombus          = texture_sdRhombus;
+exports.sdSegment          = texture_sdSegment;
+exports.sdIsoscelesTrapezoid     = texture_sdIsoscelesTrapezoid;
+exports.sdParallelogram          = texture_sdParallelogram;
+exports.sdEquilateralTriangle    = texture_sdEquilateralTriangle;
+exports.sdIsocelesTriangle = texture_sdIsoscelesTriangle;
+exports.sdTriangle         = texture_sdTriangle;
+exports.sdUnevenCapsule    = texture_sdUnevenCapsule;
+exports.sdRegularPentagon  = texture_sdRegularPentagon;
+exports.sdRegularHexagon   = texture_sdRegularHexagon;
+exports.sdRegularOctogon   = texture_sdRegularOctogon;
+exports.sdHexagram         = texture_sdHexagram;
+exports.sdStar5            = texture_sdStar5;
+exports.sdRegularStar      = texture_sdRegularStar;
+exports.sdPie              = texture_sdPie;
+exports.sdArc              = texture_sdArc;
+exports.sdHorseshoe        = texture_sdHorseshoe;
+exports.sdVesica           = texture_sdVesica;
+exports.sdMoon             = texture_sdMoon;
+exports.sdCircleCross      = texture_sdCircleCross;
+exports.sdSimpleEgg        = texture_sdSimpleEgg;
+exports.sdHeart            = texture_sdHeart;
+exports.sdCross            = texture_sdCross;
+exports.sdRoundedX         = texture_sdRoundedX;
+exports.sdPolygon          = texture_sdPolygon;
+exports.sdEllipse          = texture_sdEllipse;
+exports.sdParabola         = texture_sdParabola;
+exports.sdParabolaSegment  = texture_sdParabolaSegment;
+exports.sdQuadraticBezier  = texture_sdQuadraticBezier;
+exports.sdBobblyCross      = texture_sdBobblyCross;

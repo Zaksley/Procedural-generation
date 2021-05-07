@@ -2,7 +2,7 @@ DIR = src
 PUBLIC_DIR = public
 
 FILTERS_LIST = basic convolution composition color deformation
-TEXTURES_LIST = tools_for basic regular_tilings semiregular_tilings polygon_tilings noise cellular_automata
+TEXTURES_LIST = tools_for basic regular_tilings semiregular_tilings polygon_tilings noise cellular_automata distance signed_distance fractal shape
 ANIMATIONS_LIST = 
 
 FILTERS = ${foreach filter,${FILTERS_LIST},${DIR}/filters/${filter}_filters.js}

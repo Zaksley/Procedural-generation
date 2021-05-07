@@ -1,5 +1,10 @@
 'use strict';
 
+// Global variables
+const globalVars = require('../vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+
 /* Translates coordinates to match a canvas
  *
  * @param i x-coordinate of a pixel
@@ -194,9 +199,18 @@ function isInShape(coords) {
     }
 }
 
+function randomPolygon(n) {
+    let polygon = [];
+    for(let i = 0; i < n; i++) {
+        polygon[i] = [getRandomInt(WIDTH), getRandomInt(HEIGHT)];
+    }
+    return polygon;
+}
+
 // Exports
 exports.ij2xy 			= ij2xy;
 exports.get_offset  	= get_offset;
 exports.getRandomInt	= getRandomInt;
 exports.getFourInterpolateCoordinates = getFourInterpolateCoordinates;
 exports.isInShape       = isInShape;
+exports.randomPolygon   = randomPolygon;

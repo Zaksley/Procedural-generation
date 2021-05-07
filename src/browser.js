@@ -123,7 +123,6 @@ function generateHTMLImageFromJson(){
 	}
 
 	// Image generation
-	console.log("here");
 	generateImage(CANVAS, img);
 }
 
