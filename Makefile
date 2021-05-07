@@ -14,14 +14,7 @@ all: clean gen
 # Generates browser and node files
 gen:
 	cp ${DIR}/index.html ${PUBLIC_DIR}/
-	npx browserify ${DIR}/browser.js ${DIR}/main.js ${FILTERS} ${TEXTURES} ${ANIMATIONS} -o ${PUBLIC_DIR}/browser_main.js
-	
-	cp ${DIR}/browser.js ${PUBLIC_DIR}/
-	cp ${DIR}/main.js ${PUBLIC_DIR}/
-	cp ${DIR}/vars.js ${PUBLIC_DIR}/
-	cp -r ${DIR}/filters ${PUBLIC_DIR}/
-	cp -r ${DIR}/textures ${PUBLIC_DIR}/
-	cp -r ${DIR}/animations ${PUBLIC_DIR}/
+	npx browserify ${DIR}/browser.js ${DIR}/main_func.js ${FILTERS} ${TEXTURES} ${ANIMATIONS} -o ${PUBLIC_DIR}/browser_main.js
 
 test:
 
@@ -32,12 +25,9 @@ lint:
 		npx eslint $$obsfile; \
 	done
 	npx eslint ${DIR}/vars.js
-	npx eslint ${DIR}/main.js
+	npx eslint ${DIR}/main_func.js
 	npx eslint ${DIR}/browser.js
 
-clean:
-	#-- Cleaning public repository
-	rm -f ${PUBLIC_DIR}/filters/*
-	rm -f ${PUBLIC_DIR}/textures/*
-	rm -f ${PUBLIC_DIR}/animations/*
-	rm -df ${PUBLIC_DIR}/*
+#-- Cleaning public repository
+clean: 	
+	rm -f ${PUBLIC_DIR}/*

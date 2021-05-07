@@ -6,7 +6,7 @@ const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 
 // Main utility functions
-const main = require('./main.js');
+const main = require('./main_func.js');
 const generateImage = main.generateImage;
 const generateTexture = main.generateTexture;
 const generateAnimation = main.generateAnimation;
