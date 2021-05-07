@@ -1,42 +1,6 @@
 'use strict';
 
-// Color dictionnary
-const COLORS = {
-    blue: [0, 0, 255, 255],
-    red: [255, 0, 0, 255],
-    pink: [255, 192, 203, 255],
-    green: [0, 255, 0, 255],
-    black: [0, 0, 0, 255],
-    white: [255, 255, 255, 255],
-    orange: [255, 128, 0, 255],
-    cyan: [0, 255, 128, 255],
-    grey: [128,128,128,255],
-    silver: [192,192,192,255],
-};
 
-/* Returns a color from its name
- *
- * @param color the color name
- * @return a color 4-array
- */
-function getColor(color) {
-   switch(color){
-      // Base colors
-      case "white":  return COLORS.white;
-      case "black":  return COLORS.black;
-      case "grey":   return COLORS.grey;
-      case "silver": return COLORS.silver;
-      case "blue":   return COLORS.blue;
-      case "red":    return COLORS.red;
-      case "green":  return COLORS.green;
-
-      // Advanced colors
-      case "orange": return COLORS.orange;
-      case "cyan":   return COLORS.cyan;
-      case "pink":   return COLORS.pink;
-      default: return COLORS.black;
-   }
-}
 
 function ij2xy(i, width, j, height) {
     let x = i;
@@ -1698,7 +1662,11 @@ function texture_Greenberg_Hastings(dict)
     }
 }
 
-// Used to select a initialization setup and a next step rule for the tree generator
+/* Returns a rule from its name
+ *
+ * @param rule the rule name
+ * @return a rule init/next-state couple
+ */
 function getRule(rule)
 {
     switch(rule)
@@ -1712,6 +1680,7 @@ function getRule(rule)
         default: return [rule73_initGrid, rule73_nextState];;
     }
 }
+
 // Random initialization
 function ruleDef_initGrid(grid)
 {

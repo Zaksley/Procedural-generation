@@ -1,15 +1,41 @@
+'use strict'
+
+// Global variables
+const globalVars = require('./vars.js');
+const main = require('./main.js');
+
+// Setting the window environment
+window.regenerateImage = regenerateImage;
+window.regenerateFilters = regenerateFilters;
+window.updateSliderValue = updateSliderValue;
+window.generateHTMLImageFromJson = generateHTMLImageFromJson;
+window.showTextureOptions = showTextureOptions;
+for(const key in globalVars){
+	window[key] = globalVars[key];
+}
+for(const key in main){
+	window[key] = main[key];
+}
+
+// Setting Canvas properties
+const CANVAS = document.getElementById("canvas");
+window.CANVAS = CANVAS;
+CANVAS.width = WIDTH;
+CANVAS.height = HEIGHT;
+
+
 /* Updates the image displayed (with current canvas, texture & dictionnary)
  */
 function regenerateImage(){
-	BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT));
+	BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT));
 	generateImage(CANVAS, BASEDATA);
 };
 
 /* Updates the image displayed with the display filters
  */
 function regenerateFilters(){
-	BASEDATA = generateTexture(CANVAS, window[TEXTURE](DICT), XOFFSET, YOFFSET);
-	DATA = filter_resize(OPTDICT)(BASEDATA);
+	BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT), XOFFSET, YOFFSET);
+	DATA = window["FILTERS"]["resize"](OPTDICT)(BASEDATA);
 	generateImage(CANVAS, DATA);
 };
 
@@ -42,14 +68,13 @@ function generateHTMLImageFromJson(){
 	let jsondata = {};
 	let error = false;
 	try {
-		JSON.parse(data);
+		jsondata = JSON.parse(data);
 	} catch (e) {
 		error = true;
 		document.getElementById('jsonerror').innerHTML = "Parsing error: " + e;
 		document.getElementById('jsonerror').style.display = "block";
 	} finally {
 		if(error === false) {
-			jsondata = JSON.parse(data);
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
 			return;
@@ -59,14 +84,13 @@ function generateHTMLImageFromJson(){
 	// Transformation
 	error = false;
 	try { 
-		img = generateArrayFromJson(jsondata);
+		const img = generateArrayFromJson(CANVAS, jsondata);
 	} catch(e) {
 		error = true;
 		document.getElementById('jsonerror').innerHTML = e;
 		document.getElementById('jsonerror').style.display = "block";
 	} finally {
 		if(error === false) {
-			jsondata = JSON.parse(data);
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
 			return;
@@ -74,6 +98,7 @@ function generateHTMLImageFromJson(){
 	}
 
 	// Image generation
+	console.log("here");
 	generateImage(CANVAS, img);
 }
 
@@ -82,7 +107,7 @@ function generateHTMLImageFromJson(){
  * @param value the texture function (without 'texture_')
  */
 function showTextureOptions(value){
-	TEXTURE = "texture_" + value;
+	TEXTURE = value;
 	console.log("Switching to " + value + " texture ...");
 	// Generating default texture
 	regenerateImage();

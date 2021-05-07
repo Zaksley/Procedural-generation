@@ -1,13 +1,24 @@
 'use strict';
 
-// Global variables
-let MAX_ARGUMENTS = 50;
-const WIDTH = 500, HEIGHT = 500;
-let CANVAS = document.getElementById('canvas');
-CANVAS.width = WIDTH; CANVAS.height = HEIGHT;
-// /!\ UNUSED
-//let CONTEXT = CANVAS.getContext("2d");
-//let IMAGE = CONTEXT.createImageData(CANVAS.width, CANVAS.height);
+// Global Variables
+const globalVars = require('./vars.js');
+var COLORS = globalVars.COLORS;
+
+// Textures
+const basic_textures = require('./textures/basic_textures.js');
+const regular_tilings_textures = require('./textures/regular_tilings_textures.js');
+const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures);
+
+// Filters
+const basic_filters = require('./filters/basic_filters.js');
+const composition_filters = require('./filters/composition_filters.js');
+const convolution_filters = require('./filters/convolution_filters.js');
+const color_filters = require('./filters/color_filters.js');
+const deformation_filters = require('./filters/deformation_filters.js');
+const FILTERS = Object.assign({}, basic_filters, composition_filters, convolution_filters, color_filters, deformation_filters);
+
+// Helpers
+//const getRule = 0;
 
 //////// MAIN FUNCTIONS ///////////
 
@@ -82,94 +93,6 @@ function generateAnimation(canvas, texture) {
     }
 }
 
-/* OUTDATED Generates an image data array from a texture function
- *
- * @param canvas the canvas used for sizing
- * @param texture a texture function to generate
- * @param ...args a list of arguments for the texture function
- * @precond canvas must be a <canvas> html element
- * @return an image data array (of size width*height*4)
- */
-function generateTextureOld(canvas, texture, ...args) {
-    // Environnment definition
-    let context = canvas.getContext("2d");
-    let image = context.createImageData(canvas.width, canvas.height);
-
-    // Texture function definition
-    let nbArgs = 0;
-    let textureFunction = texture;
-    while (typeof (textureFunction) === 'function' && nbArgs <= MAX_ARGUMENTS) {
-        // Verifies that next argument is not the last block
-        if (typeof (textureFunction(args[0])) === 'function') {
-            textureFunction = textureFunction(args[0]);
-        }
-        args.shift();
-        nbArgs++;
-    }
-
-    // Texture application
-    for (let n = 0, y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < canvas.width; x++, n += 4) {
-            let pixel = textureFunction(x, y);
-            image.data[n] = pixel[0]; // Red channel
-            image.data[n + 1] = pixel[1]; // Green channel
-            image.data[n + 2] = pixel[2]; // Blue channel
-            image.data[n + 3] = pixel[3]; // Alpha channel
-        }
-    }
-
-    return image.data;
-}
-
-/* OUTDATED Generates an animation from a texture function
- *
- * @param canvas the canvas used for sizing
- * @param texture a texture function to generate
- * @param ...args a list of arguments for the texture function
- * @precond canvas must be a <canvas> html element
- * @return nothing
- */
-function generateAnimationOld(canvas, texture, ...args) {
-    // Environnment definition
-    let context = canvas.getContext("2d");
-    let image = context.createImageData(canvas.width, canvas.height);
-
-    // Texture function definition
-    let nbArgs = 0;
-    let textureFunction = texture;
-
-    while (typeof (textureFunction) === 'function' && nbArgs <= MAX_ARGUMENTS) {
-        // Verifies that next argument is not the last block
-        if (typeof (textureFunction(args[0])) === 'function') {
-            textureFunction = textureFunction(args[0]);
-        }
-        args.shift();
-        nbArgs++;
-    }
-
-    makeFrame(); // Start the animation
-
-    /* Creates an animation on main canvas
-     *
-     * @param time timestamp of current image
-     * @return nothing
-     */
-    function makeFrame(time) {
-        let dt = 0.005 * time;
-        for (let n = 0, y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++, n += 4) {
-                let pixel = textureFunction(x, y, dt);
-                image.data[n] = pixel[0]; // Red channel
-                image.data[n + 1] = pixel[1]; // Green channel
-                image.data[n + 2] = pixel[2]; // Blue channel
-                image.data[n + 3] = pixel[3]; // Alpha channel
-            }
-        }
-
-        context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
-    }
-}
-
 /* Prints an image on a canvas
  *
  * @param canvas the canvas for the image to be printed on
@@ -187,13 +110,37 @@ function generateImage(canvas, data) {
     context.putImageData(image, 0, 0);
 }
 
+/* Returns a color from its name
+ *
+ * @param color the color name
+ * @return a color 4-array
+ */
+function getColor(color) {
+   switch(color){
+      // Base colors
+      case "white":  return COLORS.white;
+      case "black":  return COLORS.black;
+      case "grey":   return COLORS.grey;
+      case "silver": return COLORS.silver;
+      case "blue":   return COLORS.blue;
+      case "red":    return COLORS.red;
+      case "green":  return COLORS.green;
+
+      // Advanced colors
+      case "orange": return COLORS.orange;
+      case "cyan":   return COLORS.cyan;
+      case "pink":   return COLORS.pink;
+      default: return COLORS.black;
+   }
+}
+
 /* Generates an image array from a json dictionnary
  * (Used in both HTML & Node generation functions)
  *
  * @param jsondata a json dictionnary with function names/parameters
  * @return an image array
  */
-function generateArrayFromJson(jsondata) {
+function generateArrayFromJson(canvas, jsondata) {
 
     // Texture functions
     let textures_func = ["horizontalGradient",
@@ -207,7 +154,7 @@ function generateArrayFromJson(jsondata) {
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
     "sharpness","box_blur","gaussian_blur","gaussian_unsharp_masking","unsharp_masking",
-    "luminosity","saturation","contrast","hueShift","resize"];
+    "luminosity","saturation","contrast","hueShift","resize","conformTransformation"];
 
     // Two-textures filters
     let doublefilters_func = ["compose"];
@@ -215,7 +162,7 @@ function generateArrayFromJson(jsondata) {
     // Textures & filters parameters
     let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
-    "operation","rule"];
+    "operation","rule","function"];
 
     /* Recursive function building a dictionnary for the current filter/texture
      *
@@ -236,7 +183,7 @@ function generateArrayFromJson(jsondata) {
 
             // The key is a parameter
             if(params.includes(key)){
-                console.log("FOUND PARAMETER " + key);
+                //console.log("FOUND PARAMETER " + key);
                 let value = dict[key];
                 // A known color is found
                 if(key.substring(0,5) === "color" && !Array.isArray(dict[key])){
@@ -253,7 +200,8 @@ function generateArrayFromJson(jsondata) {
             if(paramsOnly === false && textures_func.includes(key) && searchModel != key){
                 //console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
-                return generateTexture(CANVAS, window["texture_" + key](generateLevel(dict[key])));
+                console.log(window["texture_" + key](generateLevel(dict[key])) );
+                return generateTexture(canvas, window["texture_" + key](generateLevel(dict[key])));
             }
 
             // The key is a 1-image filter
@@ -265,9 +213,10 @@ function generateArrayFromJson(jsondata) {
             // The key is a 2-image filter
             if(paramsOnly === false && doublefilters_func.includes(key)){
                 //console.log("FOUND COMPOSING FILTER " + key);
-                let firstImg = generateLevel(dict[key], false, "--search");
-                return window["filter_" + key](generateLevel(dict[key], true))
-                    (generateLevel(dict[key], false), generateLevel(dict[key], false, firstImg));
+                const firstImg = generateLevel(dict[key], false, "--search");
+                const param1 = generateLevel(dict[key], false);
+                const param2 = generateLevel(dict[key], false, firstImg);
+                return window["filter_" + key](generateLevel(dict[key], true))(param1, param2);
             }
 
             // Unrecognized key
@@ -279,17 +228,19 @@ function generateArrayFromJson(jsondata) {
 }
 
 
-/*
-exports.generateTexture = generateTexture;
-exports.generateImage = generateImage;
-exports.generateAnimation = generateAnimation;
-//exports.colors = colors;
-*/
+// Exports
+exports.generateTexture         = generateTexture;
+exports.generateAnimation       = generateAnimation;
+exports.generateImage           = generateImage;
+exports.generateArrayFromJson   = generateArrayFromJson;
+exports.TEXTURES                = TEXTURES;
+exports.FILTERS                 = FILTERS;
+
 ///////// TESTS //////////
 
 // ========== TEXTURE (only one) ==========
 // Usage : let data = generateTexture(CANVAS, [texture], <...args>);*/
-let data =
+//let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
@@ -316,7 +267,7 @@ let data =
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
-    generateTexture(CANVAS, sdRoundedBox({}));
+    //generateTexture(CANVAS, sdRoundedBox({}));
 
 // ========================================
 
@@ -333,7 +284,7 @@ let data =
 // ===================================================
 
 // !! Do not touch
-generateImage(CANVAS, data);
+//generateImage(CANVAS, data);
 
 
 //generateAnimation(CANVAS, chromatic_circle, 100, WIDTH/2, HEIGHT/2);

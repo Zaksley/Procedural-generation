@@ -868,8 +868,8 @@ function filter_conformTransformation(dict) {
 					Math.floor(complex[1]*2)
 				)); break;
 			case "1/x": f = ((x,y) => [
-				Math.floor(1/(x/width)),
-				Math.floor(1/(y/height))
+				Math.floor(1/(shiftPos(x, width))),
+				Math.floor(1/(shiftPos(y, height)))
 				]); break;
 			default: f = ((x,y) => [x,y]); break;
 		}
