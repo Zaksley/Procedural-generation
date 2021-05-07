@@ -3,11 +3,16 @@
 // Global Variables
 const globalVars = require('./vars.js');
 var COLORS = globalVars.COLORS;
+let ANIMATION = false;
 
 // Textures
 const basic_textures = require('./textures/basic_textures.js');
 const regular_tilings_textures = require('./textures/regular_tilings_textures.js');
-const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures);
+const semiregular_tilings_textures = require('./textures/semiregular_tilings_textures.js');
+const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
+const noise_textures = require('./textures/noise_textures.js');
+const cellular_automata_textures = require('./textures/cellular_automata_textures.js');
+const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures);
 
 // Filters
 const basic_filters = require('./filters/basic_filters.js');
@@ -18,7 +23,7 @@ const deformation_filters = require('./filters/deformation_filters.js');
 const FILTERS = Object.assign({}, basic_filters, composition_filters, convolution_filters, color_filters, deformation_filters);
 
 // Helpers
-//const getRule = 0;
+const getRule = cellular_automata_textures.getRule;
 
 //////// MAIN FUNCTIONS ///////////
 
@@ -149,7 +154,7 @@ function generateArrayFromJson(canvas, jsondata) {
     // Texture functions
     let textures_func = ["horizontalGradient",
         "solid", "hexagonTiling", "triangleTiling","caireTiling","pentagonTiling3",
-        "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
+        "cubeTiling","gambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
@@ -237,6 +242,7 @@ exports.generateTexture         = generateTexture;
 exports.generateAnimation       = generateAnimation;
 exports.generateImage           = generateImage;
 exports.generateArrayFromJson   = generateArrayFromJson;
+exports.getRule                 = getRule;
 exports.TEXTURES                = TEXTURES;
 exports.FILTERS                 = FILTERS;
 

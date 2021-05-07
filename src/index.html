@@ -81,13 +81,13 @@ textarea {
 		<label for="texture">Select a texture : </label>
 
 		<script>
-			// Global vars
-			let DATA = [], BASEDATA = [];
-			let TEXTURE = "";
-			let FILTER = "filter_resize";
-			let DICT = {};
-			let OPTDICT = {intensity:1, translation:0};
-			let XOFFSET = 0, YOFFSET = 0;
+			// // Global vars
+			// let DATA = [], BASEDATA = [];
+			// let TEXTURE = "";
+			// let FILTER = "filter_resize";
+			// let DICT = {};
+			// let OPTDICT = {intensity:1, translation:0};
+			// let XOFFSET = 0, YOFFSET = 0;
 		</script>
 
 		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
@@ -103,8 +103,8 @@ textarea {
 				<option value="hexagonTiling">Hexagonal tiling</option>
 			</optgroup>
 			<optgroup label="Semi-Regular Tilings">
-				<option value="3Dcube">Isometric cubic tiling</option>
-				<option value="3DgambarTiling">Gambar tiling</option>
+				<option value="cubeTiling">Isometric cubic tiling</option>
+				<option value="gambarTiling">Gambar tiling</option>
 				<option value="elongatedTriangular">Elongated triangular tiling</option>
 				<option value="snubSquare">Snub square tiling</option>
 				<option value="snubHexagonal">Snub hexagonal tiling</option>
@@ -134,7 +134,7 @@ textarea {
          <optgroup label="Cellular Automata">
             <option value="forestFire">Forest Fire</option>
             <option value="gameOfLife">Conway's Game Of Life</option>
-	    <option value="Greenberg_Hastings">Greenberg-Hasting simulation</option>
+	    <option value="greenbergHastings">Greenberg-Hasting simulation</option>
             <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
             <option value="cyclic1DCellularAutomaton">Cyclic 1D Cellular Automaton</option>
          </optgroup>

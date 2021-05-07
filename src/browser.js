@@ -2,14 +2,24 @@
 
 // Global variables
 const globalVars = require('./vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+
+// Main utility functions
 const main = require('./main.js');
+const generateImage = main.generateImage;
+const generateTexture = main.generateTexture;
+const generateAnimation = main.generateAnimation;
+const generateArrayFromJson = main.generateArrayFromJson;
 
 // Setting the window environment
+window.hexaToRGBA = hexaToRGBA;
 window.regenerateImage = regenerateImage;
 window.regenerateFilters = regenerateFilters;
 window.updateSliderValue = updateSliderValue;
 window.generateHTMLImageFromJson = generateHTMLImageFromJson;
 window.showTextureOptions = showTextureOptions;
+window.getRule = main.getRule;
 for(const key in globalVars){
 	window[key] = globalVars[key];
 }
@@ -22,6 +32,14 @@ const CANVAS = document.getElementById("canvas");
 window.CANVAS = CANVAS;
 CANVAS.width = WIDTH;
 CANVAS.height = HEIGHT;
+let ANIMATION = main.ANIMATION;
+
+// Global vars - Web-specific
+let DATA = [], BASEDATA = [];
+let TEXTURE = "";
+let DICT = {};
+let OPTDICT = {intensity:1, translation:0};
+let XOFFSET = 0, YOFFSET = 0;
 
 
 /* Updates the image displayed (with current canvas, texture & dictionnary)
@@ -63,7 +81,7 @@ function updateSliderValue(sliderValueId, value){
  */
 function hexaToRGBA(hexa){
 	let rgb = [hexa.substr(1,2),hexa.substr(3,2),hexa.substr(5,2)];
-	rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
+	let rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
 	rgba.push(255);
 	return rgba;
 }
@@ -74,6 +92,7 @@ function generateHTMLImageFromJson(){
 	// Parsing
 	let data = '{' + document.getElementById("textarea").value + '}';
 	let jsondata = {};
+	let img = []; 
 	let error = false;
 	try {
 		jsondata = JSON.parse(data);
@@ -81,28 +100,26 @@ function generateHTMLImageFromJson(){
 		error = true;
 		document.getElementById('jsonerror').innerHTML = "Parsing error: " + e;
 		document.getElementById('jsonerror').style.display = "block";
-	} finally {
-		if(error === false) {
-			document.getElementById('jsonerror').style.display = "none";
-		} else {
-			return "";
-		}
+	}
+	if(error === false) {
+		document.getElementById('jsonerror').style.display = "none";
+	} else {
+		return 0;
 	}
 
 	// Transformation
 	error = false;
 	try { 
-		const img = generateArrayFromJson(CANVAS, jsondata);
+		img = generateArrayFromJson(CANVAS, jsondata);
 	} catch(e) {
 		error = true;
 		document.getElementById('jsonerror').innerHTML = e;
 		document.getElementById('jsonerror').style.display = "block";
-	} finally {
-		if(error === false) {
-			document.getElementById('jsonerror').style.display = "none";
-		} else {
-			return "";
-		}
+	}
+	if(error === false) {
+		document.getElementById('jsonerror').style.display = "none";
+	} else {
+		return 0;
 	}
 
 	// Image generation
@@ -116,14 +133,9 @@ function generateHTMLImageFromJson(){
  */
 function showTextureOptions(value){
 
-	TEXTURE = value;
-	console.log("Switching to " + value + " texture ...");
-	// Generating default texture
-	regenerateImage();
-
 	// Stop the Animation and then continue
-	// ANIMATION = false;
-	// setTimeout(() => {
+	ANIMATION = false;
+	setTimeout(() => {
 
 	// Gathering options
 	let options = [];
@@ -137,8 +149,8 @@ function showTextureOptions(value){
 			case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
 			case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;
 		// Semi-regular tilings
-			case "3Dcube": 				options = ["size", "color1", "color2", "color3"]; break;
-			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
+			case "cubeTiling": 			options = ["size", "color1", "color2", "color3"]; break;
+			case "gambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
 			case "elongatedTriangular": options = ["size", "color1", "color2", "color3", "color4"]; break;
 			case "snubSquare": 			options = ["size", "color1", "color2", "color3"]; break;
 			case "snubHexagonal": 		options = ["size", "color1", "color2", "color3"]; break;
@@ -157,12 +169,12 @@ function showTextureOptions(value){
 			case "perlinNoise": 		options = ["rows", "columns", "color1", "color2", "color3"]; break;
 		// Diagrams todo
 			case "Voronoi":             options = ["germs"]; break;
-        	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
-        	case "triangularFractal":   options = ["depth", "color1", "color2"]; break;
+			case "squareFractal": 		options = ["depth", "color1", "color2"]; break;
+			case "triangularFractal": 	options = ["depth", "color1", "color2"]; break;
 		// Cellular Automata
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
-		 case "Greenberg_Hastings":	 options = ["step"]; break;
+			case "Greenberg_Hastings": 	options = ["step"]; break;
         case "elementaryCellularAutomaton":          options = ["rule"]; break;
         case "cyclic1DCellularAutomaton":          options = ["color1", "color2", "color3", "color4"]; break;
 		// Signed Distance Textures
@@ -216,17 +228,17 @@ function showTextureOptions(value){
 		console.log("Switching to " + value + " animation ...");
 		generateAnimation(CANVAS, window[TEXTURE](DICT));
 	} else {
-		TEXTURE = "texture_" + value;
+		TEXTURE = value;
 		console.log("Switching to " + value + " texture ...");
 		// Generating default texture
 		regenerateImage();
 	}
 
 	// Displaying options
-	Array.from(document.getElementsByClassName("textureOption")).forEach(function(e, i){
+	Array.from(document.getElementsByClassName("textureOption")).forEach(function(e){
 		e.style.display = "none";
 	});
-	options.forEach(function(e, i){
+	options.forEach(function(e){
 		document.getElementsByClassName(e)[0].style.display = "block";
 	});
 	}, 100);
@@ -247,7 +259,7 @@ document.getElementById("textarea").addEventListener('keydown', function(e) {
 		for(let i = 0; i < linesBetween.length; i++) {
 			if(i > 0) newBlock += '\n';
 			newBlock += "\t" + linesBetween[i];
-		};
+		}
 
 		// Updates value
 		this.value = this.value.substring(0, start) 
@@ -257,5 +269,5 @@ document.getElementById("textarea").addEventListener('keydown', function(e) {
 		// Moves cursor
 		this.selectionStart = start + 1;
 		this.selectionEnd = end + linesBetween.length;
-	};
+	}
 });
