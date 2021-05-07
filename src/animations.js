@@ -106,11 +106,11 @@ function add_animation(dict) {
     };
 }
 
-function chromatic_circle(dict) {
-    const r = dict['radius']      || 150;
+function animated_chromaticCircle(dict) {
+    const r = dict['size']        || 150;
     const center = dict['center'] || [];
-    const center_x = center[0]    || 250;
-    const center_y = center[1]    || 250;
+    const center_x = center[0]    || dict['centerx'] || 250;
+    const center_y = center[1]    || dict['centery'] || 250;
     const colors = dict['colors'] || [];
     const color_bg = colors[0]    || COLORS.black;
 
@@ -141,26 +141,26 @@ function animated_caireTiling(dict) {
     };                     
 }
 
-function yin_yang(dict) {
-    const r = dict['radius']      || 150;
-    const rot = dict['rotation']  || 0;
+function texture_yinyang(dict) {
+    const r = dict['size']        || 150;
+    const rot = dict['angle']     || 0;
     const center = dict['center'] || [];
-    const center_x = center[0]    || 250;
-    const center_y = center[1]    || 250;
+    const center_x = center[0]    || dict['centerx'] || 250;
+    const center_y = center[1]    || dict['centery'] || 250;
     const colors = dict['colors'] || [];
-    const color1 = colors[0]      || COLORS.black;
-    const color2 = colors[1]      || COLORS.white;
+    const color1 = colors[0]      || dict['color1'] || COLORS.black;
+    const color2 = colors[1]      || dict['color2'] || COLORS.white;
     const color_bg = colors[2]    || COLORS.cyan;
 
-    const square = (x) => x * x;
+    const alpha = rot * 3.14 / 180;
 
-    return function (x, y, dt) {
-        const time = rot * dt;
+    return function (x, y) {
+        const center_x_up = center_x + (r / 2) * Math.sin(alpha);
+        const center_y_up = center_y - (r / 2) * Math.cos(alpha);
+        const center_x_down = center_x - (r / 2) * Math.sin(alpha);
+        const center_y_down = center_y + (r / 2) * Math.cos(alpha);
 
-        const center_x_up = center_x + (r / 2) * Math.sin(time);
-        const center_y_up = center_y - (r / 2) * Math.cos(time);
-        const center_x_down = center_x - (r / 2) * Math.sin(time);
-        const center_y_down = center_y + (r / 2) * Math.cos(time);
+        const square = (x) => x*x;
 
         if(square(x - center_x) + square(y - center_y) < square(r)) {
             if (square(x - center_x_up) + square(y - center_y_up) < square(r / 4))
@@ -171,12 +171,22 @@ function yin_yang(dict) {
                 return color2;
             else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 2))
                 return color1;
-            else if (Math.sin(time) * (y - center_y) + Math.cos(time) * (x - center_x) > 0)
+            else if (Math.sin(alpha) * (y - center_y) + Math.cos(alpha) * (x - center_x) > 0)
                 return color1;
             else
                 return color2;
         }
         return color_bg; 
+    };
+}
+
+function animated_yinyang(dict) {
+    const angle = dict['angle'] = 10;
+
+    return function (x, y, dt) {
+        const new_angle = angle + 5 * dt;
+        dict['angle'] = new_angle;
+        return texture_yinyang(dict)(x, y);
     };
 }
 
@@ -234,7 +244,7 @@ function animated_randomFunction() {
     };
 }
 
-function animated_forestFire(dict) {
+function animated_ForestFire(dict) {
     const treeProbability =      dict['treeP']  || 50;
     const lightningProbability = dict['treeP']  || 5;
 
@@ -296,6 +306,288 @@ function animated_GameOfLife(dict) {
         return node(grid, () => makeInfiniteStates(gameOfLife_nextStep(grid)));
     }
 
+        // Return grid with a gosper_glid
+    function gosper_glid(){
+
+        let gosper_glider = []; 
+        const gosp_x = 36; 
+        const gosp_y = 9; 
+
+            // Initialiaze
+        for(let i=0; i<gosp_x; i++)
+        {
+            gosper_glider[i] = [];
+            for(let j=0; j<gosp_y; j++)
+            {
+                gosper_glider[i][j] = 0;
+            }
+        }
+
+        const points = [
+                        [0, 4],
+                        [1, 4],
+                        [0, 5],
+                        [1, 5],
+                        [10, 4],
+                        [10, 5],
+                        [10, 6],
+                        [11, 3],
+                        [11, 7],
+                        [12, 2],
+                        [12, 8],
+                        [13, 2],
+                        [13, 8],
+                        [14, 5],
+                        [15, 3],
+                        [15, 7],
+                        [16, 4],
+                        [16, 5],
+                        [16, 6],
+                        [17, 5],
+                        [20, 2],
+                        [20, 3],
+                        [20, 4],
+                        [21, 2],
+                        [21, 3],
+                        [21, 4],
+                        [22, 5],
+                        [22, 1],
+                        [24, 0],
+                        [24, 1],
+                        [24, 5],
+                        [24, 6],
+                        [34, 2],
+                        [34, 3],
+                        [35, 2],
+                        [35, 3]
+                         ];
+
+            // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            gosper_glider[points[i][0]][points[i][1]] = 1; 
+        }
+
+        return gosper_glider;  
+    }
+
+    
+    function flip()
+    {
+        let flipper = []; 
+        const flip_x = 25; 
+        const flip_y = 35; 
+
+            // Initialiaze
+        for(let i=0; i< flip_x; i++)
+        {
+            flipper[i] = [];
+            for(let j=0; j < flip_y; j++)
+            {
+                flipper[i][j] = 0;
+            }
+        }
+
+        const points = [
+            [-7, -17],
+            [-6, -17],
+            [-5, -17],
+            [5, -17],
+            [6, -17],
+            [7, -17],
+            [-7, -16],
+            [-4, -16],
+            [5, -16],
+            [8, -16],
+            [-7, -15],
+            [0, -15],
+            [5, -15],
+            [-7, -14],
+            [-1, -14],
+            [0, -14],
+            [1, -14],
+            [5, -14],
+            [-7, -13],
+            [-1, -13],
+            [1, -13], 
+            [2, -13],
+            [5, -13],
+            [-7, -12],
+            [0, -12],
+            [1, -12],
+            [2, -12],
+            [5, -12],
+            [-6, -11],
+            [-3, -11],
+            [0, -11],
+            [1, -11],
+            [2, -11],
+            [6, -11],
+            [-4, -10],
+            [0, -10],
+            [1, -10],
+            [2, -10],
+            [-3, -9],
+            [3, -9],
+            [4, -9],
+            [-2, -8],
+            [-1, -8],
+            [-2, -7],
+            [-1, -6],
+            [0, -6],
+            [-11, -5],
+            [-2, -5],
+            [0, -5],
+            [2, -5],
+            [11 ,-5],
+            [-12, -4],
+            [-6, -4],
+            [-4, -4],
+            [-2, -4],
+            [0, -4],
+            [2, -4],
+            [3, -4],
+            [6, -4],
+            [12, -4],
+            [-12, -3],
+            [-6, -3],
+            [-5, -3],
+            [-4, -3],
+            [0, -3],
+            [2, -3],
+            [4, -3],
+            [5, -3],
+            [6, -3],
+            [12, -3],
+            [-12, -2],
+            [-11, -2],
+            [-10, -2],
+            [-9, -2],
+            [-8, -2],
+            [-6, -2],
+            [-2, -2],
+            [-1, -2],
+            [2, -2],
+            [6, -2],
+            [8, -2],
+            [9, -2],
+            [10, -2],
+            [11, -2],
+            [12, -2],
+            [-4, -1],
+            [-2, -1],
+            [1, -1],
+            [2, -1],
+            [4, -1],
+            [-5, 0],
+            [-4, 0],
+            [-2, 0],
+            [0, 0],
+            [2, 0],
+            [4, 0],
+            [5, 0],
+            [-4, 1],
+            [-2, 1],
+            [-1, 1],
+            [2, 1],
+            [4, 1],
+            [-12, 2],
+            [-11, 2],
+            [-10, 2],
+            [-9, 2],
+            [-8, 2],
+            [-6, 2],
+            [-2, 2],
+            [1, 2],
+            [2, 2],
+            [6, 2],
+            [8, 2],
+            [9, 2],
+            [10, 2],
+            [11, 2],
+            [12, 2],
+            [-12, 3],
+            [-6, 3],
+            [-5, 3],
+            [-4, 3],
+            [-2, 3],
+            [0, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [12, 3],
+            [-12, 4],
+            [-6, 4],
+            [-3, 4],
+            [-2, 4],
+            [0, 4],
+            [2, 4],
+            [4, 4],
+            [6, 4],
+            [12, 4],
+            [-11, 5],
+            [-2, 5],
+            [0, 5],
+            [2, 5],
+            [11, 5],
+            [0, 6],
+            [1, 6],
+            [2, 7],
+            [1, 8],
+            [2, 8],
+            [-4, 9],
+            [-3, 9],
+            [3, 9],
+            [-2, 10],
+            [-1, 10],
+            [0, 10],
+            [4, 10],
+            [-6, 11],
+            [-2, 11],
+            [-1, 11],
+            [0, 11],
+            [3, 11],
+            [6, 11],
+            [-5, 12],
+            [-2, 12],
+            [-1, 12],
+            [0, 12],
+            [7, 12],
+            [-5, 13],
+            [-2, 13],
+            [-1, 13],
+            [1, 13],
+            [7, 13],
+            [-5, 14],
+            [-1, 14],
+            [0, 14],
+            [1, 14],
+            [7, 14],
+            [-5, 15],
+            [0, 15],
+            [7, 15],
+            [-8, 16],
+            [-5, 16],
+            [4, 16],
+            [7, 16],
+            [-7, 17],
+            [-6, 17],
+            [-5, 17],
+            [5, 17],
+            [6, 17],
+            [7, 17]
+            ];
+
+                        
+            // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            flipper[points[i][0] + Math.trunc(flip_x/2) ][points[i][1]+ Math.trunc(flip_y/2) ] = 1; 
+        }
+        return flipper;  
+    }
+    
+
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
         const height = dict['height'] || HEIGHT;
@@ -305,14 +597,59 @@ function animated_GameOfLife(dict) {
         //   * 1 : Alive
         let grid = [];
 
-        for (let i = 0; i < width; ++i)
+        // === Initialization ===
+
+            // All grid => cells dead
+        for(let i=0; i<width; i++)
         {
             grid[i] = [];
-            for (let j = 0; j < height; ++j)
+            for(let j=0; j<height; j++)
             {
-                grid[i][j] = (getRandomInt(100) < 40) ? 1 : 0; // 40% Alive cells
+                grid[i][j] = 0; 
             }
         }
+        
+        // ========================
+
+            // Square
+        /*
+        grid[width/2][height/2] = 1;
+        grid[width/2][height/2+1] = 1;
+        grid[width/2+1][height/2] = 1;
+        grid[width/2+1][height/2+1] = 1;
+        */
+
+            //Gosper glider run 
+        /*
+        gap_x = 36;
+        gap_y = 9;
+        let x_start = getRandomInt(width - gap_x); 
+        let y_start = getRandomInt(height - gap_y); 
+
+        const gosper_glider = gosper_glid(); 
+        
+        for(let i=0; i<gap_x; i++)
+        {
+            for(let j=0; j<gap_y; j++)
+            {
+                grid[x_start+i][y_start+j] = gosper_glider[i][j];
+            }
+        }
+        */
+        
+            // Flipper
+        const flipper = flip(); 
+        const flip_x = 25; 
+        const flip_y = 35; 
+
+        for(let i=0; i<flip_x; i++)
+        {
+            for(let j=0; j<flip_y; j++)
+            {
+                grid[width/2 + i - Math.trunc(flip_x/2) ][height/2 + j - Math.trunc(flip_y/2) ] = flipper[i][j]; 
+            }
+        }
+            
         return grid;
     }
     
@@ -329,7 +666,7 @@ function animated_GameOfLife(dict) {
             grid = States.val;
         }
 
-        if (grid[x][y] === 1) // Dead
+        if (grid[x][y] === 0) // Dead
         {
             return COLORS.white;
         } else // Alive
@@ -339,10 +676,10 @@ function animated_GameOfLife(dict) {
     };
 }
 
-function animated_Greenberg_Hastings(dict) {
+function animated_GreenbergHastings(dict) {
     const width =  dict['width']    || WIDTH;
     const height = dict['height']   || HEIGHT;
-    const colors = dict['colors']   || [COLORS.black, COLORS.blue, COLORS.green];
+    const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green];
 
     function makeInfiniteStates(grid) {
         return node(grid, () => makeInfiniteStates(Greenberg_Hastings_nextstep(grid)));
@@ -359,7 +696,7 @@ function animated_Greenberg_Hastings(dict) {
         // Initialization grid 
         for(let i=0; i < width; ++i)
         {
-            grid[i] = []; 
+            grid[i] = [];
             for(let j = 0; j < height; ++j)
             {
                 grid[i][j] = 2; 
@@ -368,12 +705,17 @@ function animated_Greenberg_Hastings(dict) {
         // Spicy game
         // ================================
 
-        const random = 10; 
-        for(let r=0; r<random; r++)
+            // Double line
+        const size_line = 20;
+        const random_x  = getRandomInt(width-size_line);
+        const random_y = getRandomInt(height-size_line); 
+        for(let r=0; r<size_line; r++)
         {
-            let ri = getRandomInt(width);
-            let rj = getRandomInt(height); 
-            grid[ri][rj] = 0; 
+            let ri = random_x + r;
+            let rj = random_y;
+
+            grid[ri][rj] = 1; 
+            grid[ri][rj + 1] = 0;
         }
 
         return grid;
@@ -404,7 +746,7 @@ function animated_rain(dict) {
     function rain(state) {
         const rain_state = state;
         return function(x, y) {
-            let droplet = rain_state[x]
+            let droplet = rain_state[x];
             return (y > droplet && y < droplet + 6) ? COLORS.white : COLORS.black;
         };
     }

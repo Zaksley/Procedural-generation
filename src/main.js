@@ -89,6 +89,10 @@ function generateAnimation(canvas, texture) {
             }
         }
 
+        if (!ANIMATION) {
+            return;
+        }
+
         context.putImageData(image, 0, 0); requestAnimationFrame(makeFrame);
     }
 }
@@ -148,8 +152,8 @@ function generateArrayFromJson(canvas, jsondata) {
         "3Dcube","3DgambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
-        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","triangularFractal","squareFractal",
-        "star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
+        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
+        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
@@ -243,7 +247,7 @@ exports.FILTERS                 = FILTERS;
 //let data =
     //generateTexture(CANVAS, texture_horizontalColorGradients, WIDTH, 2, colors.orange, colors.cyan);
     //generateTexture(CANVAS, texture_squareTiling, WIDTH, HEIGHT, 8, 12, colors.orange, colors.blue);
-    //generateTexture(CANVAS, texture_perlinNoise, 50, 50, 4, [colors.black, colors.green, colors.blue, colors.red]);
+    //generateTexture(CANVAS, texture_perlinNoise({}));
     //generateTexture(CANVAS, texture_trihexagonal, 25, colors.orange, colors.red);
     //generateTexture(CANVAS, texture_triangleTiling, 25, colors.orange, colors.blue);
     //generateTexture(CANVAS, texture_truncatedSquare, 25, colors.orange, colors.blue, colors.red);
@@ -265,9 +269,12 @@ exports.FILTERS                 = FILTERS;
     //generateTexture(CANVAS, texture_pentagonTiling3({}));
     //generateTexture(CANVAS, texture_doubleStar({branches: 4, color1: texture_doubleStar({branches: 4, size: 30, size2: 50, colors: [COLORS.grey, COLORS.red]})}));
     //generateTexture(CANVAS, texture_bigRhombitrihexagonalTiling({}));
+    //generateTexture(CANVAS, texture_gameOfLife({}));
+    //generateTexture(CANVAS, texture_Greenberg_Hastings({})); 
     //generateTexture(CANVAS, texture_snubHexagonal({}));
     //generateTexture(CANVAS, distTexture_squareTiling({colors:[COLORS.orange, COLORS.silver], function: (array, dist, size) => array.map((x, i) => i === 3 ? 255 : x * (3 + Math.sin(dist / size * 10)) / 4)}));
     //generateTexture(CANVAS, sdRoundedBox({}));
+    //generateTexture(CANVAS, texture_yinyang({angle: 90}));
 
 // ========================================
 
@@ -299,3 +306,4 @@ exports.FILTERS                 = FILTERS;
 //generateAnimation(CANVAS, animated_Greenberg_Hastings({}));
 //generateAnimation(CANVAS, animated_rain({}));
 //generateAnimation(CANVAS, animated_forestFire({}));
+//generateAnimation(CANVAS, animated_yinyang({}));

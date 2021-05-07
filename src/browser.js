@@ -27,9 +27,17 @@ CANVAS.height = HEIGHT;
 /* Updates the image displayed (with current canvas, texture & dictionnary)
  */
 function regenerateImage(){
+	if (ANIMATION) {
+		// Stop the Animation and reapply the new one
+		ANIMATION = false;
+		setTimeout(() => {
+			ANIMATION = true;
+			generateAnimation(CANVAS, window[TEXTURE](DICT));
+		}, 100);
+	}
 	BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT));
 	generateImage(CANVAS, BASEDATA);
-};
+}
 
 /* Updates the image displayed with the display filters
  */
@@ -37,7 +45,7 @@ function regenerateFilters(){
 	BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT), XOFFSET, YOFFSET);
 	DATA = window["FILTERS"]["resize"](OPTDICT)(BASEDATA);
 	generateImage(CANVAS, DATA);
-};
+}
 
 /* Changes the label number to match the slider value 
  *
@@ -46,7 +54,7 @@ function regenerateFilters(){
  */
 function updateSliderValue(sliderValueId, value){
 	document.getElementById(sliderValueId).innerHTML = value;
-};
+}
 
 /* Converts a hexa string to a rgba array 
  *
@@ -58,7 +66,7 @@ function hexaToRGBA(hexa){
 	rgba = rgb.map((e) => parseInt(e.substr(0,1), 16)*16 + parseInt(e.substr(1,1), 16));
 	rgba.push(255);
 	return rgba;
-};
+}
 
 /* Generates an image in the canvas from the textarea
  */
@@ -77,7 +85,7 @@ function generateHTMLImageFromJson(){
 		if(error === false) {
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
-			return;
+			return "";
 		}
 	}
 
@@ -93,7 +101,7 @@ function generateHTMLImageFromJson(){
 		if(error === false) {
 			document.getElementById('jsonerror').style.display = "none";
 		} else {
-			return;
+			return "";
 		}
 	}
 
@@ -107,10 +115,15 @@ function generateHTMLImageFromJson(){
  * @param value the texture function (without 'texture_')
  */
 function showTextureOptions(value){
+
 	TEXTURE = value;
 	console.log("Switching to " + value + " texture ...");
 	// Generating default texture
 	regenerateImage();
+
+	// Stop the Animation and then continue
+	// ANIMATION = false;
+	// setTimeout(() => {
 
 	// Gathering options
 	let options = [];
@@ -131,7 +144,6 @@ function showTextureOptions(value){
 			case "snubHexagonal": 		options = ["size", "color1", "color2", "color3"]; break;
 			case "truncatedSquare": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "truncatedHexagon": 	options = ["size", "color1", "color2", "color3", "color4"]; break;
-			case "3DgambarTiling": 		options = ["size", "color1", "color2", "color3"]; break;
 			case "smallRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "bigRhombitrihexagonalTiling": 	options = ["size", "color1", "color2", "color3"]; break;
 			case "trihexagonal": 		options = ["size", "color1", "color2"]; break;
@@ -141,15 +153,18 @@ function showTextureOptions(value){
 			case "pentagonTiling3":		options = ["size", "angle", "color1", "color2", "color3"]; break;
 			case "pentagonTiling4":		options = ["size", "size2", "angle", "color1", "color2", "color3", "color4"]; break;
       // Noise maps todo
-            case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
-      // Diagrams todo
-        	case "Voronoi":             options = ["germs"]; break;
+			case "limitedWhiteNoise": 	options = ["rows", "columns"]; break;
+			case "perlinNoise": 		options = ["rows", "columns", "color1", "color2", "color3"]; break;
+		// Diagrams todo
+			case "Voronoi":             options = ["germs"]; break;
         	case "squareFractal":    	options = ["depth", "color1", "color2"]; break;
         	case "triangularFractal":   options = ["depth", "color1", "color2"]; break;
-      // Cellular Automata
+		// Cellular Automata
          case "forestFire":          options = ["treeP", "lightP", "step"]; break;
          case "gameOfLife":          options = ["step"]; break;
-         case "elementaryCellularAutomaton":          options = ["rule"]; break;
+		 case "Greenberg_Hastings":	 options = ["step"]; break;
+        case "elementaryCellularAutomaton":          options = ["rule"]; break;
+        case "cyclic1DCellularAutomaton":          options = ["color1", "color2", "color3", "color4"]; break;
 		// Signed Distance Textures
 			case "sdCircle": 					options = ["size", "centerx", "centery", "color1"]; break;
          case "sdBox":       				options = ["size", "size2", "centerx", "centery", "color1"]; break;
@@ -158,7 +173,7 @@ function showTextureOptions(value){
 			case "sdSegment":      			options = ["size", "size2", "fullangle", "centerx", "centery", "color1"]; break;
 			case "sdRhombus":      			options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdIsoscelesTrapezoid":  options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
-			case "sdParallelogram": 		options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // size3 -> distance ? (negative and positive value)
+			case "sdParallelogram": 		options = ["size", "size2", "distance", "centerx", "centery", "color1"]; break;
 			case "sdEquilateralTriangle": options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdIsocelesTriangle":    options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdTriangle":    			options = ["color1"]; break;
@@ -168,15 +183,15 @@ function showTextureOptions(value){
 			case "sdRegularOctogon":      options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdHexagram":     			options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdStar5":     				options = ["size", "size2", "centerx", "centery", "color1"]; break;
-			case "sdRegularStar":     		options = ["size", "branches", "centerx", "centery", "color1"]; break; // branches2 ?
-			case "sdPie":      				options = ["size", "centerx", "centery", "color1"]; break; // percent ?
-			case "sdArc":       				options = ["size", "size2", "fullangle", "centerx", "centery", "color1"]; break; // fullangle2 ? 
-			case "sdHorseshoe":      		options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // percent ?
-			case "sdVesica":      			options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break; // size2 -> distance ?
+			case "sdRegularStar":     		options = ["size", "branches", "branches2", "centerx", "centery", "color1"]; break;
+			case "sdPie":      				options = ["size", "fullangle", "centerx", "centery", "color1"]; break;
+			case "sdArc":       				options = ["size", "size2", "fullangle", "fullangle2", "centerx", "centery", "color1"]; break;
+			case "sdHorseshoe":      		options = ["size", "size2", "size3", "fullangle", "centerx", "centery", "color1"]; break;
+			case "sdVesica":      			options = ["size", "size2", "distance", "centerx", "centery", "color1"]; break; 
 			case "sdMoon":      				options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdSimpleEgg":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdHeart":      			options = ["size", "centerx", "centery", "color1"]; break;
-			case "sdCross":       			options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdCross":       			options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdCircleCross":       	options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdBobblyCross":      	options = ["size", "centerx", "centery", "color1"]; break;
 			case "sdRoundedX":      		options = ["size", "size2", "centerx", "centery", "color1"]; break;
@@ -186,9 +201,26 @@ function showTextureOptions(value){
 			case "sdParabolaSegment":     options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
-
+			case "chromaticCircle":      	ANIMATION = true; options = ["size", "centerx", "centery"]; break;
+			case "yinyang":      			ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
+			case "randomFunction": 			ANIMATION = true; options = []; break;
+			case "ForestFire":				ANIMATION = true; options = []; break;
+			case "GameOfLife":				ANIMATION = true; options = []; break;
+			case "GreenbergHastings":		ANIMATION = true; options = []; break;
+			case "rain":						ANIMATION = true; options = []; break;
 		default: 					options = []; break;
-	};
+	}
+
+	if (ANIMATION) {
+		TEXTURE = "animated_" + value;
+		console.log("Switching to " + value + " animation ...");
+		generateAnimation(CANVAS, window[TEXTURE](DICT));
+	} else {
+		TEXTURE = "texture_" + value;
+		console.log("Switching to " + value + " texture ...");
+		// Generating default texture
+		regenerateImage();
+	}
 
 	// Displaying options
 	Array.from(document.getElementsByClassName("textureOption")).forEach(function(e, i){
@@ -197,13 +229,14 @@ function showTextureOptions(value){
 	options.forEach(function(e, i){
 		document.getElementsByClassName(e)[0].style.display = "block";
 	});
-};
+	}, 100);
+}
 
 /* Prevents usage of TAB to exit the textarea, indent code instead
  */
 // Todo add shift+tab ?
 document.getElementById("textarea").addEventListener('keydown', function(e) {
-	if(e.key == 'Tab') {
+	if(e.key === 'Tab') {
 		e.preventDefault();
 		let start = this.selectionStart;
 		let end = this.selectionEnd;
