@@ -182,6 +182,40 @@ function filter_resize(dict) {
 	};
 }
 
+/* Filter : replace color with another
+ *
+ * @param width replacement width
+ * @param height replacement height
+ * @param offsetx replacement horizontal start
+ * @param offsety replacement vertical start
+ * @return the image with first color replaced by the other in a rectangle
+ */
+function filter_replaceColor(dict) {
+
+	const width = dict['width']			|| WIDTH;
+	const height = dict['height']		|| HEIGHT;
+	const x_offset = dict['offsetx'] 	|| 0;
+	const y_offset = dict['offsety'] 	|| 0;
+	const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+    const maxheight = (height + y_offset > height) ? height - y_offset : height;
+    const maxwidth = (width + x_offset > width) ? width - x_offset : width;
+
+	return function(img) {
+		let data = img.slice();
+		for(let y = y_offset; y < maxheight; y++) {
+			for(let x = x_offset; x < maxwidth; x++) {
+				if(img[(y*width + x)*4] === color1[0] && img[(y*width + x)*4+1] === color1[1]
+				&& img[(y*width + x)*4+2] === color1[2] && img[(y*width + x)*4+3] === color1[3]) {
+					for(let k = 0; k < 4; k++)
+						data[(y*width + x)*4 + k] = color2[k];
+				}
+			}
+		}
+		return data;
+	};
+}
 // Exports
 exports.rotation 			= filter_rotation;
 exports.horizontalFlip 		= filter_horizontalFlip;
@@ -189,3 +223,4 @@ exports.verticalFlip 		= filter_verticalFlip;
 exports.negativeImage 		= filter_negativeImage;
 exports.greyScale 			= filter_greyScale;
 exports.resize 				= filter_resize;
+exports.replaceColor 		= filter_replaceColor;

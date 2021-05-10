@@ -162,6 +162,33 @@ function texture_circle(dict) {
     };
 }
 
+/* Texture : regular rectangle
+ *
+ * @param width rectangle width
+ * @param height rectangle height
+ * @param offsetx rectangle horizontal start
+ * @param offsety rectangle vertical start
+ * @return a rectangle positionned on the image
+ */
+function texture_rectangle(dict) {
+
+    const width = dict['width']         || WIDTH/2;
+    const height = dict['height']       || HEIGHT/2;
+    const x_offset = dict['offsetx']    || 0;
+    const y_offset = dict['offsety']    || 0;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+
+    return function(x,y) {
+        if(x > x_offset && x < width + x_offset && y > y_offset && y < height + y_offset) {
+            return color1;
+        }else{
+            return color2;
+        }
+    };
+}
+
 // Exports
 exports.testInShape 	= texture_testInShape;
 exports.star 			= texture_star;
@@ -169,3 +196,4 @@ exports.doubleStar 		= texture_doubleStar;
 exports.regularShape 	= texture_regularShape;
 exports.disk            = texture_disk;
 exports.circle          = texture_circle;
+exports.rectangle       = texture_rectangle;
