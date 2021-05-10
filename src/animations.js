@@ -600,12 +600,13 @@ function animated_GameOfLife(dict) {
         return flipper;  
     }
     
-    const configList = {flipper: flip, gosper: gosper_glid};
+    function ship(f, x, y) { return {ship: f, size_x: x, size_y: y}; }
+    const configList = {flipper: ship(flip, 25, 35), gosper: ship(gosper_glid, 36, 9)};
 
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
         const height = dict['height'] || HEIGHT;
-        const config = dict['config'] || 'flipper';
+        const config = configList[dict['config']] || configList['flipper'];
     
         // The grid is represented by :
         //   * 0 : Dead
@@ -653,15 +654,15 @@ function animated_GameOfLife(dict) {
         */
         
             // Flipper
-        const flipper = configList[config](); 
-        const flip_x = 25; 
-        const flip_y = 35; 
+        const ship = config.ship(); 
+        const size_x = config.size_x; 
+        const size_y = config.size_y;
 
-        for(let i=0; i<flip_x; i++)
+        for(let i=0; i<size_x; i++)
         {
-            for(let j=0; j<flip_y; j++)
+            for(let j=0; j<size_y; j++)
             {
-                grid[width/2 + i - Math.trunc(flip_x/2) ][height/2 + j - Math.trunc(flip_y/2) ] = flipper[i][j]; 
+                grid[width/2 + i - Math.trunc(size_x/2) ][height/2 + j - Math.trunc(size_y/2) ] = ship[i][j]; 
             }
         }
             
