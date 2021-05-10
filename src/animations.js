@@ -605,7 +605,7 @@ function animated_GameOfLife(dict) {
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
         const height = dict['height'] || HEIGHT;
-        const config = dict['config'] || 'flipper'
+        const config = dict['config'] || 'flipper';
     
         // The grid is represented by :
         //   * 0 : Dead
