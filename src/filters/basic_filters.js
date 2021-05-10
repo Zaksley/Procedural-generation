@@ -14,13 +14,14 @@ const HEIGHT = globalVars.HEIGHT;
 function filter_rotation(dict) {
 
 	const width = dict['width']			|| WIDTH;
+	const height = dict['height']		|| HEIGHT;
 	const angle = dict['angle'] 		|| 45;
 
 	return function (img) {
 
 		let data = [];
 		data.length = img.length;
-		const height = data.length / (4 * width);
+		//const height = data.length / (4 * width);
 		let x_init, y_init;
 		let r, angle_init;
 		let x, y;

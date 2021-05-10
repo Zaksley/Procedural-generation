@@ -98,6 +98,8 @@ textarea {
 				<option value="horizontalGradient">Color gradients</option>
 				<option value="star">Star pattern</option>
 				<option value="regularShape">Polygon pattern</option>
+				<option value="disk">Disk shape</option>
+				<option value="circle">circle shape</option>
 			</optgroup>
 			<optgroup label="Regular Tilings">
 				<option value="triangleTiling">Triangular tiling</option>
@@ -226,6 +228,12 @@ textarea {
 			<p>Rows : <b id="rows">3</b></p>
 			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
 			onchange="WEBDICT['rows'] = parseInt(this.value); regenerateImage();">
+		</div>
+
+		<div class="textureOption outline" style="display:none">
+			<p>Outline width : <b id="outline">80</b></p>
+			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('outline', this.value)"
+			onchange="WEBDICT['epsilon'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- TREE PROBABILITY -->

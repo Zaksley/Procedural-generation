@@ -110,8 +110,62 @@ function texture_regularShape(dict) {
     };
 }
 
+/* Texture : disk
+ *
+ * @param r radius of the disk
+ * @param centerx center x-coordinate of the shape
+ * @param centery center y-coordinate of the shape
+ * @param color1 inside color
+ * @param color2 outside color
+ * @return a pixel
+ */
+function texture_disk(dict) {
+    const r = dict['r']             || dict['size'] || 100;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+
+    return function(x, y) {
+        if(Math.sqrt((y - center_y)**2 + (x - center_x)**2) <= r)
+            return color1;
+        return color2;
+    };
+}
+
+/* Texture : circle (disk outline)
+ *
+ * @param r radius of the circle
+ * @param epsilon outline width
+ * @param centerx center x-coordinate of the shape
+ * @param centery center y-coordinate of the shape
+ * @param color1 inside color
+ * @param color2 outside color
+ * @return a pixel
+ */
+function texture_circle(dict) {
+    const r = dict['r']             || dict['size'] || 100;
+    const e = dict['epsilon']       || 2;
+    const center = dict['center']   || [];
+    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
+    const colors = dict['colors']   || [];
+    const color1 = dict['color1']   || colors[0] || COLORS.blue;
+    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+
+    return function(x, y) {
+        if(Math.abs(Math.sqrt((y - center_y)**2 + (x - center_x)**2) - r) <= e)
+            return color1;
+        return color2;
+    };
+}
+
 // Exports
 exports.testInShape 	= texture_testInShape;
 exports.star 			= texture_star;
 exports.doubleStar 		= texture_doubleStar;
 exports.regularShape 	= texture_regularShape;
+exports.disk            = texture_disk;
+exports.circle          = texture_circle;
