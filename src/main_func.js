@@ -135,6 +135,7 @@ function generateImage(canvas, data) {
 function getColor(color) {
    switch(color){
       // Base colors
+      case "0":      return [0,0,0,0];
       case "white":  return COLORS.white;
       case "black":  return COLORS.black;
       case "grey":   return COLORS.grey;
@@ -167,20 +168,20 @@ function generateArrayFromJson(canvas, jsondata) {
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
         "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle",
-        "disk", "circle"];
+        "disk","circle","rectangle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
     "sharpness","box_blur","gaussian_blur","gaussian_unsharp_masking","unsharp_masking",
-    "luminosity","saturation","contrast","hueShift","resize","conformTransformation"];
+    "luminosity","saturation","contrast","hueShift","resize","conformTransformation","replaceColor"];
 
     // Two-textures filters
-    let doublefilters_func = ["compose"];
+    let doublefilters_func = ["compose","overwrite"];
 
     // Textures & filters parameters
     let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
-    "operation","rule","function","epsilon"];
+    "operation","rule","function","epsilon","offsetx","offsety","width","height"];
 
     /* Recursive function building a dictionnary for the current filter/texture
      *

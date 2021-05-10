@@ -57,9 +57,26 @@ function filter_compose(dict) {
 	}
 
 	return function(img, img2) {
-		return img.map((e,i) => (i%4 === 3) ? 255 : op(e, img2[i]));
+		return img.map((e,i) => op(e, img2[i])); //(i%4 === 3) ? 255 : op
 	}; 
 }
 
+/* Double filter : overwriting
+ *
+ * @return an image where img2 overwrites img
+ */
+ function filter_overwrite(dict) {
+
+ 	return function(img, img2) {
+ 		function coverColor(bottom, top, intensity) {
+ 			const newcolor = (top + bottom*intensity);
+ 			return (newcolor > 255) ? 255 : newcolor;
+ 		}
+ 		return img.map((e,i) => (i%4 === 3) ? (e+img2[i] > 255 ? 255 : e+img2[i]) : coverColor(e, img2[i], 1-(img2[i-i%4+3]/255)) );
+ 	};
+
+ }
+
 // Exports
 exports.compose = filter_compose;
+exports.overwrite = filter_overwrite;

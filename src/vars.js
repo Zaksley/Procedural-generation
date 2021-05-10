@@ -2,7 +2,8 @@
 
 // Global variables
 let MAX_ARGUMENTS = 50;
-const WIDTH = 600;
+// FINAL IMAGE : 1024 x 768
+const WIDTH = 500;
 const HEIGHT = 500;
 
 const COLORS = {
