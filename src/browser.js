@@ -105,7 +105,7 @@ function generateHTMLImageFromJson(){
 	if(error === false) {
 		document.getElementById('jsonerror').style.display = "none";
 	} else {
-		return;
+		return 0;
 	}
 
 	// Transformation
@@ -120,7 +120,7 @@ function generateHTMLImageFromJson(){
 	if(error === false) {
 		document.getElementById('jsonerror').style.display = "none";
 	} else {
-		return;
+		return 0;
 	}
 
 	// Image generation
