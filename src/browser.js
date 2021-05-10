@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 // Global variables
 const globalVars = require('./vars.js');

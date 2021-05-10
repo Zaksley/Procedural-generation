@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 // Global variables
 let MAX_ARGUMENTS = 50;

@@ -2,8 +2,8 @@
 
 const main = require('./main_func.js');
 
-const TEXTURES = main.TEXTURES;
-const FILTERS = main.FILTERS;
+//const TEXTURES = main.TEXTURES;
+//const FILTERS = main.FILTERS;
 
 const fs = require('fs');
 const { createCanvas, createImageData } = require('canvas');

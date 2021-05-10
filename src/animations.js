@@ -4,7 +4,10 @@ const semiregular_tilings_textures = require('./textures/semiregular_tilings_tex
 const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
 const getRandomInt = require('./textures/tools_for_textures.js').getRandomInt;
 const cellular_automata = require('./textures/cellular_automata_textures.js');
-//const { caireTiling } = require('../public/browser_main.js');
+const globalVars = require('./vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+const COLORS = globalVars.COLORS;
 const Greenberg_Hastings_nextstep = cellular_automata.Greenberg_Hastings_nextstep;
 const gameOfLife_nextStep = cellular_automata.gameOfLife_nextStep;
 const forestFire_nextStep = cellular_automata.forestFire_nextStep;
@@ -104,7 +107,7 @@ function translation(dict) {
  * @return a colored pixel corresponding to the position and time (x, y, dt) with the corresponding transformations
  */
 function add_animation(dict) {
-    const texture = dict['texture'] || texture_solid({});
+    const texture = dict['texture'] || basic_textures.solid({});
     const func = dict['function'] || [];
 
     return function(x, y, dt) {
@@ -702,7 +705,7 @@ function animated_GreenbergHastings(dict) {
         // 2 : Resting time 
 
         let grid = []; 
-   
+        
         // Initialization grid 
         for(let i=0; i < width; ++i)
         {
@@ -748,7 +751,7 @@ function animated_GreenbergHastings(dict) {
     };
 } 
 
-function animated_rain(dict) {
+function animated_rain() {
     function makeInfiniteStates(state) {
         return node(state, () => makeInfiniteStates(nextState(state)));
     }

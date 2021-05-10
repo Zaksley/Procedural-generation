@@ -125,7 +125,7 @@ function texture_whiteNoise() {
       getRandomInt(256),
       getRandomInt(256),
       255];
-   }
+   };
 }
 
 

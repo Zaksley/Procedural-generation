@@ -70,7 +70,7 @@ function isInShape(coords) {
         coords.reverse();
     let nbShapes = -1;
     let shapes = [];
-    let [coords_prime, index_list] = []
+    let [coords_prime, index_list] = [];
     while (shapes.length !== nbShapes) {
         nbShapes = shapes.length;
         [coords_prime, index_list] = removeInflexionPoint(coords);
@@ -91,7 +91,7 @@ function isInShape(coords) {
         const result = [];
         const index_inf = [];
         for(let i = 0; i < N; i++) {
-            const p = (a[1] - b[1]) / (c[1] - b[1])
+            const p = (a[1] - b[1]) / (c[1] - b[1]);
             if (b[1] > c[1] && a[0] - b[0] >= p * (c[0] - b[0]) || !(b[1] > c[1]) && a[0] - b[0] <= p * (c[0] - b[0]))
                 result.push(b);
             else
@@ -115,8 +115,8 @@ function isInShape(coords) {
             if (array[k][0] < array[min][0] || array[k][0] === array[min][0] && array[k][1] < array[min][1])
                 min = k;
         }
-        const p1 = (array[(min + 1) % N][1] - array[min][1]) / (array[(min + 1) % N][0] - array[min][0])
-        const p2 = (array[(N + min - 1) % N][1] - array[min][1]) / (array[(N + min - 1) % N][0] - array[min][0])
+        const p1 = (array[(min + 1) % N][1] - array[min][1]) / (array[(min + 1) % N][0] - array[min][0]);
+        const p2 = (array[(N + min - 1) % N][1] - array[min][1]) / (array[(N + min - 1) % N][0] - array[min][0]);
         if (p1 < p2)
             return true;
         else 
@@ -158,12 +158,14 @@ function isInShape(coords) {
             if (array[n][1] > array[(n + 1) % N][1]) {
                 if (x - array[n][0] >= p * (array[(n + 1) % N][0] - array[n][0]))
                     return convexREC(n + 1);
+                else 
+                    return false;
             }   
             else if (x - array[n][0] <= p * (array[(n + 1) % N][0] - array[n][0]))
                 return convexREC(n + 1);
             else 
                 return false;
-        }
+        };
         return convexREC(0);
     }
     
@@ -182,7 +184,7 @@ function isInShape(coords) {
                 return removeConcaveREC(n + 1);
             else    
                 return false;
-        }
+        };
         return removeConcaveREC(0);
     }
 
@@ -196,7 +198,7 @@ function isInShape(coords) {
             return true;
         else
             return false;
-    }
+    };
 }
 
 function randomPolygon(n) {

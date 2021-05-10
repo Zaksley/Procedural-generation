@@ -900,7 +900,7 @@ function texture_sdCircleCross(dict) {
       p = abs(p);
       if (p[0] < h && p[1] < p[0] * (k - h) + h)
          return k - Math.sqrt(dot2(optwovec(p, [1, k], '-')));
-      return Math.sqrt(min(dot2(optwovec(p, [0, h], '-')), dot2(optwovec(p, [1, 0], '-'))))
+      return Math.sqrt(min(dot2(optwovec(p, [0, h], '-')), dot2(optwovec(p, [1, 0], '-'))));
    }
 
    return function (x, y) {

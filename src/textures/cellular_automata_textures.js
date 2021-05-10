@@ -679,7 +679,7 @@ function texture_greenbergHastings(dict)
 
     return (x, y) => {
         return colors[grid[x][y]]; 
-    }
+    };
 }
 
 /* Returns a rule from its name
