@@ -600,10 +600,12 @@ function animated_GameOfLife(dict) {
         return flipper;  
     }
     
+    const configList = {flipper: flip, gosper: gosper_glid};
 
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
         const height = dict['height'] || HEIGHT;
+        const config = dict['config'] || 'flipper'
     
         // The grid is represented by :
         //   * 0 : Dead
@@ -651,7 +653,7 @@ function animated_GameOfLife(dict) {
         */
         
             // Flipper
-        const flipper = flip(); 
+        const flipper = configList[config](); 
         const flip_x = 25; 
         const flip_y = 35; 
 
@@ -709,7 +711,7 @@ function animated_GreenbergHastings(dict) {
         // Initialization grid 
         for(let i=0; i < width; ++i)
         {
-            grid[i] = [];
+            grid[i] = [];
             for(let j = 0; j < height; ++j)
             {
                 grid[i][j] = 2; 
