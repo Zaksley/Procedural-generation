@@ -125,6 +125,7 @@ function generateHTMLImageFromJson(){
 
 	// Image generation
 	generateImage(CANVAS, img);
+	return 1;
 }
 
 /* Displays all options for the selected texture functions
