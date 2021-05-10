@@ -220,7 +220,7 @@ function showTextureOptions(value){
 			case "yinyang":      			ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "randomFunction": 			ANIMATION = true; options = []; break;
 			case "ForestFire":				ANIMATION = true; options = []; break;
-			case "GameOfLife":				ANIMATION = true; options = []; break;
+			case "GameOfLife":				ANIMATION = true; options = ["config"]; break;
 			case "GreenbergHastings":		ANIMATION = true; options = []; break;
 			case "rain":						ANIMATION = true; options = []; break;
 		default: 					options = []; break;
