@@ -705,7 +705,7 @@ function animated_GreenbergHastings(dict) {
         // 2 : Resting time 
 
         let grid = []; 
-        
+
         // Initialization grid 
         for(let i=0; i < width; ++i)
         {
@@ -718,7 +718,7 @@ function animated_GreenbergHastings(dict) {
         // Spicy game
         // ================================
 
-            // Double line
+        // Double line
         const size_line = 20;
         const random_x  = getRandomInt(width-size_line);
         const random_y = getRandomInt(height-size_line); 
@@ -726,7 +726,7 @@ function animated_GreenbergHastings(dict) {
         {
             let ri = random_x + r;
             let rj = random_y;
-
+            
             grid[ri][rj] = 1; 
             grid[ri][rj + 1] = 0;
         }

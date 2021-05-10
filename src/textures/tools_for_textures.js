@@ -165,7 +165,7 @@ function isInShape(coords) {
                 return convexREC(n + 1);
             else 
                 return false;
-        };
+        }
         return convexREC(0);
     }
     
@@ -184,7 +184,7 @@ function isInShape(coords) {
                 return removeConcaveREC(n + 1);
             else    
                 return false;
-        };
+        }
         return removeConcaveREC(0);
     }
 
