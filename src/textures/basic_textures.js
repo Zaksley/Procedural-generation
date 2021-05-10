@@ -3,6 +3,7 @@
 // Global Variables
 const globalVars = require('../vars.js');
 const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
 const COLORS = globalVars.COLORS;
 
 /* Texture : transparent image
@@ -44,7 +45,8 @@ function texture_solid(dict) {
 // updated
 function texture_horizontalGradient(dict) {
 
-   const width = dict['width']     || WIDTH;
+   let width = dict['width']       || WIDTH;
+   const height = dict['height']   || HEIGHT;
    const n = dict['columns']       || 3;
    const a = dict['angle']         || 0;
    const colors = dict['colors']   || [];
@@ -58,6 +60,7 @@ function texture_horizontalGradient(dict) {
       }
       const ap = mod(a,360);
       const th = 2*Math.PI*ap/360;
+      width = (width < height) ? height : width;
       const length = (ap%90 === 0) ? width : width*Math.sqrt(2);
       let pos = (Math.cos(th)*x - Math.sin(th)*(y-width));
       if(ap >= 180){

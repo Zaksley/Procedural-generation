@@ -166,7 +166,8 @@ function generateArrayFromJson(canvas, jsondata) {
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
-        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle"];
+        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle",
+        "disk", "circle"];
     // One-texture filters
     let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
     "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
@@ -179,7 +180,7 @@ function generateArrayFromJson(canvas, jsondata) {
     // Textures & filters parameters
     let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
-    "operation","rule","function"];
+    "operation","rule","function","epsilon"];
 
     /* Recursive function building a dictionnary for the current filter/texture
      *
@@ -233,7 +234,7 @@ function generateArrayFromJson(canvas, jsondata) {
                 const firstImg = generateLevel(dict[key], false, "--search");
                 const param1 = generateLevel(dict[key], false);
                 const param2 = generateLevel(dict[key], false, firstImg);
-                return window["FILTERS"][key](generateLevel(dict[key], true))(param1, param2);
+                return FILTERS[key](generateLevel(dict[key], true))(param1, param2);
             }
 
             // Unrecognized key

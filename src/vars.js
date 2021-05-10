@@ -2,7 +2,7 @@
 
 // Global variables
 let MAX_ARGUMENTS = 50;
-const WIDTH = 500;
+const WIDTH = 600;
 const HEIGHT = 500;
 
 const COLORS = {
