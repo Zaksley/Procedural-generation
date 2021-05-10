@@ -32,12 +32,12 @@ const CANVAS = document.getElementById("canvas");
 window.CANVAS = CANVAS;
 CANVAS.width = WIDTH;
 CANVAS.height = HEIGHT;
-let ANIMATION = main.ANIMATION;
+// let ANIMATION = main.ANIMATION;
 
 // Global vars - Web-specific
 let DATA = [], BASEDATA = [];
 let TEXTURE = "";
-let DICT = {};
+let DICT = WEBDICT || {};
 let OPTDICT = {intensity:1, translation:0};
 let XOFFSET = 0, YOFFSET = 0;
 
@@ -50,11 +50,12 @@ function regenerateImage(){
 		ANIMATION = false;
 		setTimeout(() => {
 			ANIMATION = true;
-			generateAnimation(CANVAS, window[TEXTURE](DICT));
+			generateAnimation(CANVAS, window["ANIMATIONS"][TEXTURE](DICT));
 		}, 100);
+	} else {
+		BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT));
+		generateImage(CANVAS, BASEDATA);
 	}
-	BASEDATA = generateTexture(CANVAS, window["TEXTURES"][TEXTURE](DICT));
-	generateImage(CANVAS, BASEDATA);
 }
 
 /* Updates the image displayed with the display filters
@@ -186,7 +187,7 @@ function showTextureOptions(value){
 			case "sdIsoscelesTrapezoid":  options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdParallelogram": 		options = ["size", "size2", "distance", "centerx", "centery", "color1"]; break;
 			case "sdEquilateralTriangle": options = ["size", "centerx", "centery", "color1"]; break;
-			case "sdIsocelesTriangle":    options = ["size", "size2", "centerx", "centery", "color1"]; break;
+			case "sdIsoscelesTriangle":   options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdTriangle":    			options = ["color1"]; break;
 			case "sdUnevenCapsule":      	options = ["size", "size2", "size3", "centerx", "centery", "color1"]; break;
 			case "sdRegularPentagon":     options = ["size", "centerx", "centery", "color1"]; break;
@@ -223,9 +224,9 @@ function showTextureOptions(value){
 	}
 
 	if (ANIMATION) {
-		TEXTURE = "animated_" + value;
+		TEXTURE = value;
 		console.log("Switching to " + value + " animation ...");
-		generateAnimation(CANVAS, window[TEXTURE](DICT));
+		generateAnimation(CANVAS, window["ANIMATIONS"][TEXTURE](DICT));
 	} else {
 		TEXTURE = value;
 		console.log("Switching to " + value + " texture ...");

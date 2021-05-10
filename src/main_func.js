@@ -3,7 +3,7 @@
 // Global Variables
 const globalVars = require('./vars.js');
 let COLORS = globalVars.COLORS;
-let ANIMATION = false;
+// let ANIMATION = false;
 
 // Textures
 const basic_textures = require('./textures/basic_textures.js');
@@ -25,6 +25,10 @@ const convolution_filters = require('./filters/convolution_filters.js');
 const color_filters = require('./filters/color_filters.js');
 const deformation_filters = require('./filters/deformation_filters.js');
 const FILTERS = Object.assign({}, basic_filters, composition_filters, convolution_filters, color_filters, deformation_filters);
+
+// Animation
+const animations = require('./animations.js');
+const ANIMATIONS = Object.assign({}, animations);
 
 // Helpers
 const getRule = cellular_automata_textures.getRule;
@@ -249,6 +253,7 @@ exports.generateArrayFromJson   = generateArrayFromJson;
 exports.getRule                 = getRule;
 exports.TEXTURES                = TEXTURES;
 exports.FILTERS                 = FILTERS;
+exports.ANIMATIONS              = ANIMATIONS;
 
 ///////// TESTS //////////
 

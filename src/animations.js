@@ -1,3 +1,14 @@
+const basic_textures = require('./textures/basic_textures.js');
+const regular_tilings_textures = require('./textures/regular_tilings_textures.js');
+const semiregular_tilings_textures = require('./textures/semiregular_tilings_textures.js');
+const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
+const getRandomInt = require('./textures/tools_for_textures.js').getRandomInt;
+const cellular_automata = require('./textures/cellular_automata_textures.js');
+//const { caireTiling } = require('../public/browser_main.js');
+const Greenberg_Hastings_nextstep = cellular_automata.Greenberg_Hastings_nextstep;
+const gameOfLife_nextStep = cellular_automata.gameOfLife_nextStep;
+const forestFire_nextStep = cellular_automata.forestFire_nextStep;
+
 function node(_val, _children) {
     return {val: _val, children: _children};
 }
@@ -137,7 +148,7 @@ function animated_caireTiling(dict) {
     return function (x, y, dt) {
         const new_angle = 90 + Math.abs((5 * dt + angle) % 180 - 90);
         dict['angle'] = new_angle;
-        return texture_caireTiling(dict)(x, y);
+        return polygon_tilings_textures.caireTiling(dict)(x, y);
     };                     
 }
 
@@ -212,15 +223,14 @@ function animated_randomFunction() {
         const seed = getRandomInt(1000000);
         const texturedict = {size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
             branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
-        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5};
+        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5, radius: seed % 150 + 50, freq: seed / 10 % 3};
 
-        const textureList = [texture_3Dcube, texture_3DgambarTiling, texture_bigRhombitrihexagonalTiling,
-        texture_caireTiling, texture_elongatedTriangular, texture_hexagonTiling, texture_horizontalGradient, 
-        texture_pentagonTiling3, texture_regularShape, texture_smallRhombitrihexagonalTiling,
-        texture_snubHexagonal, texture_snubSquare, texture_solid, texture_squareFractal, texture_squareTiling,
-        texture_triangleTiling, texture_triangularFractal, texture_trihexagonal, texture_truncatedHexagon,
-        texture_truncatedSquare];
-        const funcList = [rotation, translation];
+        const textureList = [basic_textures.solid, basic_textures.horizontalGradient, 
+            regular_tilings_textures.hexagonTiling, regular_tilings_textures.triangleTiling, regular_tilings_textures.squareTiling,
+            semiregular_tilings_textures.elongatedTriangular, semiregular_tilings_textures.snubSquare, semiregular_tilings_textures.snubHexagonal, semiregular_tilings_textures.trihexagonal,
+            semiregular_tilings_textures.truncatedHexagon, semiregular_tilings_textures.truncatedSquare, semiregular_tilings_textures.smallRhombitrihexagonalTiling, semiregular_tilings_textures.bigRhombitrihexagonalTiling,
+            polygon_tilings_textures.caireTiling, polygon_tilings_textures.cubeTiling, polygon_tilings_textures.gambarTiling, polygon_tilings_textures.pentagonTiling3];
+        const funcList = [rotation, translation, circle];
 
         const texture = textureList[seed % textureList.length];
         const func = [funcList[seed % funcList.length](funcdict)];
@@ -785,3 +795,13 @@ function animated_rain(dict) {
         return rain_state(x, y);
     };
 }
+
+// Exports
+exports.caireTiling         = animated_caireTiling;
+exports.chromaticCircle     = animated_chromaticCircle;
+exports.yinyang             = animated_yinyang;
+exports.randomFunction      = animated_randomFunction;
+exports.ForestFire          = animated_ForestFire;
+exports.GameOfLife          = animated_GameOfLife;
+exports.GreenbergHastings   = animated_GreenbergHastings;
+exports.rain                = animated_rain;
