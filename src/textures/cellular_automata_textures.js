@@ -924,6 +924,7 @@ function texture_cyclic1DCellularAutomaton(dict) {
 // Exports
 exports.getRule 						= getRule;
 exports.cyclic1DCellularAutomaton 		= texture_cyclic1DCellularAutomaton;
+exports.cyclic1D_nextStep = cyclic1D_nextStep;
 exports.elementaryCellularAutomaton 	= texture_elementaryCellularAutomaton;
 exports.greenbergHastings 				= texture_greenbergHastings;
 exports.Greenberg_Hastings_nextstep 	= Greenberg_Hastings_nextstep;
