@@ -19,7 +19,7 @@ _ENSEIRB-MATMECA Group n°128-30_
 ======================
 
 - Make sure to have *node* installed on the computer
-- Download and install the following modules : *browserify*, *canvas*
+- Download and install the following modules : *browserify*, *canvas*, *jest*
 
 ## Web version
 --------------
@@ -52,6 +52,9 @@ _ENSEIRB-MATMECA Group n°128-30_
 
 	- You can use `make example` to generate an example file *example.png*
 	- The source json code used for this generation can be found in *example.txt*
+
+3. Tests
+	- Write `make test` in a terminal to launch the tests
 
 
 ## Input file format
@@ -91,8 +94,8 @@ Advanced example (double filter, color replacement, texture duplicata):
 			"color2":"0"
 		},
 		"dup_disk": {
-			"color1":"white"
-			"size":40
+			"color1":"white",
+			"size":40,
 			"color2":"0"
 		}
 	}	
