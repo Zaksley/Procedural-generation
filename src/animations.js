@@ -424,7 +424,7 @@ function animated_GameOfLife(dict) {
             [6, 8],
             [6, 9],
             [7, 9]
-        ]
+        ];
 
         // Add cells alive
         for (let i=0; i<points.length; i++)
@@ -554,10 +554,10 @@ function animated_GameOfLife(dict) {
             [-13, 22],
             [-12, 22],
             [13, 22],
-            [14, 22]
+            [14, 22],
             [-6, 23],
             [7, 23]
-        ]
+        ];
 
         // Add cells alive
         for (let i=0; i<points.length; i++)
