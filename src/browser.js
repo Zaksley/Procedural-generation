@@ -40,6 +40,8 @@ let TEXTURE = "";
 let DICT = WEBDICT || {};
 let OPTDICT = {intensity:1, translation:0};
 let XOFFSET = 0, YOFFSET = 0;
+let ANIMATION = false;
+let WEBDICT = {};
 
 
 /* Updates the image displayed (with current canvas, texture & dictionnary)

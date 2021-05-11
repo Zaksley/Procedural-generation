@@ -3,6 +3,7 @@
 const globalVars = require('../vars.js');
 const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
+const COLORS = globalVars.COLORS;
 
 /* Filter : rotation
  *

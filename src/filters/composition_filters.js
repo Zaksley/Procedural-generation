@@ -65,17 +65,17 @@ function filter_compose(dict) {
  *
  * @return an image where img2 overwrites img
  */
- function filter_overwrite(dict) {
+function filter_overwrite() {
 
- 	return function(img, img2) {
- 		function coverColor(bottom, top, intensity) {
- 			const newcolor = (top + bottom*intensity);
- 			return (newcolor > 255) ? 255 : newcolor;
- 		}
- 		return img.map((e,i) => (i%4 === 3) ? (e+img2[i] > 255 ? 255 : e+img2[i]) : coverColor(e, img2[i], 1-(img2[i-i%4+3]/255)) );
- 	};
+	return function(img, img2) {
+		function coverColor(bottom, top, intensity) {
+			const newcolor = (top + bottom*intensity);
+			return (newcolor > 255) ? 255 : newcolor;
+		}
+		return img.map((e,i) => (i%4 === 3) ? (e+img2[i] > 255 ? 255 : e+img2[i]) : coverColor(e, img2[i], 1-(img2[i-i%4+3]/255)) );
+	};
 
- }
+}
 
 // Exports
 exports.compose = filter_compose;

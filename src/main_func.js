@@ -29,6 +29,7 @@ const FILTERS = Object.assign({}, basic_filters, composition_filters, convolutio
 // Animation
 const animations = require('./animations.js');
 const ANIMATIONS = Object.assign({}, animations);
+const ANIMATION = false;
 
 // Helpers
 const getRule = cellular_automata_textures.getRule;
