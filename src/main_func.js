@@ -167,12 +167,12 @@ function generateArrayFromJson(canvas, jsondata) {
         "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
         "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
         "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
-        "triangularFractal","squareFractal","star","doubleStar","regularShape", "Greenberg_Hastings", "sdCircle",
+        "triangularFractal","squareFractal","star","doubleStar","regularShape", "GreenbergHastings", "sdCircle",
         "disk","circle","rectangle"];
     // One-texture filters
-    let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","blur",
-    "filter_detectOutline","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
-    "sharpness","box_blur","gaussian_blur","gaussian_unsharp_masking","unsharp_masking",
+    let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","simpleBlur",
+    "amplifyOutlines","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
+    "sharpness","boxBlur","gaussianBlur","gaussianUnsharpMasking","unsharpMasking",
     "luminosity","saturation","contrast","hueShift","resize","conformTransformation","replaceColor"];
 
     // Two-textures filters
@@ -182,6 +182,8 @@ function generateArrayFromJson(canvas, jsondata) {
     let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
     "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
     "operation","rule","function","epsilon","offsetx","offsety","width","height"];
+
+    // let passedKey = true; //Allows multiple same-name functions
 
     /* Recursive function building a dictionnary for the current filter/texture
      *
@@ -202,7 +204,7 @@ function generateArrayFromJson(canvas, jsondata) {
 
             // The key is a parameter
             if(params.includes(key)){
-                //console.log("FOUND PARAMETER " + key);
+                // console.log("FOUND PARAMETER " + key);
                 let value = dict[key];
                 // A known color is found
                 if(key.substring(0,5) === "color" && !Array.isArray(dict[key])){
@@ -215,23 +217,29 @@ function generateArrayFromJson(canvas, jsondata) {
                 continue;
             }
 
+            // The key is a duplicate texture function
+            if(paramsOnly === false && key.substring(0,4) === "dup_" && searchModel !== key){
+                // console.log("FOUND TEXTURE " + key);
+                if(searchModel === "--search") return key;
+                return generateTexture(canvas, TEXTURES[key.substring(4)](generateLevel(dict[key])));
+            }
+
             // The key is a texture function
             if(paramsOnly === false && textures_func.includes(key) && searchModel !== key){
-                //console.log("FOUND TEXTURE " + key);
+                // console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
-                // console.log(window["TEXTURES"][key](generateLevel(dict[key])) );
                 return generateTexture(canvas, TEXTURES[key](generateLevel(dict[key])));
             }
 
             // The key is a 1-image filter
             if(paramsOnly === false && filters_func.includes(key)){
-                //console.log("FOUND FILTER " + key);
+                // console.log("FOUND FILTER " + key);
                 return FILTERS[key](generateLevel(dict[key], true))(generateLevel(dict[key], false));
             }
 
             // The key is a 2-image filter
             if(paramsOnly === false && doublefilters_func.includes(key)){
-                //console.log("FOUND COMPOSING FILTER " + key);
+                // console.log("FOUND COMPOSING FILTER " + key);
                 const firstImg = generateLevel(dict[key], false, "--search");
                 const param1 = generateLevel(dict[key], false);
                 const param2 = generateLevel(dict[key], false, firstImg);

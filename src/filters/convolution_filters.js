@@ -132,7 +132,7 @@ function applyMask(img, width, height, mask, method="extension") {
 	const maskLenX = Math.floor(mask.length/2);
 	const maskLenY = Math.floor(mask[0].length/2);
 
-	let acc = [0,0,0];
+	let acc = [0,0,0,0];
 	let imgIndex = 0, col = 0, row = 0;
 	let leftHl = 0, rightHl = 0, topHl = 0, bottomHl = 0;
 
@@ -168,10 +168,10 @@ function applyMask(img, width, height, mask, method="extension") {
 	for(let y = 0; y < height; y++) {
 		for(let x = 0; x < width; x++) {
 
-			acc = [0,0,0];
+			acc = [0,0,0,0];
 			for(let i = 0; i < mask.length; i++) {
 				for(let j = 0; j < mask[0].length; j++) {
-					for(let k = 0; k < 3; k++) {
+					for(let k = 0; k < 4; k++) {
 
 						// Get handler values
 						getEdge(y+i-maskLenY, x+j-maskLenX);
@@ -197,7 +197,7 @@ function applyMask(img, width, height, mask, method="extension") {
 			data[(y*width + x)*4] 	  = Math.abs(acc[0]);
 			data[(y*width + x)*4 + 1] = Math.abs(acc[1]);
 			data[(y*width + x)*4 + 2] = Math.abs(acc[2]);
-			data[(y*width + x)*4 + 3] = 255;
+			data[(y*width + x)*4 + 3] = Math.abs(acc[3]);
 
 		}
 	}
