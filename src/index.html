@@ -366,6 +366,15 @@ textarea {
 			</p>
 		</div>
 
+		<!-- Starting configuration -->
+		<div class="textureOption config" style="display:none">
+			<p>Configuration :
+				<select name="configSelector" id="configSelector" oninput="(this.value)" onchange="WEBDICT['config'] = this.value; regenerateImage();">
+					<option value="flipper">Flipper</option>
+					<option value="gosper">Gosper glid</option>
+				</select>
+			</p>
+		</div>
 
                 
 		<!-- RESET -->
