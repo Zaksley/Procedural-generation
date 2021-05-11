@@ -20,6 +20,11 @@ if (process.argv.length < 3) {
 // Read the file and print its contents.
 let filename = process.argv[2];
 
+let imgname = process.argv[3];
+if(typeof imgname === 'undefined' || imgname === ''){
+	imgname = "image.png";
+}
+
 let rawdata = fs.readFileSync(filename);
 let tree = JSON.parse("{" + rawdata + "}");
 let data = main.generateArrayFromJson(canvas, tree);
@@ -29,4 +34,4 @@ main.generateImage(canvas, data);
 if(data[0] === undefined) console.log("An error occured, please verify your input file.");
 
 let buffer = canvas.toBuffer('image/png');
-fs.writeFileSync('image.png', buffer);
+fs.writeFileSync(imgname, buffer);

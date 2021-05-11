@@ -5,7 +5,7 @@
  * @param operation the operation between the two images
  * @return the filtered image
  */
-function filter_compose(dict) {
+function dfilter_compose(dict) {
 
 	const operation = dict['operation'] || 'plus';
 	let op = (e) => (e);
@@ -65,7 +65,7 @@ function filter_compose(dict) {
  *
  * @return an image where img2 overwrites img
  */
-function filter_overwrite() {
+function dfilter_paste() {
 
 	return function(img, img2) {
 		function coverColor(bottom, top, intensity) {
@@ -77,6 +77,21 @@ function filter_overwrite() {
 
 }
 
+/* Double filter : cutting
+ *
+ * @returns an image where img2 has been cut into img
+ */
+function dfilter_cut() {
+	return function(img, img2) {
+		function cutColor(bottom, top, intensity) {
+			const newcolor = (bottom - top*intensity);
+			return (newcolor < 0) ? 0 : newcolor;
+		}
+		return img.map((e,i) => (i%4 === 3) ? (e-img2[i] < 0 ? 0 : e-img2[i]) : cutColor(e, img2[i], 1-(img2[i-i%4+3]/255)) );
+	};
+}
+
 // Exports
-exports.compose = filter_compose;
-exports.overwrite = filter_overwrite;
+exports.compose = dfilter_compose;
+exports.paste = dfilter_paste;
+exports.cut = dfilter_cut;
