@@ -26,6 +26,7 @@ lint:
 	done
 	npx eslint ${DIR}/vars.js
 	npx eslint ${DIR}/main_func.js
+	npx eslint ${DIR}/main.js
 	npx eslint ${DIR}/browser.js
 
 # Generate a file from example.txt

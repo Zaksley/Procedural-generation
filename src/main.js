@@ -6,11 +6,10 @@ const width = globalVars.WIDTH;
 const height = globalVars.HEIGHT;
 
 const fs = require('fs');
-const { createCanvas, createImageData } = require('canvas');
+const { createCanvas } = require('canvas');
 
 //const width = 1024, height = 768;
 let canvas = createCanvas(width, height);
-let context = canvas.getContext('2d');
 
 if (process.argv.length < 3) {
   console.log('Usage: node ' + process.argv[1] + ' FILENAME');
