@@ -23,7 +23,10 @@ function texture_perlinNoise(dict) {
 
     const row = dict['rows'] 		|| 5;
     const column = dict['columns'] 	|| 5;
-    const colors = dict['colors'] 	|| [COLORS.blue, COLORS.green, COLORS.red];
+    let colors = dict['colors'] 	|| [];
+    colors[0] = dict['color1']      || COLORS.blue;
+    colors[1] = dict['color2']      || COLORS.red;
+    colors[2] = dict['color3']      || COLORS.green;
 
     /*
     row

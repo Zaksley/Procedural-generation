@@ -225,7 +225,7 @@ function showTextureOptions(value){
 		default: 					options = []; break;
 	}
 
-	if (ANIMATION) {
+	if (window.ANIMATION) {
 		TEXTURE = value;
 		console.log("Switching to " + value + " animation ...");
 		generateAnimation(CANVAS, window["ANIMATIONS"][TEXTURE](DICT));

@@ -3,6 +3,7 @@
 // Global Variables
 const globalVars = require('./vars.js');
 let COLORS = globalVars.COLORS;
+const VERBOSE = false;
 
 // Textures
 const basic_textures = require('./textures/basic_textures.js');
@@ -17,6 +18,12 @@ const fractal_textures = require('./textures/fractal_textures.js');
 const shape_textures = require('./textures/shape_textures.js');
 const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures, distance_textures, signed_distance_textures, fractal_textures, shape_textures);
 
+let textures_func = [];
+for(let key in TEXTURES){
+    if(TEXTURES[key].name.substring(0,8) === "texture_")
+        textures_func.push(TEXTURES[key].name.substring(8));
+}
+
 // Filters
 const basic_filters = require('./filters/basic_filters.js');
 const composition_filters = require('./filters/composition_filters.js');
@@ -24,6 +31,15 @@ const convolution_filters = require('./filters/convolution_filters.js');
 const color_filters = require('./filters/color_filters.js');
 const deformation_filters = require('./filters/deformation_filters.js');
 const FILTERS = Object.assign({}, basic_filters, composition_filters, convolution_filters, color_filters, deformation_filters);
+
+let filters_func = [];
+let doublefilters_func = [];
+for(let key in FILTERS){
+    if(FILTERS[key].name.substring(0,7) === "filter_")
+        filters_func.push(FILTERS[key].name.substring(7));
+    if(FILTERS[key].name.substring(0,8) === "dfilter_")
+        doublefilters_func.push(FILTERS[key].name.substring(8));
+}
 
 // Animation
 const animations = require('./animations.js');
@@ -159,31 +175,6 @@ function getColor(color) {
  */
 function generateArrayFromJson(canvas, jsondata) {
 
-    // Texture functions
-    let textures_func = ["horizontalGradient",
-        "solid", "hexagonTiling", "triangleTiling","caireTiling","pentagonTiling3",
-        "cubeTiling","gambarTiling","elongatedTriangular","snubSquare","snubHexagonal",
-        "truncatedSquare","truncatedHexagon","smallRhombitrihexagonalTiling",
-        "bigRhombitrihexagonalTiling","trihexagonal","squareTiling","limitedWhiteNoise",
-        "whiteNoise","Voronoi","forestFire","gameOfLife","elementaryCellularAutomaton","cyclic1DCellularAutomaton",
-        "triangularFractal","squareFractal","star","doubleStar","regularShape", "GreenbergHastings", "sdCircle",
-        "disk","circle","rectangle"];
-    // One-texture filters
-    let filters_func = ["rotation","horizontalFlip","verticalFlip","invertColor","simpleBlur",
-    "amplifyOutlines","grayScale","getRGBChannel","getHSLChannel","sobel","canny",
-    "sharpness","boxBlur","gaussianBlur","gaussianUnsharpMasking","unsharpMasking",
-    "luminosity","saturation","contrast","hueShift","resize","conformTransformation","replaceColor"];
-
-    // Two-textures filters
-    let doublefilters_func = ["compose","overwrite"];
-
-    // Textures & filters parameters
-    let params = ["size","size2","size3", "angle","columns","rows","treepP","lightP","step","germs","branches",
-    "depth","centerx","centery","radius","stdev","intensity","c","color1","color2","color3","color4",
-    "operation","rule","function","epsilon","offsetx","offsety","width","height"];
-
-    // let passedKey = true; //Allows multiple same-name functions
-
     /* Recursive function building a dictionnary for the current filter/texture
      *
      * @param dict the dictionnary to explore
@@ -201,52 +192,61 @@ function generateArrayFromJson(canvas, jsondata) {
 
         for(let key in dict) {
 
-            // The key is a parameter
-            if(params.includes(key)){
-                // console.log("FOUND PARAMETER " + key);
-                let value = dict[key];
-                // A known color is found
-                if(key.substring(0,5) === "color" && !Array.isArray(dict[key])){
-                    value = getColor(dict[key]);
-                }
-                if(key.substring(0,4) === "rule" && !Array.isArray(dict[key])){
-                    value = getRule(dict[key]);
-                }
-                levelArgs[key] = value;
-                continue;
-            }
-
             // The key is a duplicate texture function
             if(paramsOnly === false && key.substring(0,4) === "dup_" && searchModel !== key){
-                // console.log("FOUND TEXTURE " + key);
+                if(VERBOSE === true) console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
                 return generateTexture(canvas, TEXTURES[key.substring(4)](generateLevel(dict[key])));
             }
 
             // The key is a texture function
-            if(paramsOnly === false && textures_func.includes(key) && searchModel !== key){
-                // console.log("FOUND TEXTURE " + key);
+            else if(paramsOnly === false && textures_func.includes(key) && searchModel !== key){
+                if(VERBOSE === true) console.log("FOUND TEXTURE " + key);
                 if(searchModel === "--search") return key;
                 return generateTexture(canvas, TEXTURES[key](generateLevel(dict[key])));
             }
 
             // The key is a 1-image filter
-            if(paramsOnly === false && filters_func.includes(key)){
-                // console.log("FOUND FILTER " + key);
+            else if(paramsOnly === false && filters_func.includes(key) && searchModel !== key){
+                if(VERBOSE === true) console.log("FOUND FILTER " + key);
+                if(searchModel === "--search") return key;
                 return FILTERS[key](generateLevel(dict[key], true))(generateLevel(dict[key], false));
             }
 
             // The key is a 2-image filter
-            if(paramsOnly === false && doublefilters_func.includes(key)){
-                // console.log("FOUND COMPOSING FILTER " + key);
+            else if(paramsOnly === false && doublefilters_func.includes(key) && searchModel !== key){
+                if(VERBOSE === true) console.log("FOUND COMPOSING FILTER " + key);
+                if(searchModel === "--search") return key;
                 const firstImg = generateLevel(dict[key], false, "--search");
                 const param1 = generateLevel(dict[key], false);
                 const param2 = generateLevel(dict[key], false, firstImg);
                 return FILTERS[key](generateLevel(dict[key], true))(param1, param2);
             }
 
-            // Unrecognized key
-            //else throw new Error("Invalid key (filter, texture or parameter not recognized).");
+            // The key is a parameter
+            //if(params.includes(key)){
+            else {
+                if(VERBOSE === true) console.log("FOUND PARAMETER " + key);
+                let value = dict[key];
+                // A known color is found
+                if(key.substring(0,5) === "color" && (typeof dict[key] === "string")){
+                    value = getColor(dict[key]);
+                }
+                // A subtexture function is called
+                if(key.substring(0,5) === "color" && (typeof dict[key] === "object" && !Array.isArray(dict[key]))){
+                    if(VERBOSE === true) console.log("FOUND FOLLOWING SUBTEXTURE");
+                    for(let subkey in dict[key]){
+                        if(VERBOSE === true) console.log(subkey);
+                        value = TEXTURES[subkey](generateLevel(dict[key][subkey]));
+                    }
+                }
+                // A known rule is found
+                if(key.substring(0,4) === "rule" && !Array.isArray(dict[key])){
+                    value = getRule(dict[key]);
+                }
+                levelArgs[key] = value;
+                continue;
+            }
         }
         return levelArgs;
     }

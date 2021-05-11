@@ -47,6 +47,7 @@ function texture_horizontalGradient(dict) {
 
    let width = dict['width']       || WIDTH;
    const height = dict['height']   || HEIGHT;
+   const x_offset = dict['offsetx'] || 0;
    const n = dict['columns']       || 3;
    const a = dict['angle']         || 0;
    const colors = dict['colors']   || [];
@@ -61,8 +62,8 @@ function texture_horizontalGradient(dict) {
       const ap = mod(a,360);
       const th = 2*Math.PI*ap/360;
       width = (width < height) ? height : width;
-      const length = (ap%90 === 0) ? width : width*Math.sqrt(2);
-      let pos = (Math.cos(th)*x - Math.sin(th)*(y-width));
+      const length = (ap%90 === 0) ? width : Math.sqrt((width)**2 + (height)**2);
+      let pos = (Math.cos(th)*(x-x_offset) - Math.sin(th)*(y-x_offset-width));
       if(ap >= 180){
          if(ap >= 270){
             pos = pos - width*Math.sin(th);
@@ -74,10 +75,10 @@ function texture_horizontalGradient(dict) {
             pos = pos - width*Math.cos(th);
          }
       }
-      //console.log(length);
+
       return [0,0,0].map((e,i) => Math.floor(
-            color1[i]* ((n*(length-pos))%(length+1)) / length
-          + color2[i]* ((n*(pos))%(length+1)) / length
+          color1[i]* ((n*(length-pos-1))%(length+1)) / (length-1)
+              + color2[i]* ((n*(pos))%(length+1)) / (length-1)
          )).concat(255);
    };
 }

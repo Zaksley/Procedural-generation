@@ -6,11 +6,10 @@ const width = globalVars.WIDTH;
 const height = globalVars.HEIGHT;
 
 const fs = require('fs');
-const { createCanvas, createImageData } = require('canvas');
+const { createCanvas } = require('canvas');
 
 //const width = 1024, height = 768;
 let canvas = createCanvas(width, height);
-let context = canvas.getContext('2d');
 
 if (process.argv.length < 3) {
   console.log('Usage: node ' + process.argv[1] + ' FILENAME');
@@ -19,6 +18,11 @@ if (process.argv.length < 3) {
 
 // Read the file and print its contents.
 let filename = process.argv[2];
+
+let imgname = process.argv[3];
+if(typeof imgname === 'undefined' || imgname === ''){
+	imgname = "image.png";
+}
 
 let rawdata = fs.readFileSync(filename);
 let tree = JSON.parse("{" + rawdata + "}");
@@ -29,4 +33,4 @@ main.generateImage(canvas, data);
 if(data[0] === undefined) console.log("An error occured, please verify your input file.");
 
 let buffer = canvas.toBuffer('image/png');
-fs.writeFileSync('image.png', buffer);
+fs.writeFileSync(imgname, buffer);
