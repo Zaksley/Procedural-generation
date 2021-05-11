@@ -384,6 +384,188 @@ function animated_GameOfLife(dict) {
         return gosper_glider;  
     }
 
+        
+    function fireworks()
+    {
+        let fireworks = []; 
+        const fireworks_x = 15; 
+        const fireworks_y = 19; 
+
+            // Initialiaze
+        for(let i=0; i< fireworks_x; i++)
+        {
+            fireworks[i] = [];
+            for(let j=0; j < fireworks_y; j++)
+            {
+                fireworks[i][j] = 0;
+            }
+        }
+
+        const points = [
+            [-6, -8],
+            [-5, -8],
+            [-5, -7],
+            [-5, -6],
+            [-3, -6],
+            [-4, -5],
+            [-3, -5],
+            [2, -4],
+            [1, -3],
+            [2, -3],
+            [2, -2],
+            [-1, 3],
+            [-1, 4],
+            [0, 4],
+            [-1, 5],
+            [4, 6],
+            [5, 6],
+            [4, 7],
+            [6, 7],
+            [6, 8],
+            [6, 9],
+            [7, 9]
+        ]
+
+        // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            fireworks[points[i][0] + Math.trunc(fireworks_x/2) ][points[i][1]+ Math.trunc(fireworks_y/2) ] = 1; 
+        }
+        return fireworks;  
+    }
+        
+
+
+    function sun()
+    {
+        let sun = [];
+        const sun_x = 48;
+        const sun_y = 48; 
+
+        // Initialiaze
+        for(let i=0; i< sun_x; i++)
+        {
+            sun[i] = [];
+            for(let j=0; j < sun_y; j++)
+            {
+                sun[i][j] = 0;
+            }
+        }
+
+        const points = [
+            [-6, -22],
+            [7, -22],
+            [-13, -21],
+            [-12, -21],
+            [13, -21],
+            [14, -21],
+            [-14, -20],
+            [-13, -20],
+            [-12, -20],
+            [-8, -20],
+            [-7, -20],
+            [8, -20],
+            [9, -20],
+            [13, -20],
+            [14, -20],
+            [15, -20],
+            [-8, -19],
+            [-7, -19],
+            [-5, -19],
+            [-4, -19],
+            [5, -19],
+            [6, -19],
+            [8, -19],
+            [9, -19],
+            [-6, -18],
+            [7, -18],
+            [-20, -14],
+            [21, -14],
+            [-21, -13],
+            [-20, -13],
+            [21, -13],
+            [22, -13],
+            [-21, 12],
+            [-20, -12],
+            [21, -12],
+            [22, -12],
+            [-20, -8],
+            [-19, -8],
+            [20, -8],
+            [21, -8],
+            [-20, -7],
+            [-19, -7],
+            [20, -7],
+            [21, -7],
+            [-22, -6],
+            [-18, -6],
+            [19, -6],
+            [23, -6],
+            [-19, -5],
+            [-19, -4],
+            [20, -5],
+            [20, -4],
+            [-19, 5],
+            [20, 5],
+            [-19, 6],
+            [20, 6],
+            [-22, 7],
+            [-18, 7],
+            [19, 7],
+            [23, 7],
+            [-20, 8],
+            [-19, 8],
+            [20, 8],
+            [21, 8],
+            [-20, 9],
+            [-19, 9],
+            [20, 9],
+            [21, 9],
+            [-21, 13],
+            [-20, 13],
+            [21, 13],
+            [22, 13],
+            [-21, 14],
+            [-20, 14],
+            [21, 14],
+            [22, 14],
+            [-20, 15],
+            [21, 15],
+            [-6, 19],
+            [7, 19],
+            [-8, 20],
+            [-7, 20],
+            [-5, 20],
+            [-4, 20],
+            [5, 20],
+            [6, 20],
+            [8, 20],
+            [9, 20],
+            [-14, 21],
+            [-13, 21],
+            [-12, 21],
+            [-8, 21],
+            [-7, 21],
+            [8, 21],
+            [9, 21],
+            [13, 21],
+            [14, 21],
+            [15, 21],
+            [-13, 22],
+            [-12, 22],
+            [13, 22],
+            [14, 22]
+            [-6, 23],
+            [7, 23]
+        ]
+
+        // Add cells alive
+        for (let i=0; i<points.length; i++)
+        {
+            sun[points[i][0] + Math.trunc(sun_x/2) ][points[i][1]+ Math.trunc(sun_y/2) ] = 1; 
+        }
+        return sun;  
+    }
     
     function flip()
     {
@@ -601,7 +783,7 @@ function animated_GameOfLife(dict) {
     }
     
     function ship(f, x, y) { return {ship: f, size_x: x, size_y: y}; }
-    const configList = {flipper: ship(flip, 25, 35), gosper: ship(gosper_glid, 36, 9)};
+    const configList = {flipper: ship(flip, 25, 35), gosper: ship(gosper_glid, 36, 9), fireworks: ship(fireworks, 14, 18), sun: ship(sun, 48, 48)};
 
     function init_state(dict) {
         const width =  dict['width']  || WIDTH;
@@ -627,33 +809,7 @@ function animated_GameOfLife(dict) {
         
         // ========================
 
-            // Square
-        /*
-        grid[width/2][height/2] = 1;
-        grid[width/2][height/2+1] = 1;
-        grid[width/2+1][height/2] = 1;
-        grid[width/2+1][height/2+1] = 1;
-        */
-
-            //Gosper glider run 
-        /*
-        gap_x = 36;
-        gap_y = 9;
-        let x_start = getRandomInt(width - gap_x); 
-        let y_start = getRandomInt(height - gap_y); 
-
-        const gosper_glider = gosper_glid(); 
-        
-        for(let i=0; i<gap_x; i++)
-        {
-            for(let j=0; j<gap_y; j++)
-            {
-                grid[x_start+i][y_start+j] = gosper_glider[i][j];
-            }
-        }
-        */
-        
-            // Flipper
+            // Generic way to produce animation
         const ship = config.ship(); 
         const size_x = config.size_x; 
         const size_y = config.size_y;
