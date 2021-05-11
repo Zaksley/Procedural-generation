@@ -75,10 +75,10 @@ function texture_horizontalGradient(dict) {
             pos = pos - width*Math.cos(th);
          }
       }
-      //console.log(length);
+
       return [0,0,0].map((e,i) => Math.floor(
-            color1[i]* ((n*(length-pos))%(length+1)) / length
-          + color2[i]* ((n*(pos))%(length+1)) / length
+          color1[i]* ((n*(length-pos-1))%(length+1)) / (length-1)
+              + color2[i]* ((n*(pos))%(length+1)) / (length-1)
          )).concat(255);
    };
 }
