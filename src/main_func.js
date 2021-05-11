@@ -3,7 +3,6 @@
 // Global Variables
 const globalVars = require('./vars.js');
 let COLORS = globalVars.COLORS;
-// let ANIMATION = false;
 
 // Textures
 const basic_textures = require('./textures/basic_textures.js');
@@ -29,7 +28,6 @@ const FILTERS = Object.assign({}, basic_filters, composition_filters, convolutio
 // Animation
 const animations = require('./animations.js');
 const ANIMATIONS = Object.assign({}, animations);
-const ANIMATION = false;
 
 // Helpers
 const getRule = cellular_automata_textures.getRule;
@@ -103,7 +101,7 @@ function generateAnimation(canvas, texture) {
             }
         }
 
-        if (!ANIMATION) {
+        if (!window.ANIMATION) {
             return;
         }
 

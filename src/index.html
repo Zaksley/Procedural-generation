@@ -85,8 +85,8 @@ textarea {
 			// let DATA = [], BASEDATA = [];
 			// let TEXTURE = "";
 			// let FILTER = "filter_resize";
-			let WEBDICT = {};
-			let ANIMATION = false;
+			window.DICT = {};
+			window.ANIMATION = false;
 			// let OPTDICT = {intensity:1, translation:0};
 			// let XOFFSET = 0, YOFFSET = 0;
 		</script>
@@ -192,139 +192,139 @@ textarea {
 		<div class="textureOption size" style="display:none">
 			<p>Pattern size : <b id="size">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size', this.value)"
-			onchange="WEBDICT['size'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['size'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- SIZE 2 -->
 		<div class="textureOption size2" style="display:none">
 			<p>Pattern second size : <b id="size2">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size2', this.value)"
-			onchange="WEBDICT['size2'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['size2'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- SIZE 3 -->
 		<div class="textureOption size3" style="display:none">
 			<p>Pattern third size : <b id="size3">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size3', this.value)"
-			onchange="WEBDICT['size3'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['size3'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- DISTANCE -->
 		<div class="textureOption distance" style="display:none">
 			<p>Distance : <b id="distance">80</b></p>
 			<input type="range" min="-100" max="100" value="0" oninput="updateSliderValue('distance', this.value)"
-			onchange="WEBDICT['distance'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['distance'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- COLUMNS -->
 		<div class="textureOption columns" style="display:none">
 			<p>Columns : <b id="columns">3</b></p>
 			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('columns', this.value)"
-			onchange="WEBDICT['columns'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['columns'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- ROWS -->
 		<div class="textureOption rows" style="display:none">
 			<p>Rows : <b id="rows">3</b></p>
 			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
-			onchange="WEBDICT['rows'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['rows'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<div class="textureOption outline" style="display:none">
 			<p>Outline width : <b id="outline">80</b></p>
 			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('outline', this.value)"
-			onchange="WEBDICT['epsilon'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['epsilon'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- TREE PROBABILITY -->
 		<div class="textureOption treeP" style="display:none">
 			<p>Tree Probability : <b id="treeP">50</b></p>
 			<input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
-			onchange="WEBDICT['treeP'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['treeP'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- LIGHTNING PROBABILITY -->
 		<div class="textureOption lightP" style="display:none">
 			<p>Lightning Probability : <b id="lightP">5</b></p>
 			<input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
-			onchange="WEBDICT['lightP'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['lightP'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- STEP NUMBER -->
 		<div class="textureOption step" style="display:none">
 			<p>Step : <b id="step">30</b></p>
 			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
-			onchange="WEBDICT['step'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['step'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- GERMS -->
 		<div class="textureOption germs" style="display:none">
 			<p>Germs : <b id="germs">10</b></p>
 			<input type="range" min="1" max="40" value="10" oninput="updateSliderValue('germs', this.value)"
-			onchange="WEBDICT['germs'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['germs'] = parseInt(this.value); regenerateImage();">
 		</div>
                 
 		<!-- ANGLE (90-180) -->
 		<div class="textureOption angle" style="display:none">
 			<p>Angle : <b id="angle">135</b>°</p>
 			<input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
-			onchange="WEBDICT['angle'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['angle'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- ANGLE (0-360) -->
 		<div class="textureOption fullangle" style="display:none">
 			<p>Angle : <b id="fullangle">45</b>°</p>
 			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle', this.value*15)"
-			onchange="WEBDICT['angle'] = parseInt(this.value*15); regenerateImage();">
+			onchange="window.DICT['angle'] = parseInt(this.value*15); regenerateImage();">
 		</div>
 
 		<!-- ANGLE 2 (0-360) -->
 		<div class="textureOption fullangle2" style="display:none">
 			<p>Second Angle : <b id="fullangle2">45</b>°</p>
 			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle2', this.value*15)"
-			onchange="WEBDICT['angle2'] = parseInt(this.value*15); regenerateImage();">
+			onchange="window.DICT['angle2'] = parseInt(this.value*15); regenerateImage();">
 		</div>
 
 		<!-- BRANCHES -->
 		<div class="textureOption branches" style="display:none">
 			<p>Branches : <b id="branches">5</b></p>
 			<input type="range" min="3" max="20" value="5" oninput="updateSliderValue('branches', this.value)"
-			onchange="WEBDICT['branches'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['branches'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- BRANCHES2 -->
 		<div class="textureOption branches2" style="display:none">
 			<p>Branches second option : <b id="branches2">5</b></p>
 			<input type="range" min="2" max="20" value="5" oninput="updateSliderValue('branches2', this.value)"
-			onchange="WEBDICT['branches2'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['branches2'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- FRACTAL DEPTH -->
 		<div class="textureOption depth" style="display:none">
 			<p>Depth levels : <b id="depth">3</b></p>
 			<input type="range" min="1" max="8" value="3" oninput="updateSliderValue('depth', this.value)"
-			onchange="WEBDICT['depth'] = parseInt(this.value); regenerateImage();">
+			onchange="window.DICT['depth'] = parseInt(this.value); regenerateImage();">
 		</div>
 
 		<!-- CENTER X -->
 		<div class="textureOption centerx" style="display:none">
 			<p>Horizontal centering : <b id="centerx">0.5</b></p>
 			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centerx', this.value*10/WIDTH)"
-			onchange="WEBDICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
+			onchange="window.DICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
 		</div>
 
 		<!-- CENTER Y -->
 		<div class="textureOption centery" style="display:none">
 			<p>Vertical centering : <b id="centery">0.5</b></p>
 			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centery', this.value*10/HEIGHT)"
-			onchange="WEBDICT['centery'] = parseInt(this.value)*10; regenerateImage();">
+			onchange="window.DICT['centery'] = parseInt(this.value)*10; regenerateImage();">
 		</div>
 
 		<!-- COLOR 1 -->
 		<div class="textureOption color1" style="display:none">
 			<p>Color 1 : <b id="color1">#0080FF</b>
 			<input type="color" value="#0080FF" oninput="updateSliderValue('color1', this.value)"
-			onchange="WEBDICT['color1'] = hexaToRGBA(this.value); regenerateImage();">
+			onchange="window.DICT['color1'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
@@ -332,7 +332,7 @@ textarea {
 		<div class="textureOption color2" style="display:none">
 			<p>Color 2 : <b id="color2">#0000FF</b>
 			<input type="color" value="#0000FF" oninput="updateSliderValue('color2', this.value)"
-			onchange="WEBDICT['color2'] = hexaToRGBA(this.value); regenerateImage();">
+			onchange="window.DICT['color2'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
@@ -340,7 +340,7 @@ textarea {
 		<div class="textureOption color3" style="display:none">
 			<p>Color 3 : <b id="color3">#ff8000</b>
 			<input type="color" value="#ff8000" oninput="updateSliderValue('color3', this.value)"
-			onchange="WEBDICT['color3'] = hexaToRGBA(this.value); regenerateImage();">
+			onchange="window.DICT['color3'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
@@ -348,14 +348,14 @@ textarea {
 		<div class="textureOption color4" style="display:none">
 			<p>Color 4 : <b id="color4">#ef76ff</b>
 			<input type="color" value="#ef76ff" oninput="updateSliderValue('color4', this.value)"
-			onchange="WEBDICT['color4'] = hexaToRGBA(this.value); regenerateImage();">
+			onchange="window.DICT['color4'] = hexaToRGBA(this.value); regenerateImage();">
 			</p>
 		</div>
 
                 <!-- RULE SELECTOR -->
 		<div class="textureOption rule" style="display:none">
 		  <p>Rule :
-                    <select name="ruleSelector" id="ruleSelector" oninput="(this.value)" onchange="WEBDICT['rule'] = getRule(this.value); regenerateImage();">
+                    <select name="ruleSelector" id="ruleSelector" oninput="(this.value)" onchange="window.DICT['rule'] = getRule(this.value); regenerateImage();">
 		      <option value="73" selected>73</option>
                       <option value="73_rng">73 random</option>
                       <option value="90">90</option>
@@ -369,7 +369,7 @@ textarea {
 		<!-- Starting configuration -->
 		<div class="textureOption config" style="display:none">
 			<p>Configuration :
-				<select name="configSelector" id="configSelector" oninput="(this.value)" onchange="WEBDICT['config'] = this.value; regenerateImage();">
+				<select name="configSelector" id="configSelector" oninput="(this.value)" onchange="window.DICT['config'] = this.value; regenerateImage();">
 					<option value="flipper">Flipper</option>
 					<option value="gosper">Gosper glid</option>
 				</select>

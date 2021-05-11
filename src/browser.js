@@ -32,26 +32,23 @@ const CANVAS = document.getElementById("canvas");
 window.CANVAS = CANVAS;
 CANVAS.width = WIDTH;
 CANVAS.height = HEIGHT;
-// let ANIMATION = main.ANIMATION;
 
 // Global vars - Web-specific
 let DATA = [], BASEDATA = [];
 let TEXTURE = "";
-let DICT = WEBDICT || {};
+let DICT = window.DICT;
 let OPTDICT = {intensity:1, translation:0};
 let XOFFSET = 0, YOFFSET = 0;
-let ANIMATION = false;
-let WEBDICT = {};
 
 
 /* Updates the image displayed (with current canvas, texture & dictionnary)
  */
 function regenerateImage(){
-	if (ANIMATION) {
+	if (window.ANIMATION) {
 		// Stop the Animation and reapply the new one
-		ANIMATION = false;
+		window.ANIMATION = false;
 		setTimeout(() => {
-			ANIMATION = true;
+			window.ANIMATION = true;
 			generateAnimation(CANVAS, window["ANIMATIONS"][TEXTURE](DICT));
 		}, 100);
 	} else {
@@ -137,7 +134,7 @@ function generateHTMLImageFromJson(){
 function showTextureOptions(value){
 
 	// Stop the Animation and then continue
-	ANIMATION = false;
+	window.ANIMATION = false;
 	setTimeout(() => {
 
 	// Gathering options
@@ -218,13 +215,13 @@ function showTextureOptions(value){
 			case "sdParabolaSegment":     options = ["size", "size2", "centerx", "centery", "color1"]; break;
 			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
-			case "chromaticCircle":      	ANIMATION = true; options = ["size", "centerx", "centery"]; break;
-			case "yinyang":      			ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
-			case "randomFunction": 			ANIMATION = true; options = []; break;
-			case "ForestFire":				ANIMATION = true; options = []; break;
-			case "GameOfLife":				ANIMATION = true; options = ["config"]; break;
-			case "GreenbergHastings":		ANIMATION = true; options = []; break;
-			case "rain":						ANIMATION = true; options = []; break;
+			case "chromaticCircle":      	window.ANIMATION = true; options = ["size", "centerx", "centery"]; break;
+			case "yinyang":      			window.ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
+			case "randomFunction": 			window.ANIMATION = true; options = []; break;
+			case "ForestFire":				window.ANIMATION = true; options = []; break;
+			case "GameOfLife":				window.ANIMATION = true; options = ["config"]; break;
+			case "GreenbergHastings":		window.ANIMATION = true; options = []; break;
+			case "rain":						window.ANIMATION = true; options = []; break;
 		default: 					options = []; break;
 	}
 
