@@ -166,7 +166,7 @@ function texture_pentagonTiling4(dict) {
  * @precond each color must be a 4-element array (rgba format)
  * @return a colored pixel corresponding to (i,j) position 
  */
-function texture_3Dcube(dict) {
+function texture_cubeTiling(dict) {
 
     const size = dict['size']       || 80;
     const colors = dict['colors']   || [];
@@ -201,7 +201,7 @@ function texture_3Dcube(dict) {
  * @precond each color must be a 4-element array (rgba format)
  * @return a colored pixel corresponding to (i,j) position 
  */
-function texture_3DgambarTiling(dict) {
+function texture_gambarTiling(dict) {
 
     const size = dict['size']       || 60;
     const colors = dict['colors']   || [];
@@ -232,5 +232,5 @@ function texture_3DgambarTiling(dict) {
 exports.caireTiling  		= texture_caireTiling;
 exports.pentagonTiling3 	= texture_pentagonTiling3;
 exports.pentagonTiling4 	= texture_pentagonTiling4;
-exports.cubeTiling			= texture_3Dcube;
-exports.gambarTiling		= texture_3DgambarTiling;				
+exports.cubeTiling			= texture_cubeTiling;
+exports.gambarTiling		= texture_gambarTiling;				

@@ -263,6 +263,9 @@ exports.getRule                 = getRule;
 exports.TEXTURES                = TEXTURES;
 exports.FILTERS                 = FILTERS;
 exports.ANIMATIONS              = ANIMATIONS;
+exports.textures_func           = textures_func;
+exports.filters_func            = filters_func;
+exports.doublefilters_func      = doublefilters_func;
 
 ///////// TESTS //////////
 

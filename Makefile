@@ -18,6 +18,9 @@ gen:
 
 test:
 
+# Generate documentation
+doc:
+	node ${DIR}/makedoc.js
 
 # Simple rule to test linter errors
 lint:
@@ -28,6 +31,7 @@ lint:
 	npx eslint ${DIR}/main_func.js
 	npx eslint ${DIR}/main.js
 	npx eslint ${DIR}/browser.js
+	npx eslint ${DIR}/makedoc.js
 
 # Generate a file from example.txt
 example:
