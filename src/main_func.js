@@ -44,7 +44,6 @@ for(let key in FILTERS){
 // Animation
 const animations = require('./animations.js');
 const ANIMATIONS = Object.assign({}, animations);
-const ANIMATION = false;
 
 // Helpers
 const getRule = cellular_automata_textures.getRule;
@@ -118,7 +117,7 @@ function generateAnimation(canvas, texture) {
             }
         }
 
-        if (!ANIMATION) {
+        if (!window.ANIMATION) {
             return;
         }
 
