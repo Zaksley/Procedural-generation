@@ -26,8 +26,15 @@ lint:
 	done
 	npx eslint ${DIR}/vars.js
 	npx eslint ${DIR}/main_func.js
+	npx eslint ${DIR}/main.js
 	npx eslint ${DIR}/browser.js
 
-#-- Cleaning public repository
+# Generate a file from example.txt
+example:
+	node ${DIR}/main.js example.txt example.png
+	eog example.png
+
+# Cleaning public repository
 clean: 	
 	rm -f ${PUBLIC_DIR}/*
+
