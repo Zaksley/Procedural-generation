@@ -209,6 +209,13 @@ function color_sdFunc(d, color) {
    return col;
 }
 
+function getColorFunc(str, color) {
+   switch (str) {
+      case 'example': return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 255 - e : e));
+      default: return (d) => color_sdFunc(d, color);
+   }
+}
+
 function texture_sdCircle(dict) {
    const r = dict['size']          || 100;
    const center = dict['center']   || [];
@@ -216,7 +223,7 @@ function texture_sdCircle(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    return function(x, y) {
       const p = [x - center_x, y - center_y];
@@ -236,7 +243,7 @@ function texture_sdRoundedBox(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, b, r) {
       [r[0], r[1]] = p[0] > 0 ? [r[0], r[1]] : [r[2], r[3]];
@@ -265,7 +272,7 @@ function texture_sdBox(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, b) {
       const d = opvec(abs(p), '-', b);
@@ -291,7 +298,7 @@ function texture_sdOrientedBox(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, a, b, th) {
       const l = length(opvec(b, '-', a));
@@ -323,7 +330,7 @@ function texture_sdSegment(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, a, b) {
       const ba = opvec(b, '-', a);
@@ -352,7 +359,7 @@ function texture_sdRhombus(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, b) {
       const q = abs(p);
@@ -381,7 +388,7 @@ function texture_sdIsoscelesTrapezoid(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r1, r2, he) {
       const k1 = [r2, he];
@@ -412,7 +419,7 @@ function texture_sdParallelogram(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, wi, he, sk) {
       const e = [sk, he];
@@ -444,7 +451,7 @@ function texture_sdEquilateralTriangle(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p) {
       const k = Math.sqrt(3);
@@ -472,7 +479,7 @@ function texture_sdIsoscelesTriangle(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, q) {
       p[0] = abs(p[0]);
@@ -499,7 +506,7 @@ function texture_sdTriangle(dict) {
    const points = dict['points']   || [[WIDTH / 4, HEIGHT / 5], [WIDTH / 5, 3 * HEIGHT / 5], [4 * WIDTH / 5, 7 * HEIGHT / 8]];
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
    const p0 = points[0];
    const p1 = points[1];
    const p2 = points[2];
@@ -536,7 +543,7 @@ function texture_sdUnevenCapsule(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r1, r2, h) {
       p[0] = abs(p[0]);
@@ -564,7 +571,7 @@ function texture_sdRegularPentagon(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r) {
       const k = [0.809016994, 0.587785252, 0.726542528];
@@ -592,7 +599,7 @@ function texture_sdRegularHexagon(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r) {
       const k = [-0.866025404, 0.5, 0.577350269];
@@ -619,7 +626,7 @@ function texture_sdRegularOctogon(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r) {
       const k = [-0.9238795325, 0.3826834323, 0.4142135623];
@@ -647,7 +654,7 @@ function texture_sdHexagram(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r) {
       const k = [-0.5, 0.8660254038, 0.5773502692, 1.7320508076];
@@ -676,7 +683,7 @@ function texture_sdStar5(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r, rf) {
       const k1 = [0.809016994375, -0.587785252292];
@@ -709,7 +716,7 @@ function texture_sdRegularStar(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const an = 3.141593 / n;
    const en = 3.141593 / max(2, min(m, n));
@@ -743,7 +750,7 @@ function texture_sdPie(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const c = [Math.sin(3.14 * percent), Math.cos(3.14 * percent)];
 
@@ -773,7 +780,7 @@ function texture_sdArc(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const sca = [Math.sin(ana), Math.cos(ana)];
    const scb = [Math.sin(anb), Math.cos(anb)];
@@ -804,7 +811,7 @@ function texture_sdHorseshoe(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const c = [Math.sin(3.14 * percent / 2), Math.cos(3.14 * percent / 2)];
    const w = [size, 0.25 * th];
@@ -837,7 +844,7 @@ function texture_sdVesica(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, r, d) {
       p = abs(p);
@@ -864,7 +871,7 @@ function texture_sdMoon(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, d, ra, rb) {
       p[1] = abs(p[1]);
@@ -893,7 +900,7 @@ function texture_sdCircleCross(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, h) {
       const k = 0.5 * (h + 1 / h);
@@ -920,7 +927,7 @@ function texture_sdSimpleEgg(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, ra, rb) {
       const k = Math.sqrt(3);
@@ -947,7 +954,7 @@ function texture_sdHeart(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, s) {
       p[0] = abs(p[0]);
@@ -974,7 +981,7 @@ function texture_sdCross(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const b = [2 * size1, 2 * min(size2, size1)];
 
@@ -1005,7 +1012,7 @@ function texture_sdRoundedX(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, w, r) {
       p = abs(p);
@@ -1026,7 +1033,7 @@ function texture_sdPolygon(dict) {
    const polygon = dict['points']  || randomPolygon(nbp);
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(p, v) {
       const N = v.length;
@@ -1061,7 +1068,7 @@ function texture_sdEllipse(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const ab = [ra, rb];
 
@@ -1119,7 +1126,7 @@ function texture_sdParabola(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(pos, k) {
       pos[0] = abs(pos[0]);
@@ -1152,7 +1159,7 @@ function texture_sdParabolaSegment(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(pos, wi, he) {
       pos[0] = abs(pos[0]);
@@ -1182,7 +1189,7 @@ function texture_sdQuadraticBezier(dict) {
    const triPoints = dict['points']|| randomPolygon(3);
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    const p0 = triPoints[0];
    const p1 = triPoints[1];
@@ -1240,7 +1247,7 @@ function texture_sdBobblyCross(dict) {
    const center_y = center[1]      || dict['centery'] || HEIGHT / 2;
    const colors = dict['colors']   || [];
    const color = dict['color1']    || colors[0] || [255*0.9,255*0.6,255*0.3,255];
-   const fcolor = (d) => (color_sdFunc(d, color));
+   const fcolor = getColorFunc(dict['function'], color);
 
    function dist(pos, he) {
       pos = abs(pos);
