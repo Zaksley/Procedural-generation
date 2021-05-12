@@ -83,7 +83,30 @@ function texture_horizontalGradient(dict) {
    };
 }
 
+function texture_tileBoard(dict) {
+   const width = dict['width']   || WIDTH;
+   const height = dict['height'] || HEIGHT;
+   const th = dict['size']       || 5;
+   const r = dict['rows']        || 3;
+   const c = dict['columns']     || 3;
+   const colors = dict['colors'] || [];
+   const color1 = dict['color1'] || colors[0] || COLORS.black;
+   const color2 = dict['color2'] || colors[1] || COLORS.white;
+
+   return function (x, y) {
+      x = x % (width / r);
+      y = y % (height / c);
+      if (x < th / 2 || x > width / r - th / 2)
+         return color2;
+      else if (y < th / 2 || y > height / c - th / 2)
+         return color2;
+      else  
+         return color1;
+   }
+}
+
 // Exports
 exports.none 			= texture_none;
 exports.solid 			= texture_solid;
 exports.horizontalGradient  = texture_horizontalGradient;
+exports.tileBoard = texture_tileBoard;

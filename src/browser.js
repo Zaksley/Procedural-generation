@@ -147,6 +147,7 @@ function showTextureOptions(value){
 			case "regularShape": 		options = ["size", "branches", "centerx", "centery", "color1", "color2"]; break;
 			case "disk": 				options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "circle": 				options = ["size", "outline", "centerx", "centery", "color1", "color2"]; break;
+			case "tileBoard":			options = ["size", "columns", "rows", "color1", "color2"]; break;
 		// Regular tilings
 			case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
 			case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;

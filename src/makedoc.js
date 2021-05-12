@@ -19,6 +19,7 @@ function getParams(func) {
 			case "disk": 					options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "circle": 					options = ["size", "outline", "centerx", "centery", "color1", "color2"]; break;
 			case "testInShape":				options = ["coords"]; break;
+			case "tileBoard":			options = ["size", "columns", "rows", "color1", "color2"]; break;
 		// Regular tilings
 			case "triangleTiling": 			options = ["size", "color1", "color2"]; break;
 			case "hexagonTiling": 			options = ["size", "color1", "color2", "color3"]; break;
