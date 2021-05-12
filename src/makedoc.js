@@ -165,4 +165,4 @@ for(let i = 0; i < dfilters.length; i++) {
 }
 
 // Write in file
-fs.writeFileSync("documentation.md", buffer);
+fs.writeFileSync("public/documentation.md", buffer);
