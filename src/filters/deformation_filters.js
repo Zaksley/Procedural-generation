@@ -75,7 +75,7 @@ function filter_conformTransformation(dict) {
 					return [
 						Math.floor((x2 + (height-(intensity2*y2))*(x2 - width2/2)/height)),
 						Math.floor((y2/height)**(1/intensity) * height)
-					] }; break;
+					]; }; break;
 			case "starSky": f = ((x,y) => [
 				Math.floor((x * y)%width),
 				Math.floor((x * y)%height)

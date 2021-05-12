@@ -5,6 +5,17 @@ const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 const COLORS = globalVars.COLORS;
 
+/* Filter : simple copy
+ *
+ * @return the exact copy of the image
+ * // Used in the tree generator when pastes are stacked
+ */
+function filter_copy() {
+	return function (img) {
+		return img;
+	}
+}
+
 /* Filter : rotation
  *
  * @param width canvas width
@@ -218,6 +229,7 @@ function filter_replaceColor(dict) {
 	};
 }
 // Exports
+exports.copy 				= filter_copy;
 exports.rotation 			= filter_rotation;
 exports.horizontalFlip 		= filter_horizontalFlip;
 exports.verticalFlip 		= filter_verticalFlip;

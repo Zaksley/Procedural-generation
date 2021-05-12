@@ -318,11 +318,12 @@ function filter_boxBlur(dict) {
 	const radius = dict['radius'] 	|| 1;
 	const width = dict['width'] 	|| WIDTH;
 	const height = dict['height'] 	|| HEIGHT;
+	const method = dict['method']	|| "extension";
 
 	return function(img) {
 		const len = 2*radius + 1;
 		const mask = new Array(len).fill().map(() => Array(len).fill(1/(len**2)));
-		return applyMask(img, width, height, mask);
+		return applyMask(img, width, height, mask, method);
 	};
 }
 
