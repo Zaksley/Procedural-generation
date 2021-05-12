@@ -102,7 +102,7 @@ function texture_tileBoard(dict) {
          return color2;
       else  
          return color1;
-   }
+   };
 }
 
 // Exports
