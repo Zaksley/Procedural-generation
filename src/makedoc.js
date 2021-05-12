@@ -112,7 +112,7 @@ function getParams(func) {
 			case "saturation": 				options = ["intensity"]; break;
 			case "hueShift": 				options = ["intensity"]; break;
 			case "contrast": 				options = ["intensity"]; break;
-			case "conformTransformation":	options = ["width","height","function"]; break;
+			case "conformTransformation":	options = ["width","width2","height","function","intensity","intensity2","offsetx","offsety"]; break;
 
 		// Double filters
 			case "compose": 				options = ["operation"]; break;

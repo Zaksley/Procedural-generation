@@ -63,14 +63,38 @@ function generateTexture(canvas, texture, xOffset=0, yOffset=0) {
     // Environnment definition
     let context = canvas.getContext("2d");
     let image = context.createImageData(canvas.width, canvas.height);
+    // console.log("generate: " + texture.name);
+    // let filterBuffer = [];
+    // let bufferFull = false;
 
     // Texture application
     for (let n = 0, y = 0; y < canvas.height; y++) {
         for (let x = 0; x < canvas.width; x++, n += 4) {
             
+            // Texture
             let pixel = texture(x+xOffset, y+yOffset);
-            while (typeof (pixel) === 'function')
+            while (typeof (pixel) === 'function'){
                 pixel = pixel(x+xOffset, y+yOffset);
+            }
+            // Not yet working : filter composition
+            // // console.log(texture.name);
+            // if(textures_func.includes(texture.name) === true) {
+            //     //console.log("bbbbb");
+            //     while (typeof (pixel) === 'function'){
+            //         pixel = pixel(x+xOffset, y+yOffset);
+            //     }
+            // }
+            // // Filter
+            // else if(filters_func.includes(texture.name) === true){
+            //     console.log("aaaaa");
+            //     if(bufferFull === false){
+            //         filterBuffer = generateTexture(canvas, texture, xOffset, yOffset);
+            //         bufferFull = true;
+            //     }
+            //     pixel = filterBuffer[(y*canvas.width + x)*4];
+            // }else{
+            //     // console.log("cccccc");
+            // }
 
             image.data[n] = pixel[0]; // Red channel
             image.data[n + 1] = pixel[1]; // Green channel
@@ -78,9 +102,11 @@ function generateTexture(canvas, texture, xOffset=0, yOffset=0) {
             image.data[n + 3] = pixel[3]; // Alpha channel
         }
     }
-
     return image.data;
 }
+
+
+
 
 /* Generates an animation from a texture function
  *
@@ -232,12 +258,19 @@ function generateArrayFromJson(canvas, jsondata) {
                 if(key.substring(0,5) === "color" && (typeof dict[key] === "string")){
                     value = getColor(dict[key]);
                 }
-                // A subtexture function is called
+                // A subfunction is called as a color parameter
                 if(key.substring(0,5) === "color" && (typeof dict[key] === "object" && !Array.isArray(dict[key]))){
-                    if(VERBOSE === true) console.log("FOUND FOLLOWING SUBTEXTURE");
+                    if(VERBOSE === true) console.log("FOUND COMPLEX COLOR");
                     for(let subkey in dict[key]){
                         if(VERBOSE === true) console.log(subkey);
-                        value = TEXTURES[subkey](generateLevel(dict[key][subkey]));
+
+                        if(textures_func.includes(subkey)){
+                            value = TEXTURES[subkey](generateLevel(dict[key][subkey]));
+                            // Object.defineProperty(value, "name", { value: subkey });
+                        }
+                        else if(filters_func.includes(subkey)){
+                            value = FILTERS[subkey](generateLevel(dict[key][subkey], true))(generateLevel(dict[key][subkey], false));
+                        }
                     }
                 }
                 // A known rule is found

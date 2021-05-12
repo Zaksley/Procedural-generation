@@ -69,7 +69,7 @@ function filter_horizontalFlip(dict) {
 
 	const width = dict['width'] 		|| WIDTH;
 
-	return function (img) {
+	return function horizontalFlip(img) {
 		let data = [];
 		data.length = img.length;
 		const height = data.length / (4 * width);
@@ -131,7 +131,7 @@ function filter_greyScale(dict) {
 	const width = dict['width'] 	|| WIDTH;
 	const height = dict['height'] 	|| HEIGHT;
 
-	return function(img) {
+	return function greyScale(img) {
 		let data = img.slice();
 		let val = 0;
 		for(let y = 0; y < height; y++) {
