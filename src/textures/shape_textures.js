@@ -189,6 +189,45 @@ function texture_rectangle(dict) {
     };
 }
 
+function texture_yinyang(dict) {
+    const r = dict['size']        || 150;
+    const rot = dict['angle']     || 0;
+    const center = dict['center'] || [];
+    const center_x = center[0]    || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]    || dict['centery'] || HEIGHT / 2;
+    const colors = dict['colors'] || [];
+    const color1 = colors[0]      || dict['color1'] || COLORS.black;
+    const color2 = colors[1]      || dict['color2'] || COLORS.white;
+    const color_bg = colors[2]    || COLORS.cyan;
+
+    const alpha = rot * 3.14 / 180;
+
+    return function (x, y) {
+        const center_x_up = center_x + (r / 2) * Math.sin(alpha);
+        const center_y_up = center_y - (r / 2) * Math.cos(alpha);
+        const center_x_down = center_x - (r / 2) * Math.sin(alpha);
+        const center_y_down = center_y + (r / 2) * Math.cos(alpha);
+
+        const square = (x) => x*x;
+
+        if(square(x - center_x) + square(y - center_y) < square(r)) {
+            if (square(x - center_x_up) + square(y - center_y_up) < square(r / 4))
+                return color1;
+            else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 4))
+                return color2;
+            else if (square(x - center_x_up) + square(y - center_y_up) < square(r / 2))
+                return color2;
+            else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 2))
+                return color1;
+            else if (Math.sin(alpha) * (y - center_y) + Math.cos(alpha) * (x - center_x) > 0)
+                return color1;
+            else
+                return color2;
+        }
+        return color_bg; 
+    };
+}
+
 // Exports
 exports.testInShape 	= texture_testInShape;
 exports.star 			= texture_star;
@@ -197,3 +236,4 @@ exports.regularShape 	= texture_regularShape;
 exports.disk            = texture_disk;
 exports.circle          = texture_circle;
 exports.rectangle       = texture_rectangle;
+exports.yinyang         = texture_yinyang;

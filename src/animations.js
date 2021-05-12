@@ -2,6 +2,7 @@ const basic_textures = require('./textures/basic_textures.js');
 const regular_tilings_textures = require('./textures/regular_tilings_textures.js');
 const semiregular_tilings_textures = require('./textures/semiregular_tilings_textures.js');
 const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
+const shape_textures = require("./textures/shape_textures.js");
 const getRandomInt = require('./textures/tools_for_textures.js').getRandomInt;
 const cellular_automata = require('./textures/cellular_automata_textures.js');
 const globalVars = require('./vars.js');
@@ -155,52 +156,13 @@ function animated_caireTiling(dict) {
     };                     
 }
 
-function texture_yinyang(dict) {
-    const r = dict['size']        || 150;
-    const rot = dict['angle']     || 0;
-    const center = dict['center'] || [];
-    const center_x = center[0]    || dict['centerx'] || 250;
-    const center_y = center[1]    || dict['centery'] || 250;
-    const colors = dict['colors'] || [];
-    const color1 = colors[0]      || dict['color1'] || COLORS.black;
-    const color2 = colors[1]      || dict['color2'] || COLORS.white;
-    const color_bg = colors[2]    || COLORS.cyan;
-
-    const alpha = rot * 3.14 / 180;
-
-    return function (x, y) {
-        const center_x_up = center_x + (r / 2) * Math.sin(alpha);
-        const center_y_up = center_y - (r / 2) * Math.cos(alpha);
-        const center_x_down = center_x - (r / 2) * Math.sin(alpha);
-        const center_y_down = center_y + (r / 2) * Math.cos(alpha);
-
-        const square = (x) => x*x;
-
-        if(square(x - center_x) + square(y - center_y) < square(r)) {
-            if (square(x - center_x_up) + square(y - center_y_up) < square(r / 4))
-                return color1;
-            else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 4))
-                return color2;
-            else if (square(x - center_x_up) + square(y - center_y_up) < square(r / 2))
-                return color2;
-            else if (square(x - center_x_down) + square(y - center_y_down) < square(r / 2))
-                return color1;
-            else if (Math.sin(alpha) * (y - center_y) + Math.cos(alpha) * (x - center_x) > 0)
-                return color1;
-            else
-                return color2;
-        }
-        return color_bg; 
-    };
-}
-
-function animated_yinyang(dict) {
-    const angle = dict['angle'] = 10;
+function animated_Yinyang(dict) {
+    const angle = dict['angle'] || 10;
 
     return function (x, y, dt) {
         const new_angle = angle + 5 * dt;
         dict['angle'] = new_angle;
-        return texture_yinyang(dict)(x, y);
+        return shape_textures.yinyang(dict)(x, y);
     };
 }
 
@@ -961,7 +923,7 @@ function animated_rain() {
 // Exports
 exports.caireTiling         = animated_caireTiling;
 exports.chromaticCircle     = animated_chromaticCircle;
-exports.yinyang             = animated_yinyang;
+exports.Yinyang             = animated_Yinyang;
 exports.randomFunction      = animated_randomFunction;
 exports.ForestFire          = animated_ForestFire;
 exports.GameOfLife          = animated_GameOfLife;
