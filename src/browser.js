@@ -148,6 +148,7 @@ function showTextureOptions(value){
 			case "disk": 				options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "circle": 				options = ["size", "outline", "centerx", "centery", "color1", "color2"]; break;
 			case "tileBoard":			options = ["size", "columns", "rows", "color1", "color2"]; break;
+			case "yinyang":			options = ["size", "fullangle", "centerx", "centery","color1", "color2"]; break;
 		// Regular tilings
 			case "triangleTiling": 		options = ["size", "color1", "color2"]; break;
 			case "hexagonTiling": 		options = ["size", "color1", "color2", "color3"]; break;
@@ -217,7 +218,7 @@ function showTextureOptions(value){
 			case "sdQuadraticBezier":     options = ["color1"]; break;
 		// Animations todo
 			case "chromaticCircle":      	window.ANIMATION = true; options = ["size", "centerx", "centery"]; break;
-			case "yinyang":      			window.ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
+			case "Yinyang":      			window.ANIMATION = true; options = ["size", "centerx", "centery", "color1", "color2"]; break;
 			case "randomFunction": 			window.ANIMATION = true; options = []; break;
 			case "ForestFire":				window.ANIMATION = true; options = []; break;
 			case "GameOfLife":				window.ANIMATION = true; options = ["config"]; break;
