@@ -805,6 +805,7 @@ function texture_sdHorseshoe(dict) {
    const r = dict['size']          || WIDTH / 5;
    const th = dict['size2']        || WIDTH / 5;
    const size = dict['size3']      || WIDTH / 10;
+   const intensity = dict['intensity'] || 2;
    const percent = dict['angle'] / 360 || 0.3;
    const center = dict['center']   || [];
    const center_x = center[0]      || dict['centerx'] || WIDTH / 2;
@@ -829,7 +830,7 @@ function texture_sdHorseshoe(dict) {
    return function (x, y) {
       const p = [x - center_x, center_y - y];
       
-      const d = 2 * dist(p, c, r, w) / WIDTH;
+      const d = intensity * dist(p, c, r, w) / WIDTH;
        
       return fcolor(d);
    };

@@ -1,15 +1,71 @@
-"paste": { "paste": {
-	"solid": {
-		"color1": { "horizontalGradient" : {
-			"color1": [5,0,30,255],
-			"color2": [237,12,97,255],
-			"angle": -90,
-			"columns":2
-		}}
+"paste": { "paste": { "paste": {
+	"compose": {
+		"operation":"plus",
+		"sdHorseshoe": {
+			"centery":100,
+			"size":140,
+			"intensity":4
+		},
+		"compose": {
+			"operation":"plus",
+			"cut": {
+				"replaceColor": {
+					"color1": "white",
+					"color2": "0",
+					"contrast": {
+						"intensity":6,
+						"greyScale": {
+							"perlinNoise": {
+								"color1":[5,5,5,255],
+								"color2":"0",
+								"color3": {
+									"limitedWhiteNoise": {
+										"columns":20,
+										"rows":20
+									}
+								},
+								"columns":100,
+								"rows":100
+							}
+						}
+					}
+				},
+				"rectangle": {
+					"width":1024,
+					"height":768,
+					"color1":[50,50,50,64],
+					"color2":"0"
+				}
+			},
+			"solid": {
+				"color1": { "horizontalGradient" : {
+					"color1": [5,0,30,255],
+					"color2": [237,12,97,255],
+					"angle": -90,
+					"columns":2
+				}}
+			}
+		}
 	},
-	"paste": {
+	"translation": {
+		"direction":"vertical",
+		"intensity":-150,
+		"rotation": {
+			"angle":-90,
+			"boxBlur": {
+				"radius":15,
+				"disk": {
+					"color1":[237,12,97,255],
+					"color2":"0",
+					"size":1000,
+					"centerx":-600
+				}
+			}
+		}
+	}},
+	"copy": { "paste": {
 		"boxBlur": {
-			"radius":1,
+			"radius":15,
 			"disk": {
 				"color1":[237,12,97,255],
 				"color2":"0",
@@ -66,7 +122,7 @@
 				"offsety":400
 			}
 		}
-	}},
+	}}},
 
 	"cut": {
 		"conformTransformation": { 
@@ -101,4 +157,3 @@
 		} 
 	}
 }
-

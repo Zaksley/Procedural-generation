@@ -401,6 +401,30 @@ function filter_unsharpMasking(dict) {
 	};
 }
 
+// /* Filter : Movement blur
+//  * 
+//  * @param width image width
+//  * @param height image height
+//  * @param 
+//  * @return the filtered image
+//  */
+// function filter_movementBlur_sketch(dict) {
+
+// 	const width = dict['width'] 	|| WIDTH;
+// 	const height = dict['height'] 	|| HEIGHT;
+// 	const angle = dict['angle'] 	|| 0;
+// 	const len = dict['radius']		|| 1;
+
+// 	return function(img) {
+// 		let movementMask = new Array(len).fill().map(() => Array(len).fill(0));
+// 		for(let i = 0; i < len; i++) {
+
+// 		}
+// 		console.log(movementMask);
+// 		return applyMask(img, width, height, movementMask)
+// 	};
+// }
+
 // Exports
 exports.gaussianMask 	= gaussianMask;
 exports.applyMask 		= applyMask;

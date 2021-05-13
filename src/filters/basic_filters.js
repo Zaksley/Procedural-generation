@@ -13,7 +13,7 @@ const COLORS = globalVars.COLORS;
 function filter_copy() {
 	return function (img) {
 		return img;
-	}
+	};
 }
 
 /* Filter : rotation
@@ -31,8 +31,7 @@ function filter_rotation(dict) {
 
 	return function (img) {
 
-		let data = [];
-		data.length = img.length;
+		let data = img.slice().fill(0,0);
 		//const height = data.length / (4 * width);
 		let x_init, y_init;
 		let r, angle_init;
@@ -64,6 +63,41 @@ function filter_rotation(dict) {
 						data[m + 2] = img[n + 2];
 						data[m + 3] = img[n + 3];
 					}
+				}
+			}
+		}
+		return data;
+	};
+}
+
+/* Filter : translation
+ *
+ * @param direction "vertical"/"horizontal"
+ * @param intensity translation length
+ */
+function filter_translation(dict) {
+
+	const width = dict['width']			|| WIDTH;
+	const height = dict['height']		|| HEIGHT;
+	const dir = dict['direction'] 		|| "vertical";
+	const len = dict['intensity'] 		|| 40;
+
+	let xdiff = 0; let ydiff = 0;
+	switch(dir){
+		case "vertical": xdiff = len; break;
+		case "horizontal": ydiff = len; break;
+		case "oblique1": xdiff = len; ydiff = len; break;
+		case "oblique2": xdiff = len; ydiff = -len; break;
+		default: xdiff = len; break;
+	}
+
+	return function (img) {
+		let data = img.slice();
+
+		for (let i = 0; i < width; i++) {
+			for (let j = 0; j < height; j++) {
+				for(let k = 0; k < 4; k++) {
+					data[(j*width + i)*4 + k] = img[(((j-xdiff)%height)*width + (i-ydiff)%width)*4 + k];
 				}
 			}
 		}
@@ -231,6 +265,7 @@ function filter_replaceColor(dict) {
 // Exports
 exports.copy 				= filter_copy;
 exports.rotation 			= filter_rotation;
+exports.translation 		= filter_translation;
 exports.horizontalFlip 		= filter_horizontalFlip;
 exports.verticalFlip 		= filter_verticalFlip;
 exports.negativeImage 		= filter_negativeImage;
