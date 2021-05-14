@@ -380,6 +380,19 @@ textarea {
 			</p>
 		</div>
 
+		<!-- Color function -->
+		<div class="textureOption color function" style="display:none">
+			<p>Color Function :
+				<select name="colorFunctionSelector" id="colorFunctionSelector" oninput="(this.value)" onchange="window.DICT['function'] = this.value; regenerateImage();">
+					<option value="default">Default</option>
+					<option value="example">Basic</option>
+					<option value="noise">Noise</option>
+					<option value="gradient">Gradient</option>
+					<option value="random">Random</option>
+				</select>
+			</p>
+		</div>
+
                 
 		<!-- RESET -->
 		<div class="reset">
