@@ -2,16 +2,23 @@ const basic_textures = require('./textures/basic_textures.js');
 const regular_tilings_textures = require('./textures/regular_tilings_textures.js');
 const semiregular_tilings_textures = require('./textures/semiregular_tilings_textures.js');
 const polygon_tilings_textures = require('./textures/polygon_tilings_textures.js');
-const shape_textures = require("./textures/shape_textures.js");
+const noise_textures = require('./textures/noise_textures.js');
+const cellular_automata_textures = require('./textures/cellular_automata_textures.js');
+const distance_textures = require('./textures/distance_textures.js');
+const signed_distance_textures = require('./textures/signed_distance_textures.js');
+const fractal_textures = require('./textures/fractal_textures.js');
+const shape_textures = require('./textures/shape_textures.js');
+const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures, distance_textures, signed_distance_textures, fractal_textures, shape_textures);
+
 const getRandomInt = require('./textures/tools_for_textures.js').getRandomInt;
-const cellular_automata = require('./textures/cellular_automata_textures.js');
+const generateGalery = require('./filters/composition_filters.js').galery;
 const globalVars = require('./vars.js');
 const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 const COLORS = globalVars.COLORS;
-const Greenberg_Hastings_nextstep = cellular_automata.Greenberg_Hastings_nextstep;
-const gameOfLife_nextStep = cellular_automata.gameOfLife_nextStep;
-const forestFire_nextStep = cellular_automata.forestFire_nextStep;
+const Greenberg_Hastings_nextstep = TEXTURES.Greenberg_Hastings_nextstep;
+const gameOfLife_nextStep = TEXTURES.gameOfLife_nextStep;
+const forestFire_nextStep = TEXTURES.forestFire_nextStep;
 
 function node(_val, _children) {
     return {val: _val, children: _children};
@@ -124,8 +131,8 @@ function add_animation(dict) {
 function animated_chromaticCircle(dict) {
     const r = dict['size']        || 150;
     const center = dict['center'] || [];
-    const center_x = center[0]    || dict['centerx'] || 250;
-    const center_y = center[1]    || dict['centery'] || 250;
+    const center_x = center[0]    || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]    || dict['centery'] || HEIGHT / 2;
     const colors = dict['colors'] || [];
     const color_bg = colors[0]    || COLORS.black;
 
@@ -152,7 +159,7 @@ function animated_caireTiling(dict) {
     return function (x, y, dt) {
         const new_angle = 90 + Math.abs((5 * dt + angle) % 180 - 90);
         dict['angle'] = new_angle;
-        return polygon_tilings_textures.caireTiling(dict)(x, y);
+        return TEXTURES.caireTiling(dict)(x, y);
     };                     
 }
 
@@ -162,7 +169,7 @@ function animated_Yinyang(dict) {
     return function (x, y, dt) {
         const new_angle = angle + 5 * dt;
         dict['angle'] = new_angle;
-        return shape_textures.yinyang(dict)(x, y);
+        return TEXTURES.yinyang(dict)(x, y);
     };
 }
 
@@ -190,11 +197,11 @@ function animated_randomFunction() {
             branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
         const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5, radius: seed % 150 + 50, freq: seed / 10 % 3};
 
-        const textureList = [basic_textures.solid, basic_textures.horizontalGradient, 
-            regular_tilings_textures.hexagonTiling, regular_tilings_textures.triangleTiling, regular_tilings_textures.squareTiling,
-            semiregular_tilings_textures.elongatedTriangular, semiregular_tilings_textures.snubSquare, semiregular_tilings_textures.snubHexagonal, semiregular_tilings_textures.trihexagonal,
-            semiregular_tilings_textures.truncatedHexagon, semiregular_tilings_textures.truncatedSquare, semiregular_tilings_textures.smallRhombitrihexagonalTiling, semiregular_tilings_textures.bigRhombitrihexagonalTiling,
-            polygon_tilings_textures.caireTiling, polygon_tilings_textures.cubeTiling, polygon_tilings_textures.gambarTiling, polygon_tilings_textures.pentagonTiling3];
+        const textureList = [TEXTURES.solid, TEXTURES.horizontalGradient, 
+            TEXTURES.hexagonTiling, TEXTURES.triangleTiling, TEXTURES.squareTiling,
+            TEXTURES.elongatedTriangular, TEXTURES.snubSquare, TEXTURES.snubHexagonal, TEXTURES.trihexagonal,
+            TEXTURES.truncatedHexagon, TEXTURES.truncatedSquare, TEXTURES.smallRhombitrihexagonalTiling, TEXTURES.bigRhombitrihexagonalTiling,
+            TEXTURES.caireTiling, TEXTURES.cubeTiling, TEXTURES.gambarTiling, TEXTURES.pentagonTiling3];
         const funcList = [rotation, translation, circle];
 
         const texture = textureList[seed % textureList.length];
