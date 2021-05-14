@@ -11,7 +11,6 @@ const shape_textures = require('./textures/shape_textures.js');
 const TEXTURES = Object.assign({}, basic_textures, regular_tilings_textures, semiregular_tilings_textures, polygon_tilings_textures, noise_textures, cellular_automata_textures, distance_textures, signed_distance_textures, fractal_textures, shape_textures);
 
 const getRandomInt = require('./textures/tools_for_textures.js').getRandomInt;
-const generateGalery = require('./filters/composition_filters.js').galery;
 const globalVars = require('./vars.js');
 const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;

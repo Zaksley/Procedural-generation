@@ -1,5 +1,9 @@
 'use strict';
 
+const globalVars = require('./vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+
 /* Double filter : composition
  *
  * @param operation the operation between the two images
@@ -152,7 +156,7 @@ function nfilter_galery(dict) {
 		const size_y = Math.ceil(h / r);
 
 		let data = [];
-		let imgs = images.map((e) => reduce_image({width: w, height: h, rows: r, columns: c})(e))
+		let imgs = images.map((e) => reduce_image({width: w, height: h, rows: r, columns: c})(e));
 
 		if (c * r > n) {
 			none = reduce_image({width: w, height: h, rows: r, columns: c})(none);
