@@ -1,6 +1,6 @@
 'use strict';
 
-const globalVars = require('./vars.js');
+const globalVars = require('../vars.js');
 const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 
