@@ -233,11 +233,12 @@ function color_sdRandom(d, seed) {
 }
 
 function getColorFunc(str, color) {
+   const seed = new Array(3).fill(Math.random).map((x) => x());
    switch (str) {
       case 'example': return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 255 - e : e));
       case 'noise': return (d) => color_sdNoise(d, color);
       case 'gradient': return (d) => color_sdGradient(d, color);
-      case 'random': const seed = new Array(3).fill(Math.random).map((x) => x()); return (d) => color_sdRandom(d, seed);
+      case 'random': return (d) => color_sdRandom(d, seed);
       default: return (d) => color_sdFunc(d, color);
    }
 }
