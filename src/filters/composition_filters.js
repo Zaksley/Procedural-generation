@@ -1,5 +1,9 @@
 'use strict';
 
+const globalVars = require('../vars.js');
+const WIDTH = globalVars.WIDTH;
+const HEIGHT = globalVars.HEIGHT;
+
 /* Double filter : composition
  *
  * @param operation the operation between the two images
@@ -92,7 +96,87 @@ function dfilter_cut() {
 	};
 }
 
+/* Function : reduce *  
+ * @param dict.w original width of the image 
+ * @param dict.h original height of the image 
+ * @param dict.r number of rows 
+ * @param dict.c number of columns 
+ * @return an image at the size (w / c) * (h / r) 
+ */
+function reduce_image(dict) {
+	const w = dict['width']  || WIDTH;
+	const h = dict['height'] || HEIGHT;
+	const r = dict['rows'] 	 || 3;
+	const c = dict['columns']|| 3;
+
+	return function (img) {
+		let data = [];
+		let color;
+		const size_x = Math.floor(w / c);
+		const size_y = Math.floor(h / r);
+
+		function avgColor(x, y) {
+			let color = [0, 0, 0, 0];
+			for(let i = 0; i < c; i++)
+				for(let j = 0; j < r; j++)
+					color = color.map((e, k) => e + img[(x * c + i + (y * r + j) * w) * 4 + k] / (r * c));
+			return color;
+		}
+
+		for(let i = 0; i < size_x; i++) {
+			for(let j = 0; j < size_y; j++) {
+				color = avgColor(i, j);
+				for(let k = 0; k < 4; k++) {
+					data[(i + j * size_x) * 4 + k] = color[k];
+				}
+			}
+		}
+		return data;	
+	};
+}
+
+/* filter : galery
+ * 
+ * @param images an array of images
+ * @return an image which is a galery of image
+ */
+function nfilter_galery(dict) {
+	const w = dict['width']  || WIDTH;
+	const h = dict['height'] || HEIGHT;
+	let none = new Uint8ClampedArray(w * h * 4).fill(0);
+
+	return function(images) {
+		const n = Math.max(images.length, 1);
+		let c = Math.ceil(Math.sqrt(n));
+		let r = Math.floor(Math.sqrt(n));
+		r = c * r >= n ? r : r + 1;
+		[r, c] = h > w ? [c, r] : [r, c];
+
+		const size_x = Math.ceil(w / c);
+		const size_y = Math.ceil(h / r);
+
+		let data = [];
+		let imgs = images.map((e) => reduce_image({width: w, height: h, rows: r, columns: c})(e));
+
+		if (c * r > n) {
+			none = reduce_image({width: w, height: h, rows: r, columns: c})(none);
+			imgs.length = c * r;
+			imgs.fill(none, n, c * r);
+		}
+
+		for(let i = 0; i < w; i++) {
+			for(let j = 0; j < h; j++) {
+				for(let k = 0; k < 4; k++) {
+					data[(i + j * w) * 4 + k] = imgs[Math.floor(i / size_x) + Math.floor(j / size_y) * c][(i % size_x + (j % size_y) * size_x) * 4 + k];
+				}
+			}
+		}
+		return data;
+	};
+}
+
 // Exports
 exports.compose = dfilter_compose;
 exports.paste = dfilter_paste;
 exports.cut = dfilter_cut;
+exports.galery = nfilter_galery;

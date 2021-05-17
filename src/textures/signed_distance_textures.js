@@ -209,7 +209,8 @@ function color_sdFunc(d, color) {
    return col;
 }
 
-function color_biwaves(d, color) {
+
+function color_sdBiwaves(d, color) {
    let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
    col = col.map((x) => x * (1 - Math.exp(-3 * abs(d))));
    col = col.map((x) => x * (0.8 + 0.4 * Math.tan(100 * d)));
@@ -220,11 +221,38 @@ function color_biwaves(d, color) {
    return col;
 }
 
+function color_sdNoise(d, color) {
+   let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
+   const p =  (1 - Math.random() * Math.exp(-(1 + Math.cos(50 * abs(d)))) > 0.9) ? 1 : 0;
+   col = col.map((x) => x * p * (1 - Math.exp(-3 * abs(d))));
+   col[3] = color[3];
+   
+   return col;
+}
+
+function color_sdGradient(d, color) {
+   let col1 = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
+   let col2 = [255 * (1 + sign(d) * (1 - color[0] / 255)), 255 * (1 + sign(d) * (1 - color[1] / 255)), 255 * (1 + sign(d) * (1 - color[2] / 255))];
+   col1 = col1.map((x) => x * (1 - Math.exp(-3 * abs(d))));
+   col2 = col2.map((x) => x * (1 - Math.exp(-3 * abs(d))));
+   const a = abs(10 * abs(d) - 0.5) % 1;
+
+   return mix(col1, col2, a).concat(color[3]);
+}
+
+function color_sdRandom(d, seed) {
+   return seed.map((x) => ((x * 5000) * abs(d)) % 255).concat(255);
+}
+
 function getColorFunc(str, color) {
+   const seed = new Array(3).fill(Math.random).map((x) => x());
    switch (str) {
       case 'example': return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 255 - e : e));
       case "biwaves": return (d) => color_biwaves(d, color);
       case "fade": return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 0- e : e)).map((e,i) => (i===3) ? e : (e*d*2)%256);
+      case 'noise': return (d) => color_sdNoise(d, color);
+      case 'gradient': return (d) => color_sdGradient(d, color);
+      case 'random': return (d) => color_sdRandom(d, seed);
       default: return (d) => color_sdFunc(d, color);
    }
 }
