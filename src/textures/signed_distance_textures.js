@@ -209,9 +209,22 @@ function color_sdFunc(d, color) {
    return col;
 }
 
+function color_biwaves(d, color) {
+   let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
+   col = col.map((x) => x * (1 - Math.exp(-3 * abs(d))));
+   col = col.map((x) => x * (0.8 + 0.4 * Math.tan(100 * d)));
+   col = col.map((x) => x * (0.8 + 0.4 * Math.cos(50 * d)));
+   col = mix(col, [255, 255, 255], 1 - smoothstep(0, 0.01, abs(d)));
+   col[3] = color[3];
+
+   return col;
+}
+
 function getColorFunc(str, color) {
    switch (str) {
       case 'example': return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 255 - e : e));
+      case "biwaves": return (d) => color_biwaves(d, color);
+      case "fade": return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 0- e : e)).map((e,i) => (i===3) ? e : (e*d*2)%256);
       default: return (d) => color_sdFunc(d, color);
    }
 }

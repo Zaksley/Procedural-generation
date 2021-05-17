@@ -215,10 +215,10 @@ function filter_resize(dict) {
 					if(i*n + i2 >= height) break;
 					for (let j2 = 0; j2 < n; j2++) {
 						if(j*n + j2 >= width) break;
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4] = img[i*height*4 + j*4];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 1] = img[i*height*4 + j*4 + 1];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 2] = img[i*height*4 + j*4 + 2];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 3] = img[i*height*4 + j*4 + 3];
+						data[(i2 + n*i)*width*4 + (j2 + n*j)*4] = img[i*width*4 + j*4];
+						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 1] = img[i*width*4 + j*4 + 1];
+						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 2] = img[i*width*4 + j*4 + 2];
+						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 3] = img[i*width*4 + j*4 + 3];
 					}
 				}
 			}
