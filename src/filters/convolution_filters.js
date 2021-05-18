@@ -180,14 +180,14 @@ function applyMask(img, width, height, mask, method="extension") {
 						if(y+i-maskLenY >= 0) {
 							if(y+i-maskLenY < height)
 								col = y+i-maskLenY;
-							else col = rightHl;
-						} else col = leftHl;
+							else col = bottomHl;
+						} else col = topHl;
 
 						if(x+j-maskLenX >= 0) {
 							if(x+j-maskLenX < width)
 								row = x+j-maskLenX;
-							else row = bottomHl;
-						} else row = topHl;
+							else row = rightHl;
+						} else row = leftHl;
 
 						imgIndex = ((col)*width + row)*4 + k;
 						acc[k] += mask[i][j]*img[imgIndex];
