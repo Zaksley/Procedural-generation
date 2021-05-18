@@ -156,13 +156,10 @@ function filter_verticalFlip(dict) {
  *
  * @return texture with inverted colors 
  */
-function filter_negativeImage(img) {
-	let data = img;
-	for (let i = 0; i < data.length; i++) {
-		if (i % 4 !== 3)
-			data[i] = 255 - img[i];
-	}
-	return data;
+function filter_negativeImage() {
+	return function(img) {
+		return img.map((e,i) => (i%4===3) ? e : 256 - e);
+	};
 }
 
 /* Filter : gray scale
@@ -176,7 +173,7 @@ function filter_greyScale(dict) {
 	const width = dict['width'] 	|| WIDTH;
 	const height = dict['height'] 	|| HEIGHT;
 
-	return function greyScale(img) {
+	return function(img) {
 		let data = img.slice();
 		let val = 0;
 		for(let y = 0; y < height; y++) {
@@ -184,7 +181,6 @@ function filter_greyScale(dict) {
 				val = Math.floor(img.slice((y*width + x)*4, (y*width + x)*4+3).reduce((acc, el) => acc+el, 0)/3);
 				for(let k = 0; k < 3; k++) {
 					data[(y*width + x)*4 + k] = val;
-					data[(y*width + x)*4 + 3] = 255; 
 				}
 			}
 		}

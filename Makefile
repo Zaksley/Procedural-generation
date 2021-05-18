@@ -17,7 +17,7 @@ gen:
 	npx browserify ${DIR}/browser.js ${DIR}/main_func.js ${FILTERS} ${TEXTURES} ${ANIMATIONS} -o ${PUBLIC_DIR}/browser_main.js
 
 test:
-	npx jest --coverage
+	npx jest --verbose
 
 # Generate documentation
 doc:
