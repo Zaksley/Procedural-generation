@@ -5,8 +5,9 @@ const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 const COLORS = globalVars.COLORS;
 
+const basic_tools = require('./basic_filters.js');
 const color_tools = require('./color_filters.js');
-const filter_greyScale = color_tools.greyScale;
+const filter_greyScale = basic_tools.greyScale;
 const filter_getHSLChannel = color_tools.getHSLChannel;
 const gatherHSLChannels = color_tools.gatherHSLChannels;
 
@@ -177,13 +178,13 @@ function applyMask(img, width, height, mask, method="extension") {
 						getEdge(y+i-maskLenY, x+j-maskLenX);
 
 						if(y+i-maskLenY >= 0) {
-							if(y+i-maskLenY < width)
+							if(y+i-maskLenY < height)
 								col = y+i-maskLenY;
 							else col = rightHl;
 						} else col = leftHl;
 
 						if(x+j-maskLenX >= 0) {
-							if(x+j-maskLenX < height)
+							if(x+j-maskLenX < width)
 								row = x+j-maskLenX;
 							else row = bottomHl;
 						} else row = topHl;
