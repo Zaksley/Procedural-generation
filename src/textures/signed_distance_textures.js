@@ -248,7 +248,7 @@ function getColorFunc(str, color) {
    const seed = new Array(3).fill(Math.random).map((x) => x());
    switch (str) {
       case 'example': return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 255 - e : e));
-      case "biwaves": return (d) => color_biwaves(d, color);
+      case "biwaves": return (d) => color_sdBiwaves(d, color);
       case "fade": return (d) => (d > 0 ? color : color.map((e, i) => i < 3 ? 0- e : e)).map((e,i) => (i===3) ? e : (e*d*2)%256);
       case 'noise': return (d) => color_sdNoise(d, color);
       case 'gradient': return (d) => color_sdGradient(d, color);
