@@ -140,20 +140,21 @@ function reduce_image(dict) {
  * @param images an array of images
  * @return an image which is a galery of image
  */
-function nfilter_galery(dict) {
+function dfilter_galery(dict) {
 	const w = dict['width']  || WIDTH;
 	const h = dict['height'] || HEIGHT;
 	let none = new Uint8ClampedArray(w * h * 4).fill(0);
 
-	return function(images) {
+	return function(...images) {
+		console.log(images);
 		const n = Math.max(images.length, 1);
 		let c = Math.ceil(Math.sqrt(n));
 		let r = Math.floor(Math.sqrt(n));
-		r = c * r >= n ? r : r + 1;
+		r = (c * r < n) ? r + 1: r;
 		[r, c] = h > w ? [c, r] : [r, c];
 
-		const size_x = Math.ceil(w / c);
-		const size_y = Math.ceil(h / r);
+		const size_x = Math.floor(w / c);
+		const size_y = Math.floor(h / r);
 
 		let data = [];
 		let imgs = images.map((e) => reduce_image({width: w, height: h, rows: r, columns: c})(e));
@@ -167,7 +168,7 @@ function nfilter_galery(dict) {
 		for(let i = 0; i < w; i++) {
 			for(let j = 0; j < h; j++) {
 				for(let k = 0; k < 4; k++) {
-					data[(i + j * w) * 4 + k] = imgs[Math.floor(i / size_x) + Math.floor(j / size_y) * c][(i % size_x + (j % size_y) * size_x) * 4 + k];
+					data[(i + j * w) * 4 + k] = imgs[Math.min(Math.floor(i / size_x), c - 1) + Math.min(Math.floor(j / size_y), r - 1) * c][(i % size_x + (j % size_y) * size_x) * 4 + k];
 				}
 			}
 		}
@@ -179,4 +180,4 @@ function nfilter_galery(dict) {
 exports.compose = dfilter_compose;
 exports.paste = dfilter_paste;
 exports.cut = dfilter_cut;
-exports.galery = nfilter_galery;
+exports.galery = dfilter_galery;
