@@ -43,6 +43,15 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+/* Generates a semi-random int with a specified seed
+ *
+ * @param max upper boundary of the maximum
+ * @return a random int between -max and max
+ */
+function getRandomIntSeed(max, seed) {
+    return Math.floor(Math.abs(602214076 * Math.sin(seed * seed * seed++))) % max;
+}
+
 // Used in limitedWhiteNoise
 function getFourInterpolateCoordinates(i, j, x, y) {
     let top = y - j + 1;
@@ -215,6 +224,7 @@ function randomPolygon(n) {
 exports.ij2xy 			= ij2xy;
 exports.get_offset  	= get_offset;
 exports.getRandomInt	= getRandomInt;
+exports.getRandomIntSeed= getRandomIntSeed;
 exports.getFourInterpolateCoordinates = getFourInterpolateCoordinates;
 exports.isInShape       = isInShape;
 exports.randomPolygon   = randomPolygon;

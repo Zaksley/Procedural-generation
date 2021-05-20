@@ -3,8 +3,8 @@
 // Global variables
 let MAX_ARGUMENTS = 50;
 // FINAL IMAGE : 1024 x 768 (500ko max)
-const WIDTH = 1024;
-const HEIGHT = 768;
+const WIDTH = 500;
+const HEIGHT = 500;
 
 const COLORS = {
     blue: [0, 0, 255, 255],
