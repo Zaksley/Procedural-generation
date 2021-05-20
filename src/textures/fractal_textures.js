@@ -7,8 +7,8 @@ const WIDTH = globalVars.WIDTH;
 const HEIGHT = globalVars.HEIGHT;
 
 function texture_triangularFractal(dict) {
-    const width_init = dict['width']    || 500;
-    const height_init = dict['height']  || 500;
+    const width_init = dict['width']    || WIDTH;
+    const height_init = dict['height']  || HEIGHT;
     const n = dict['depth']             || 5;
     const colors = dict['colors']       || [];
     const color = colors[0]             || dict['color1'] || COLORS.black;

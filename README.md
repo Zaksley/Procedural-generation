@@ -5,6 +5,10 @@
 
 - [Thor web page](https://thor.enseirb-matmeca.fr/ruby/projects/projetss6-proc)
 
+Procedural generation is an image generation processus used to create textures based on various semi-random generators (Voronoi cells, automatons, Perlin noise, etc). Those textures can then be mapped and applied onto 3d objects before a rendering phase.
+
+This project implements a function library containing various textures and filters, and a way to generate images with them in a terminal or in a web browser.
+
 # Authors
 =========
 
@@ -18,7 +22,7 @@ _ENSEIRB-MATMECA Group n°128-30_
 # Installation & Usage
 ======================
 
-- Make sure to have *node* installed on the computer
+- Make sure to have *node* installed on the computer (and *npx* to run the modules)
 - Download and install the following modules : *browserify*, *canvas*, *jest*
 
 ## Web version
@@ -104,6 +108,7 @@ Explanations:
 - `paste` is a double-filter, hence it takes exactly two images as parameters.
 - `dup_disk` calls the same function as `disk` does, but adding `dup_` at the begining prevents the key re-definition.
 - Whole images can be passed as color parameters
+- If you want to copy a filter instead of a texture, do not use "dup_", use the "copy {}" filter around it.
 
 
 ## Reading the documentation
