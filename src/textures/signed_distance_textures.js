@@ -204,18 +204,16 @@ function color_sdFunc(d, color) {
    col = col.map((x) => x * (1 - Math.exp(-3 * abs(d))));
    col = col.map((x) => x * (0.8 + 0.2 * Math.cos(150 * d)));
    col = mix(col, [255, 255, 255], 1 - smoothstep(0, 0.01, abs(d)));
-   col[3] = color[3];
 
-   return col;
+   return col.concat(color[3]);
 }
 
 function color_sdNoise(d, color) {
    let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
    const p =  (1 - Math.random() * Math.exp(-(1 + Math.cos(50 * abs(d)))) > 0.9) ? 1 : 0;
    col = col.map((x) => x * p * (1 - Math.exp(-3 * abs(d))));
-   col[3] = color[3];
    
-   return col;
+   return col.concat(color[3]);
 }
 
 function color_sdGradient(d, color) {
@@ -232,6 +230,15 @@ function color_sdRandom(d, seed) {
    return seed.map((x) => ((x * 5000) * abs(d)) % 255).concat(255);
 }
 
+function color_sdLines(d, color) {
+   let col = [255 * (1 - sign(d) * (1 - color[0] / 255)), 255 * (1 - sign(d) * (1 - color[1] / 255)), 255 * (1 - sign(d) * (1 - color[2] / 255))];
+   col = col.map((x) => x * (1 - Math.exp(-3 * abs(d))));
+   col = col.map((x) => Math.cos(150 * d) > 0.95 ? x : 0);
+   col = mix(col, [255, 255, 255], 1 - smoothstep(0, 0.01, abs(d)));
+
+   return col.concat(color[3]);
+}
+
 function getColorFunc(str, color) {
    const seed = new Array(3).fill(Math.random).map((x) => x());
    switch (str) {
@@ -239,6 +246,7 @@ function getColorFunc(str, color) {
       case 'noise': return (d) => color_sdNoise(d, color);
       case 'gradient': return (d) => color_sdGradient(d, color);
       case 'random': return (d) => color_sdRandom(d, seed);
+      case 'lines': return (d) => color_sdLines(d, color);
       default: return (d) => color_sdFunc(d, color);
    }
 }
