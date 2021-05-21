@@ -198,7 +198,7 @@ function texture_yinyang(dict) {
     const colors = dict['colors'] || [];
     const color1 = colors[0]      || dict['color1'] || COLORS.black;
     const color2 = colors[1]      || dict['color2'] || COLORS.white;
-    const color_bg = colors[2]    || COLORS.cyan;
+    const color_bg = colors[2]    || dict['color3'] || COLORS.cyan;
 
     const alpha = rot * 3.14 / 180;
 
