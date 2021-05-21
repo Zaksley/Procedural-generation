@@ -81,14 +81,8 @@ textarea {
 		<label for="texture">Select a texture : </label>
 
 		<script>
-			// // Global vars
-			// let DATA = [], BASEDATA = [];
-			// let TEXTURE = "";
-			// let FILTER = "filter_resize";
 			window.DICT = {};
 			window.ANIMATION = false;
-			// let OPTDICT = {intensity:1, translation:0};
-			// let XOFFSET = 0, YOFFSET = 0;
 		</script>
 
 		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
@@ -123,7 +117,6 @@ textarea {
 				<option value="squareTiling">Checkboard</option>
 				<option value="caireTiling">Pentagonal tiling</option>
 				<option value="pentagonTiling3">Rotating pentagonal tiling</option>
-				<!-- PentagonTiling 4 : not yet fixed (offset issue) -->
 				<option value="pentagonTiling4" disabled>PentagonTiling4</option>
 			</optgroup>
 			<optgroup label="Noise maps">

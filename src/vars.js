@@ -20,7 +20,7 @@ const COLORS = {
 };
 
 // Exports
-exports.MAX_ARGUMENTS = MAX_ARGUMENTS;
-exports.WIDTH = WIDTH;
-exports.HEIGHT = HEIGHT;
-exports.COLORS = COLORS;
+exports.MAX_ARGUMENTS   = MAX_ARGUMENTS;
+exports.WIDTH           = WIDTH;
+exports.HEIGHT          = HEIGHT;
+exports.COLORS          = COLORS;
