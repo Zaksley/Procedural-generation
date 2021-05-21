@@ -92,6 +92,11 @@ function filter_conformTransformation(dict) {
                     Math.floor(1 / (shiftPos(x, width))),
                     Math.floor(1 / (shiftPos(y, height)))
                 ]); break;
+            case "cos":
+                f = ((x, y) => [
+                    Math.floor(width / 2 * Math.abs(1 + Math.sin(Math.PI * x / width))),
+                    Math.floor(height / 2 * Math.abs(1 + Math.sin(Math.PI * y / height)))
+                ]); break;
             default: 
                 f = ((x, y) => [x, y]); break;
         }
