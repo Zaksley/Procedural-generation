@@ -207,16 +207,16 @@ function texture_rectangle(dict) {
 }
 
 function texture_yinyang(dict) {
-    const r =           dict['size']    || 150;
-    const rot =         dict['angle']   || 0;
-    const center =      dict['center']  || [];
-    const center_x =    dict['centerx'] || center[0] || WIDTH / 2;
-    const center_y =    dict['centery'] || center[1] || HEIGHT / 2;
-    const colors =      dict['colors']  || [];
-    const color1 =      dict['color1']  || colors[0] || COLORS.blue;
-    const color2 =      dict['color2']  || colors[1] || COLORS.cyan;
-    const color_bg = colors[2] || COLORS.cyan;
 
+    const r = dict['size']        || 150;
+    const rot = dict['angle']     || 0;
+    const center = dict['center'] || [];
+    const center_x = center[0]    || dict['centerx'] || WIDTH / 2;
+    const center_y = center[1]    || dict['centery'] || HEIGHT / 2;
+    const colors = dict['colors'] || [];
+    const color1 = colors[0]      || dict['color1'] || COLORS.black;
+    const color2 = colors[1]      || dict['color2'] || COLORS.white;
+    const color_bg = colors[2]    || dict['color3'] || COLORS.cyan;
     const alpha = rot * 3.14 / 180;
 
     return function (x, y) {
