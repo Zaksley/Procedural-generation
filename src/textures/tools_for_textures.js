@@ -16,10 +16,12 @@ const HEIGHT = globalVars.HEIGHT;
 function ij2xy(i, width, j, height) {
     let x = i;
     let y = j;
-    while (x < 0)
+    while (x < 0) {
         x += width;
-    while (y < 0)
+    }
+    while (y < 0) {
         y += height;
+    }
     return [x % width, y % height];
 }
 
@@ -28,8 +30,8 @@ function ij2xy(i, width, j, height) {
  */
 function get_offset(coord, freq, percent, offset) {
     if (coord < 0)
-        return (-coord / freq) % 1 < percent ? offset : 0;
-    return (coord / freq) % 1 < percent ? 0 : offset;
+        return ((-coord / freq) % 1 < percent) ? offset : 0;
+    return ((coord / freq) % 1 < percent) ? 0 : offset;
 }
 
 /* Generates a random int 

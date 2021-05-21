@@ -16,9 +16,8 @@ const texture_triangleTiling = require("./regular_tilings_textures.js").triangle
  *
  */
 function texture_elongatedTriangular(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
+    const size =    dict['size']    || 80;
+    const colors =  dict['colors']  || [];
     const colorT1 = dict['color1']  || colors[0] || COLORS.cyan;
     const colorT2 = dict['color2']  || colors[1] || COLORS.orange;
     const colorS1 = dict['color3']  || colors[2] || COLORS.blue;
@@ -30,7 +29,7 @@ function texture_elongatedTriangular(dict) {
 
         const [x, y] = ij2xy(i + offset, size, j, h + size);
 
-        const realcolorS = (i + offset) % (2 * size) > size ? colorS2 : colorS1;
+        const realcolorS = ((i + offset) % (2 * size) > size) ? colorS2 : colorS1;
 
         if (y > size) {
             const p = (y - size) / h;
@@ -52,12 +51,11 @@ function texture_elongatedTriangular(dict) {
  * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_snubSquare(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
+    const size =    dict['size']    || 80;
+    const colors =  dict['colors']  || [];
     const colorT1 = dict['color1']  || colors[0] || COLORS.cyan;
     const colorT2 = dict['color2']  || colors[1] || COLORS.orange;
-    const colorS = dict['color3']   || colors[2] || COLORS.blue;
+    const colorS =  dict['color3']  || colors[2] || COLORS.blue;
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -99,22 +97,21 @@ function texture_snubSquare(dict) {
  * @return a colored pixel corresponding to (i,j) position
  */
 function texture_truncatedSquare(dict) {
-
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorS = dict['color1']   || colors[0] || COLORS.cyan;
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorS =  dict['color1']  || colors[0] || COLORS.cyan;
     const colorH1 = dict['color2']  || colors[1] || COLORS.orange;
     const colorH2 = dict['color3']  || colors[2] || COLORS.blue;
 
     return function (i, j) {
-        const h = Math.sqrt(3   ) * size / 2;
-        const p = j % (h + size) > h ? 1 : j % (h + size) / h;
+        const h = Math.sqrt(3) * size / 2;
+        const p = (j % (h + size) > h) ? 1 : j % (h + size) / h;
 
         const offset = get_offset(j, 2 * (h + size), 0.5, h + size);
         const [x, y] = ij2xy(i + offset, 2 * (h + size), j, h + size);
 
-        const realcolorH1 = j % (2 * (h + size)) > h + size ? colorH1 : colorH2;
-        const realcolorH2 = j % (2 * (h + size)) > h + size ? colorH2 : colorH1;
+        const realcolorH1 = (j % (2 * (h + size)) > h + size) ? colorH1 : colorH2;
+        const realcolorH2 = (j % (2 * (h + size)) > h + size) ? colorH2 : colorH1;
 
         if (x > h && x < h + size && y > h)
             return colorS;
@@ -134,10 +131,9 @@ function texture_truncatedSquare(dict) {
  * @return a colored pixel corresponding to (i,j) position 
  */
 function texture_truncatedHexagon(dict) {
-
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorT = dict['color1']   || colors[0] || COLORS.cyan;
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorT =  dict['color1']  || colors[0] || COLORS.cyan;
     const colorH1 = dict['color2']  || colors[1] || COLORS.orange;
     const colorH2 = dict['color3']  || colors[2] || COLORS.blue;
     const colorH3 = dict['color4']  || colors[3] || COLORS.pink;
@@ -184,12 +180,11 @@ function texture_truncatedHexagon(dict) {
  * @return a colored pixel corresponding to (x,y) position 
  */
 function texture_smallRhombitrihexagonalTiling(dict) {
-
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorS = dict['color1']   || colors[0] || COLORS.cyan;
-    const colorT = dict['color2']   || colors[1] || COLORS.orange;
-    const colorH = dict['color3']   || colors[2] || COLORS.blue;
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorS =  dict['color1']  || colors[0] || COLORS.cyan;
+    const colorT =  dict['color2']  || colors[1] || COLORS.orange;
+    const colorH =  dict['color3']  || colors[2] || COLORS.blue;
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -206,14 +201,14 @@ function texture_smallRhombitrihexagonalTiling(dict) {
         // middle
         else if (y < h + size) {
             // color triangle
-            const p1 = y < h + size / 2 ? (y - size / 2) / h % 1 : 1;
-            const p2 = y > size ? 1 - ((y - size) / h % 1) : 1;
+            const p1 = (y < h + size / 2) ? (y - size / 2) / h % 1 : 1;
+            const p2 = (y > size) ? 1 - ((y - size) / h % 1) : 1;
             if (x - h > p1 * size / 2 && x - h < (1 - p1 / 2) * size
                 || x - (2 * h + size / 2) > p2 * size / 2 || x < (1 - p2) * size / 2)
                 return colorT;
             // color hexagon 
-            const p3 = y < size ? ((y - size / 2) / (size / 2)) % 1 : 1;
-            const p4 = y > h + size / 2 ? 1 - ((y - (h + size / 2)) / (size / 2)) % 1 : 1;
+            const p3 = (y < size) ? ((y - size / 2) / (size / 2)) % 1 : 1;
+            const p4 = (y > h + size / 2) ? 1 - ((y - (h + size / 2)) / (size / 2)) % 1 : 1;
             if (x < (1 - p3) * h || x - (h + size) > p3 * h
                 || x - size / 2 > p4 * h && x - size / 2 < (2 - p4) * h)
                 return colorH;
@@ -239,14 +234,13 @@ function texture_smallRhombitrihexagonalTiling(dict) {
  * @return a colored pixel corresponding to (x,y) position 
  */
 function texture_bigRhombitrihexagonalTiling(dict) {
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorS =  dict['color1']  || colors[0] || COLORS.cyan;
+    const colorH =  dict['color2']  || colors[1] || COLORS.orange;
+    const colorD =  dict['color3']  || colors[2] || COLORS.blue;
 
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorS = dict['color1']   || colors[0] || COLORS.cyan;
-    const colorH = dict['color2']   || colors[1] || COLORS.orange;
-    const colorD = dict['color3']   || colors[2] || COLORS.blue;
-
-    return function(i, j) {
+    return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
         const offset = get_offset(j, 2 * (h + size * 1.5), 0.5, size * 1.5 + 3 * h);
 
@@ -258,7 +252,7 @@ function texture_bigRhombitrihexagonalTiling(dict) {
                 return colorS;
             else if (x < size + 2 * h || x >= 3 * size + 4 * h)
                 return colorH;
-            else 
+            else
                 return colorD;
         }
         // bottom
@@ -276,7 +270,7 @@ function texture_bigRhombitrihexagonalTiling(dict) {
             else if (x - (size + 2 * h) > p4 * size / 2 && x - (5 / 2 * size + 4 * h) < (1 - p4) * size / 2)
                 return colorD;
             else
-                return colorS;           
+                return colorS;
         }
     };
 }
@@ -290,13 +284,13 @@ function texture_bigRhombitrihexagonalTiling(dict) {
  * @return a colored pixel corresponding to (x,y) position 
  */
 function texture_snubHexagonal(dict) {
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorH = dict['color1']   || colors[0] || COLORS.cyan;
-    const colorT1 = dict['color2']   || colors[1] || COLORS.orange;
-    const colorT2 = dict['color3']   || colors[2] || COLORS.blue;
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorH =  dict['color1']  || colors[0] || COLORS.cyan;
+    const colorT1 = dict['color2']  || colors[1] || COLORS.orange;
+    const colorT2 = dict['color3']  || colors[2] || COLORS.blue;
 
-    return function(i, j) {
+    return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
         const offset = Math.floor(j / (3 * h)) * 6.5 * size;
 
@@ -313,7 +307,7 @@ function texture_snubHexagonal(dict) {
         else if (x - 5 * size > (1 - p3) * size / 2 && x - 6.5 * size < p3 * size / 2 && y >= 2 * h || x - 4.5 * size > p1 * size / 2 && x - 6 * size < (1 - p1) * size / 2 && y < h)
             return colorH;
         else
-            return texture_triangleTiling({size: size, colors: [colorT1, colorT2]})(x + size / 2, y);
+            return texture_triangleTiling({ size: size, colors: [colorT1, colorT2] })(x + size / 2, y);
     };
 }
 
@@ -326,11 +320,10 @@ function texture_snubHexagonal(dict) {
  * @return a colored pixel corresponding to (i,j) position
  */
 function texture_trihexagonal(dict) {
-
-    const size = dict['size']       || 60;
-    const colors = dict['colors']   || [];
-    const colorT = dict['color1']   || colors[0] || texture_solid({ colors: [COLORS.cyan] });
-    const colorH = dict['color2']   || colors[1] || texture_solid({ colors: [COLORS.orange] });
+    const size =    dict['size']    || 60;
+    const colors =  dict['colors']  || [];
+    const colorT =  dict['color1']  || colors[0] || texture_solid({ colors: [COLORS.cyan] });
+    const colorH =  dict['color2']  || colors[1] || texture_solid({ colors: [COLORS.orange] });
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -338,7 +331,7 @@ function texture_trihexagonal(dict) {
 
         const [x, y] = ij2xy(i + offset, 2 * size, j, h);
 
-        const p = j % (2 * h) > h ? y / h : 1 - y / h;
+        const p = (j % (2 * h) > h) ? y / h : 1 - y / h;
         if (x > p * size / 2 && (i + offset) % (2 * size) < (2 - p / 2) * size)
             return colorH;
         else
@@ -347,11 +340,11 @@ function texture_trihexagonal(dict) {
 }
 
 //Exports
-exports.elongatedTriangular  		= texture_elongatedTriangular;
-exports.snubSquare 					= texture_snubSquare;
-exports.truncatedSquare 			= texture_truncatedSquare;
-exports.truncatedHexagon 			= texture_truncatedHexagon;
-exports.smallRhombitrihexagonalTiling = texture_smallRhombitrihexagonalTiling;
-exports.bigRhombitrihexagonalTiling = texture_bigRhombitrihexagonalTiling;
-exports.snubHexagonal 				= texture_snubHexagonal;
-exports.trihexagonal 				= texture_trihexagonal;	
+exports.elongatedTriangular             = texture_elongatedTriangular;
+exports.snubSquare                      = texture_snubSquare;
+exports.truncatedSquare                 = texture_truncatedSquare;
+exports.truncatedHexagon                = texture_truncatedHexagon;
+exports.smallRhombitrihexagonalTiling   = texture_smallRhombitrihexagonalTiling;
+exports.bigRhombitrihexagonalTiling     = texture_bigRhombitrihexagonalTiling;
+exports.snubHexagonal                   = texture_snubHexagonal;
+exports.trihexagonal                    = texture_trihexagonal;

@@ -15,12 +15,11 @@ function colorFromDist(color, dist, size, func) {
 }
 
 function distTexture_triangleTiling(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.blue;
-    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
-    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+    const size =    dict['size']        || 80;
+    const colors =  dict['colors']      || [];
+    const color1 =  dict['color1']      || colors[0] || COLORS.blue;
+    const color2 =  dict['color2']      || colors[1] || COLORS.cyan;
+    const func =    dict['function']    || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
     
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -32,7 +31,7 @@ function distTexture_triangleTiling(dict) {
 
         const dist1 = Math.abs(x - p * size / 2);
         const dist2 = Math.abs(x - (2 - p) * size / 2);
-        const dist3 = y > h / 2 ? h - y : y;
+        const dist3 = (y > h / 2) ? h - y : y;
         const dist = Math.min(dist1, dist2, dist3);
 
         const realcolor1 = colorFromDist(color1, dist, h * 1 / 3, func);
@@ -45,13 +44,12 @@ function distTexture_triangleTiling(dict) {
 }
 
 function distTexture_hexagonTiling(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.orange;
-    const color3 = dict['color3']   || colors[2] || COLORS.blue;
-    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+    const size =    dict['size']        || 80;
+    const colors =  dict['colors']      || [];
+    const color1 =  dict['color1']      || colors[0] || COLORS.cyan;
+    const color2 =  dict['color2']      || colors[1] || COLORS.orange;
+    const color3 =  dict['color3']      || colors[2] || COLORS.blue;
+    const func =    dict['function']    || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -69,7 +67,7 @@ function distTexture_hexagonTiling(dict) {
         const dist2 = Math.abs(x - p2 * size / 2);
         const dist3 = Math.abs(x - 3 * size / 2 - (1 - p1) * size / 2);
         const dist4 = Math.abs(x - 3 * size / 2 - (1 - p2) * size / 2);
-        const dist5 = x > size / 2 ? y > h ? 2 * h - y : y : h;
+        const dist5 = (x > size / 2) ? (y > h) ? 2 * h - y : y : h;
         const dist = Math.min(dist1, dist2, dist3, dist4, dist5);
 
         const realcolor1 = colorFromDist(cond1 ? cond2 ? color3 : color2 : color1, dist, h / 2, func);
@@ -86,15 +84,14 @@ function distTexture_hexagonTiling(dict) {
 }
 
 function distTexture_squareTiling(dict) {
-
-    const width = dict['width']     || WIDTH;
-    const height = dict['height']   || HEIGHT;
-    const rows = dict['rows']       || 5;
-    const columns = dict['columns'] || 5;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.orange;
-    const func = dict['function']   || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
+    const width =   dict['width']       || WIDTH;
+    const height =  dict['height']      || HEIGHT;
+    const rows =    dict['rows']        || 5;
+    const columns = dict['columns']     || 5;
+    const colors =  dict['colors']      || [];
+    const color1 =  dict['color1']      || colors[0] || COLORS.cyan;
+    const color2 =  dict['color2']      || colors[1] || COLORS.orange;
+    const func =    dict['function']    || ((array, dist, size) => [array[0], array[1], array[2], array[3] * dist / size]);
 
     return function (i, j) {
         const size_x = width / columns;

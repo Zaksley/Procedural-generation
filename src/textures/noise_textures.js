@@ -20,20 +20,12 @@ const getFourInterpolateCoordinates = tools.getFourInterpolateCoordinates;
  * @return a colored pixel corresponding to (x,y) position   
  */
 function texture_perlinNoise(dict) {
-
-    const row = dict['rows'] 		|| 5;
-    const column = dict['columns'] 	|| 5;
-    let colors = dict['colors'] 	|| [];
-    colors[0] = dict['color1']      || COLORS.blue;
-    colors[1] = dict['color2']      || COLORS.red;
-    colors[2] = dict['color3']      || COLORS.green;
-
-    /*
-    row
-    return function (column) {
-        return function (nb_colors) {
-            return function (colors) {
-    */
+    const row =     dict['rows']    || 5;
+    const column =  dict['columns'] || 5;
+    const color1 =  dict['color1']  || COLORS.blue;
+    const color2 =  dict['color2']  || COLORS.red;
+    const color3 =  dict['color3']  || COLORS.green;
+    const colors =  dict['colors']  || [color1, color2, color3];
 
     let stock_gradient = {};
 
@@ -141,10 +133,9 @@ function texture_whiteNoise() {
  * @return a colored pixel corresponding to (x,y) position
  */
 function texture_limitedWhiteNoise(dict) {
-
-    const width = dict['width']     || WIDTH;
-    const height = dict['height']   || HEIGHT;
-    const rows = dict['rows']       || 5;
+    const width =   dict['width']   || WIDTH;
+    const height =  dict['height']  || HEIGHT;
+    const rows =    dict['rows']    || 5;
     const columns = dict['columns'] || 5;
     let pixels = [];
     

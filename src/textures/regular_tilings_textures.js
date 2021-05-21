@@ -20,11 +20,10 @@ const ij2xy = tools.ij2xy;
 */
 
 function texture_triangleTiling(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.blue;
-    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
+    const size =    dict['size']    || 80;
+    const colors =  dict['colors']  || [];
+    const color1 =  dict['color1']  || colors[0] || COLORS.blue;
+    const color2 =  dict['color2']  || colors[1] || COLORS.cyan;
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -50,12 +49,11 @@ function texture_triangleTiling(dict) {
  * @return a colored pixel corresponding to (i,j) position   
 */
 function texture_hexagonTiling(dict) {
-
-    const size = dict['size']       || 80;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.orange;
-    const color3 = dict['color3']   || colors[2] || COLORS.blue;
+    const size =    dict['size']    || 80;
+    const colors =  dict['colors']  || [];
+    const color1 =  dict['color1']  || colors[0] || COLORS.cyan;
+    const color2 =  dict['color2']  || colors[1] || COLORS.orange;
+    const color3 =  dict['color3']  || colors[2] || COLORS.blue;
 
     return function (i, j) {
         const h = Math.sqrt(3) * size / 2;
@@ -94,13 +92,13 @@ function texture_hexagonTiling(dict) {
 */
 function texture_squareTiling(dict) {
 
-    const width = dict['width']     || WIDTH;
-    const height = dict['height']   || HEIGHT;
-    const rows = dict['rows']       || 5;
+    const width =   dict['width']   || WIDTH;
+    const height =  dict['height']  || HEIGHT;
+    const rows =    dict['rows']    || 5;
     const columns = dict['columns'] || 5;
-    const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.cyan;
-    const color2 = dict['color2']   || colors[1] || COLORS.orange;
+    const colors =  dict['colors']  || [];
+    const color1 =  dict['color1']  || colors[0] || COLORS.cyan;
+    const color2 =  dict['color2']  || colors[1] || COLORS.orange;
 
     return function (i, j) {
         const size_x = width / columns;
@@ -123,6 +121,6 @@ function texture_squareTiling(dict) {
 }
 
 // Exports
-exports.triangleTiling 			= texture_triangleTiling;
-exports.hexagonTiling 			= texture_hexagonTiling;
-exports.squareTiling 			= texture_squareTiling;
+exports.triangleTiling =    texture_triangleTiling;
+exports.hexagonTiling =     texture_hexagonTiling;
+exports.squareTiling =      texture_squareTiling;
