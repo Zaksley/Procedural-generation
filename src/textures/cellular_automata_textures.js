@@ -169,7 +169,6 @@ function texture_gameOfLife(dict) {
     const height =  dict['height']  || HEIGHT;
     const steps =   dict['step']    || 1;
 
-    // ==============================
     function gosper_glid() {
 
         let gosper_glider = [];
@@ -230,8 +229,6 @@ function texture_gameOfLife(dict) {
 
         return gosper_glider;
     }
-
-    // ================================
 
     function flip() {
         let flipper = [];
@@ -436,7 +433,6 @@ function texture_gameOfLife(dict) {
             [7, 17]
         ];
 
-
         // Add cells alive
         for (let i = 0; i < points.length; i++) {
             flipper[points[i][0] + Math.trunc(flip_x / 2)][points[i][1] + Math.trunc(flip_y / 2)] = 1;
@@ -444,8 +440,6 @@ function texture_gameOfLife(dict) {
 
         return flipper;
     }
-
-    // ================================
 
     // The grid is represented by :
     //   * 0 : Dead
@@ -459,10 +453,7 @@ function texture_gameOfLife(dict) {
         }
     }
 
-    gosper_glid();
-
     // Flipper
-
     const flipper = flip();
     const flip_x = 25;
     const flip_y = 35;
@@ -560,16 +551,12 @@ function texture_greenbergHastings(dict) {
 
     let grid = [];
 
-    // Initialization grid 
     for (let i = 0; i < width; ++i) {
         grid[i] = [];
         for (let j = 0; j < height; ++j) {
             grid[i][j] = 2;
         }
     }
-
-    // Spicy game
-    // ================================
 
     // Double line
     const size_line = 10;
@@ -584,13 +571,10 @@ function texture_greenbergHastings(dict) {
         grid[ri][rj_2] = 0;
     }
 
-    // ================================
-
     // Running the game
     for (let k = 0; k < step; k++) {
         grid = Greenberg_Hastings_nextstep(grid);
     }
-
 
     return (x, y) => {
         return colors[grid[x][y]];

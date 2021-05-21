@@ -20,7 +20,7 @@ const gameOfLife_nextStep = TEXTURES.gameOfLife_nextStep;
 const forestFire_nextStep = TEXTURES.forestFire_nextStep;
 
 function node(_val, _children) {
-    return {val: _val, children: _children};
+    return { val: _val, children: _children };
 }
 
 function nodeThaw(node) {
@@ -35,8 +35,8 @@ function nodeThaw(node) {
  * @return a function (x, y, dt) returning an array of coordinates
  */
 function circle(dict) {
-    const r = dict['radius']   || 100;
-    const freq = dict['freq']  || 25;
+    const r =       dict['radius']  || 100;
+    const freq =    dict['freq']    || 25;
 
     return ((x, y, dt) => [x + r * Math.cos(Math.PI * 2 * dt / freq), y + r * Math.sin(Math.PI * 2 * dt / freq)]);
 }
@@ -50,16 +50,16 @@ function circle(dict) {
  * @return a function (x, y, dt) returning an array of coordinates
  */
 function rotation(dict) {
-    const borders = dict['borders_rot'] || [];
-    const width = borders[0]        || 0;
-    const height = borders[1]       || 0;
-    const center = dict['center']   || [];
-    const center_x = center[0]      || width / 2;
-    const center_y = center[1]      || height / 2;
-    const angle = dict['angle']     || 0;
-    const func = dict['function']   || ((angle, dt) => angle + 0 * dt);
+    const borders =     dict['borders']     || [];
+    const width =       dict['width']       || borders[0] || 0;
+    const height =      dict['height']      || borders[1] || 0;
+    const center =      dict['center']      || [];
+    const center_x =    dict['centerx']     || center[0] || width / 2;
+    const center_y =    dict['centery']     || center[1] || height / 2;
+    const angle =       dict['angle']       || 0;
+    const func =        dict['function']    || ((angle, dt) => angle + 0 * dt);
 
-    return function(x, y, dt) {
+    return function (x, y, dt) {
         if (width !== 0 && height !== 0 && angle % 360 !== 0) {
             const alpha = func(angle, dt) * Math.PI / 180;
             const x_init = x - center_x;
@@ -95,14 +95,14 @@ function rotation(dict) {
  */
 function translation(dict) {
     const borders = dict['borders'] || [];
-    const bd_x = borders[0]         || 0;
-    const bd_y = borders[1]         || 0;
-    const v_x = dict['x_speed']     || 0;
-    const v_y = dict['y_speed']     || 0;
+    const bd_x =    dict['width']   || borders[0] || 0;
+    const bd_y =    dict['height']  || borders[1] || 0;
+    const v_x =     dict['x_speed'] || 0;
+    const v_y =     dict['y_speed'] || 0;
 
     if (bd_x === 0 && bd_y === 0)
         return ((x, y, dt) => [(x + v_x * dt), (y + v_y * dt)]);
-    else 
+    else
         return ((x, y, dt) => [(x + v_x * dt) % bd_x, (y + v_y * dt) % bd_y]);
 }
 
@@ -114,10 +114,10 @@ function translation(dict) {
  * @return a colored pixel corresponding to the position and time (x, y, dt) with the corresponding transformations
  */
 function add_animation(dict) {
-    const texture = dict['texture'] || basic_textures.solid({});
-    const func = dict['function'] || [];
+    const texture = dict['texture']     || basic_textures.solid({});
+    const func =    dict['function']    || [];
 
-    return function(x, y, dt) {
+    return function (x, y, dt) {
         let new_x = x, new_y = y;
         // apply transformations 
         for (let i = 0; i < func.length; i++)
@@ -128,15 +128,15 @@ function add_animation(dict) {
 }
 
 function animated_chromaticCircle(dict) {
-    const r = dict['size']        || 150;
-    const center = dict['center'] || [];
-    const center_x = center[0]    || dict['centerx'] || WIDTH / 2;
-    const center_y = center[1]    || dict['centery'] || HEIGHT / 2;
-    const colors = dict['colors'] || [];
-    const color_bg = colors[0]    || COLORS.black;
+    const r =           dict['size']    || 150;
+    const center =      dict['center']  || [];
+    const center_x =    dict['centerx'] || center[0] || WIDTH / 2;
+    const center_y =    dict['centery'] || center[1] || HEIGHT / 2;
+    const colors =      dict['colors']  || [];
+    const color_bg =    dict['color1']  || colors[0] || COLORS.black;
 
     const square = (x) => x * x;
-    const abs = (x) => x > 0 ? x : -x;
+    const abs = (x) => (x > 0) ? x : -x;
     const f = (x) => abs(x % 256 - 128);
     return function (x, y, dt) {
         if (square(y - center_y) + square(x - center_x) < square(r))
@@ -147,23 +147,17 @@ function animated_chromaticCircle(dict) {
 }
 
 function animated_caireTiling(dict) {
-    //const size = dict['size']       || 50;
-    const angle = dict['size']      || 135;
-    //const colors = dict['colors']   || [];
-    //const color1 = colors[0]        || COLORS.cyan;
-    //const color2 = colors[1]        || COLORS.orange;
-    //const color3 = colors[2]        || COLORS.blue;
-    //const color4 = colors[3]        || COLORS.pink;
+    const angle =   dict['size']    || 135;
 
     return function (x, y, dt) {
         const new_angle = 90 + Math.abs((5 * dt + angle) % 180 - 90);
         dict['angle'] = new_angle;
         return TEXTURES.caireTiling(dict)(x, y);
-    };                     
+    };
 }
 
 function animated_Yinyang(dict) {
-    const angle = dict['angle'] || 10;
+    const angle =   dict['angle']   || 10;
 
     return function (x, y, dt) {
         const new_angle = angle + 5 * dt;
@@ -180,23 +174,25 @@ function animated_randomFunction() {
     function getColors(seed, n) {
         const f = (w, x) => ((w * x) % 256);
         let colors = [];
-        for(let k = 0; k < n; k++) {
+        for (let k = 0; k < n; k++) {
             colors.push([]);
-            for(let l = 0; l < 3; l++) {
+            for (let l = 0; l < 3; l++) {
                 colors[k][l] = f(4 * k + l + 1, seed);
             }
             colors[k][3] = 255;
         }
-        return colors; 
+        return colors;
     }
 
     function nextTexture() {
         const seed = getRandomInt(1000000);
-        const texturedict = {size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
-            branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2};
-        const funcdict = {function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5, radius: seed % 150 + 50, freq: seed / 10 % 3};
+        const texturedict = {
+            size: seed % 71 + 10, colors: getColors(seed, 4), angle: seed % 90 + 90, depth: seed % 5 + 1,
+            branches: seed % 10 + 3, rows: seed % 29 + 1, columns: seed % 28 + 2
+        };
+        const funcdict = { function: ((angle, dt) => angle + (seed % 10) * dt), borders_rot: [WIDTH, HEIGHT], angle: 30, x_speed: (seed % 5) * 5, y_speed: (seed % 6) * 5, radius: seed % 150 + 50, freq: seed / 10 % 3 };
 
-        const textureList = [TEXTURES.solid, TEXTURES.horizontalGradient, 
+        const textureList = [TEXTURES.solid, TEXTURES.horizontalGradient,
             TEXTURES.hexagonTiling, TEXTURES.triangleTiling, TEXTURES.squareTiling,
             TEXTURES.elongatedTriangular, TEXTURES.snubSquare, TEXTURES.snubHexagonal, TEXTURES.trihexagonal,
             TEXTURES.truncatedHexagon, TEXTURES.truncatedSquare, TEXTURES.smallRhombitrihexagonalTiling, TEXTURES.bigRhombitrihexagonalTiling,
@@ -206,7 +202,7 @@ function animated_randomFunction() {
         const texture = textureList[seed % textureList.length];
         const func = [funcList[seed % funcList.length](funcdict)];
         const time = 100;
-        return {time: time, func: add_animation({texture: texture(texturedict), function: func})};
+        return { time: time, func: add_animation({ texture: texture(texturedict), function: func }) };
     }
 
     let States = makeInfiniteStates(nextTexture());
@@ -215,7 +211,7 @@ function animated_randomFunction() {
     let time = States.val.time;
     return function (x, y, dt) {
         new_state = Math.floor(dt / time);
-        new_state = isNaN(new_state) ? 0 : new_state;
+        new_state = isNaN(new_state) ? state : new_state;
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
@@ -226,29 +222,27 @@ function animated_randomFunction() {
 }
 
 function animated_ForestFire(dict) {
-    const treeProbability =      dict['treeP']  || 50;
-    const lightningProbability = dict['treeP']  || 5;
+    const treeProbability =         dict['treeP']   || 50;
+    const lightningProbability =    dict['treeP']   || 5;
 
     function makeInfiniteStates(forest, treeP, lightP) {
         return node(forest, () => makeInfiniteStates(forestFire_nextStep(forest, treeP, lightP), treeP, lightP));
     }
 
     function init_state(dict) {
-        const width =                dict['width']  || WIDTH;
-        const height =               dict['height'] || HEIGHT;
-        const treeProbability =      dict['treeP']  || 50;
-    
+        const width =           dict['width']   || WIDTH;
+        const height =          dict['height']  || HEIGHT;
+        const treeProbability = dict['treeP']   || 50;
+
         // The forest is represented by :
         //   * 0 : Empty
         //   * 1 : Tree
         //   * 2 : Burning
         let forest = [];
-    
-        for (let i = 0; i < width; ++i)
-        {
+
+        for (let i = 0; i < width; ++i) {
             forest[i] = [];
-            for (let j = 0; j < height; ++j)
-            {
+            for (let j = 0; j < height; ++j) {
                 forest[i][j] = (getRandomInt(100) < treeProbability) ? 1 : 0;
             }
         }
@@ -261,7 +255,7 @@ function animated_ForestFire(dict) {
     let forest = States.val;
     return function (x, y, dt) {
         new_state = Math.floor(dt / 5);
-        new_state = isNaN(new_state) ? 0 : new_state;
+        new_state = isNaN(new_state) ? state : new_state;
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
@@ -269,15 +263,11 @@ function animated_ForestFire(dict) {
         }
 
         if (forest[x][y] === 0) // Empty
-        {
             return COLORS.black;
-        } else if (forest[x][y] === 1) // Tree
-        {
+        else if (forest[x][y] === 1) // Tree
             return COLORS.green;
-        } else // Burning 
-        {
+        else // Burning 
             return COLORS.red;
-        }
     };
 }
 
@@ -287,84 +277,76 @@ function animated_GameOfLife(dict) {
         return node(grid, () => makeInfiniteStates(gameOfLife_nextStep(grid)));
     }
 
-        // Return grid with a gosper_glid
-    function gosper_glid(){
+    // Return grid with a gosper_glid
+    function gosper_glid() {
+        let gosper_glider = [];
+        const gosp_x = 36;
+        const gosp_y = 9;
 
-        let gosper_glider = []; 
-        const gosp_x = 36; 
-        const gosp_y = 9; 
-
-            // Initialiaze
-        for(let i=0; i<gosp_x; i++)
-        {
+        // Initialiaze
+        for (let i = 0; i < gosp_x; i++) {
             gosper_glider[i] = [];
-            for(let j=0; j<gosp_y; j++)
-            {
+            for (let j = 0; j < gosp_y; j++) {
                 gosper_glider[i][j] = 0;
             }
         }
 
         const points = [
-                        [0, 4],
-                        [1, 4],
-                        [0, 5],
-                        [1, 5],
-                        [10, 4],
-                        [10, 5],
-                        [10, 6],
-                        [11, 3],
-                        [11, 7],
-                        [12, 2],
-                        [12, 8],
-                        [13, 2],
-                        [13, 8],
-                        [14, 5],
-                        [15, 3],
-                        [15, 7],
-                        [16, 4],
-                        [16, 5],
-                        [16, 6],
-                        [17, 5],
-                        [20, 2],
-                        [20, 3],
-                        [20, 4],
-                        [21, 2],
-                        [21, 3],
-                        [21, 4],
-                        [22, 5],
-                        [22, 1],
-                        [24, 0],
-                        [24, 1],
-                        [24, 5],
-                        [24, 6],
-                        [34, 2],
-                        [34, 3],
-                        [35, 2],
-                        [35, 3]
-                         ];
+            [0, 4],
+            [1, 4],
+            [0, 5],
+            [1, 5],
+            [10, 4],
+            [10, 5],
+            [10, 6],
+            [11, 3],
+            [11, 7],
+            [12, 2],
+            [12, 8],
+            [13, 2],
+            [13, 8],
+            [14, 5],
+            [15, 3],
+            [15, 7],
+            [16, 4],
+            [16, 5],
+            [16, 6],
+            [17, 5],
+            [20, 2],
+            [20, 3],
+            [20, 4],
+            [21, 2],
+            [21, 3],
+            [21, 4],
+            [22, 5],
+            [22, 1],
+            [24, 0],
+            [24, 1],
+            [24, 5],
+            [24, 6],
+            [34, 2],
+            [34, 3],
+            [35, 2],
+            [35, 3]
+        ];
 
-            // Add cells alive
-        for (let i=0; i<points.length; i++)
-        {
-            gosper_glider[points[i][0]][points[i][1]] = 1; 
+        // Add cells alive
+        for (let i = 0; i < points.length; i++) {
+            gosper_glider[points[i][0]][points[i][1]] = 1;
         }
 
-        return gosper_glider;  
+        return gosper_glider;
     }
 
-        
-    function fireworks()
-    {
-        let fireworks = []; 
-        const fireworks_x = 15; 
-        const fireworks_y = 19; 
+    function fireworks() {
+        let fireworks = [];
+        const fireworks_x = 15;
+        const fireworks_y = 19;
 
-            // Initialiaze
-        for(let i=0; i< fireworks_x; i++)
-        {
+        // Initialiaze
+        for (let i = 0; i < fireworks_x; i++) {
             fireworks[i] = [];
-            for(let j=0; j < fireworks_y; j++)
-            {
+            for (let j = 0; j < fireworks_y; j++) {
                 fireworks[i][j] = 0;
             }
         }
@@ -395,27 +377,21 @@ function animated_GameOfLife(dict) {
         ];
 
         // Add cells alive
-        for (let i=0; i<points.length; i++)
-        {
-            fireworks[points[i][0] + Math.trunc(fireworks_x/2) ][points[i][1]+ Math.trunc(fireworks_y/2) ] = 1; 
+        for (let i = 0; i < points.length; i++) {
+            fireworks[points[i][0] + Math.trunc(fireworks_x / 2)][points[i][1] + Math.trunc(fireworks_y / 2)] = 1;
         }
-        return fireworks;  
+        return fireworks;
     }
-        
 
-
-    function sun()
-    {
+    function sun() {
         let sun = [];
         const sun_x = 48;
-        const sun_y = 48; 
+        const sun_y = 48;
 
         // Initialiaze
-        for(let i=0; i< sun_x; i++)
-        {
+        for (let i = 0; i < sun_x; i++) {
             sun[i] = [];
-            for(let j=0; j < sun_y; j++)
-            {
+            for (let j = 0; j < sun_y; j++) {
                 sun[i][j] = 0;
             }
         }
@@ -528,25 +504,21 @@ function animated_GameOfLife(dict) {
         ];
 
         // Add cells alive
-        for (let i=0; i<points.length; i++)
-        {
-            sun[points[i][0] + Math.trunc(sun_x/2) ][points[i][1]+ Math.trunc(sun_y/2) ] = 1; 
+        for (let i = 0; i < points.length; i++) {
+            sun[points[i][0] + Math.trunc(sun_x / 2)][points[i][1] + Math.trunc(sun_y / 2)] = 1;
         }
-        return sun;  
+        return sun;
     }
-    
-    function flip()
-    {
-        let flipper = []; 
-        const flip_x = 25; 
-        const flip_y = 35; 
 
-            // Initialiaze
-        for(let i=0; i< flip_x; i++)
-        {
+    function flip() {
+        let flipper = [];
+        const flip_x = 25;
+        const flip_y = 35;
+
+        // Initialiaze
+        for (let i = 0; i < flip_x; i++) {
             flipper[i] = [];
-            for(let j=0; j < flip_y; j++)
-            {
+            for (let j = 0; j < flip_y; j++) {
                 flipper[i][j] = 0;
             }
         }
@@ -572,7 +544,7 @@ function animated_GameOfLife(dict) {
             [5, -14],
             [-7, -13],
             [-1, -13],
-            [1, -13], 
+            [1, -13],
             [2, -13],
             [5, -13],
             [-7, -12],
@@ -602,7 +574,7 @@ function animated_GameOfLife(dict) {
             [-2, -5],
             [0, -5],
             [2, -5],
-            [11 ,-5],
+            [11, -5],
             [-12, -4],
             [-6, -4],
             [-4, -4],
@@ -739,60 +711,50 @@ function animated_GameOfLife(dict) {
             [5, 17],
             [6, 17],
             [7, 17]
-            ];
+        ];
 
-                        
-            // Add cells alive
-        for (let i=0; i<points.length; i++)
-        {
-            flipper[points[i][0] + Math.trunc(flip_x/2) ][points[i][1]+ Math.trunc(flip_y/2) ] = 1; 
+        // Add cells alive
+        for (let i = 0; i < points.length; i++) {
+            flipper[points[i][0] + Math.trunc(flip_x / 2)][points[i][1] + Math.trunc(flip_y / 2)] = 1;
         }
-        return flipper;  
+        return flipper;
     }
-    
-    function ship(f, x, y) { return {ship: f, size_x: x, size_y: y}; }
-    const configList = {flipper: ship(flip, 25, 35), gosper: ship(gosper_glid, 36, 9), fireworks: ship(fireworks, 14, 18), sun: ship(sun, 48, 48)};
+
+    function ship(f, x, y) { return { ship: f, size_x: x, size_y: y }; }
+    const configList = { flipper: ship(flip, 25, 35), gosper: ship(gosper_glid, 36, 9), fireworks: ship(fireworks, 14, 18), sun: ship(sun, 48, 48) };
 
     function init_state(dict) {
-        const width =  dict['width']  || WIDTH;
-        const height = dict['height'] || HEIGHT;
-        const config = configList[dict['config']] || configList['flipper'];
-    
+        const width =   dict['width']               || WIDTH;
+        const height =  dict['height']              || HEIGHT;
+        const config =  configList[dict['config']]  || configList['flipper'];
+
         // The grid is represented by :
         //   * 0 : Dead
         //   * 1 : Alive
         let grid = [];
 
-        // === Initialization ===
-
-            // All grid => cells dead
-        for(let i=0; i<width; i++)
-        {
+        // All grid => dead cells
+        for (let i = 0; i < width; i++) {
             grid[i] = [];
-            for(let j=0; j<height; j++)
-            {
-                grid[i][j] = 0; 
+            for (let j = 0; j < height; j++) {
+                grid[i][j] = 0;
             }
         }
-        
-        // ========================
 
-            // Generic way to produce animation
-        const ship = config.ship(); 
-        const size_x = config.size_x; 
+        // Generic way to produce animation
+        const ship = config.ship();
+        const size_x = config.size_x;
         const size_y = config.size_y;
 
-        for(let i=0; i<size_x; i++)
-        {
-            for(let j=0; j<size_y; j++)
-            {
-                grid[width/2 + i - Math.trunc(size_x/2) ][height/2 + j - Math.trunc(size_y/2) ] = ship[i][j]; 
+        for (let i = 0; i < size_x; i++) {
+            for (let j = 0; j < size_y; j++) {
+                grid[width / 2 + i - Math.trunc(size_x / 2)][height / 2 + j - Math.trunc(size_y / 2)] = ship[i][j];
             }
         }
-            
+
         return grid;
     }
-    
+
     let States = makeInfiniteStates(init_state(dict));
     let state = 0;
     let new_state = 0;
@@ -807,19 +769,19 @@ function animated_GameOfLife(dict) {
         }
 
         if (grid[x][y] === 0) // Dead
-        {
             return COLORS.white;
-        } else // Alive
-        {
+        else // Alive
             return COLORS.black;
-        }
     };
 }
 
 function animated_GreenbergHastings(dict) {
-    const width =  dict['width']    || WIDTH;
-    const height = dict['height']   || HEIGHT;
-    const colors = dict['colors']   || [COLORS.red, COLORS.blue, COLORS.green];
+    const width =   dict['width']   || WIDTH;
+    const height =  dict['height']  || HEIGHT;
+    const color1 =  dict['color1']  || COLORS.red;
+    const color2 =  dict['color2']  || COLORS.blue;
+    const color3 =  dict['color3']  || COLORS.green;
+    const colors =  dict['colors']  || [color1, color2, color3];
 
     function makeInfiniteStates(grid) {
         return node(grid, () => makeInfiniteStates(Greenberg_Hastings_nextstep(grid)));
@@ -831,30 +793,25 @@ function animated_GreenbergHastings(dict) {
         // 1 : Refractory time 
         // 2 : Resting time 
 
-        let grid = []; 
+        let grid = [];
 
         // Initialization grid 
-        for(let i=0; i < width; ++i)
-        {
+        for (let i = 0; i < width; ++i) {
             grid[i] = [];
-            for(let j = 0; j < height; ++j)
-            {
-                grid[i][j] = 2; 
+            for (let j = 0; j < height; ++j) {
+                grid[i][j] = 2;
             }
         }
-        // Spicy game
-        // ================================
 
         // Double line
         const size_line = 20;
-        const random_x  = getRandomInt(width-size_line);
-        const random_y = getRandomInt(height-size_line); 
-        for(let r=0; r<size_line; r++)
-        {
+        const random_x = getRandomInt(width - size_line);
+        const random_y = getRandomInt(height - size_line);
+        for (let r = 0; r < size_line; r++) {
             let ri = random_x + r;
             let rj = random_y;
-            
-            grid[ri][rj] = 1; 
+
+            grid[ri][rj] = 1;
             grid[ri][rj + 1] = 0;
         }
 
@@ -867,16 +824,16 @@ function animated_GreenbergHastings(dict) {
     let grid = States.val;
     return function (x, y, dt) {
         new_state = Math.floor(dt / 1);
-        new_state = isNaN(new_state) ? 0 : new_state;
+        new_state = isNaN(new_state) ? state : new_state;
         if (state !== new_state) {
             state = new_state;
             States = (state % Math.floor((HEIGHT > WIDTH ? HEIGHT : WIDTH)) === 0) ? makeInfiniteStates(init_state()) : nodeThaw(States).children;
             grid = States.val;
         }
-        
+
         return colors[grid[x][y]];
     };
-} 
+}
 
 function animated_rain() {
     function makeInfiniteStates(state) {
@@ -885,7 +842,7 @@ function animated_rain() {
 
     function rain(state) {
         const rain_state = state;
-        return function(x, y) {
+        return function (x, y) {
             let droplet = rain_state[x];
             return (y > droplet && y < droplet + 6) ? COLORS.white : COLORS.black;
         };
@@ -893,7 +850,7 @@ function animated_rain() {
 
     function nextState(state) {
         let new_state = [];
-        for(let i = 0; i < WIDTH; i++) {
+        for (let i = 0; i < WIDTH; i++) {
             let droplet = state[i];
             droplet = (droplet >= HEIGHT && Math.random() > 0.995) ? 0 : droplet + 2;
             new_state[i] = droplet;
@@ -903,8 +860,8 @@ function animated_rain() {
 
     function initState() {
         let state = [];
-        for(let i = 0; i < WIDTH; i++) {
-            state[i] = getRandomInt(50) === 0 ? 0 : HEIGHT;
+        for (let i = 0; i < WIDTH; i++) {
+            state[i] = (getRandomInt(50) === 0) ? 0 : HEIGHT;
         }
         return state;
     }
@@ -915,13 +872,13 @@ function animated_rain() {
     let rain_state = rain(States.val);
     return function (x, y, dt) {
         new_state = Math.floor(dt / 0.1);
-        new_state = isNaN(new_state) ? 0 : new_state;
+        new_state = isNaN(new_state) ? state : new_state;
         if (state !== new_state) {
             state = new_state;
             States = nodeThaw(States).children;
             rain_state = rain(States.val);
         }
-        
+
         return rain_state(x, y);
     };
 }
