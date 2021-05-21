@@ -19,18 +19,15 @@ const gatherHSLChannels = color_tools.gatherHSLChannels;
  * @return blurred texture
  */
 function filter_simpleBlur(dict) {
-
-	const width = dict['width'] 		|| WIDTH;
-	const height = dict['height'] 		|| HEIGHT;
-	const d = dict['intensity']			|| 5;
+	const width = 	dict['width'] 		|| WIDTH;
+	const height = 	dict['height'] 		|| HEIGHT;
+	const d = 		dict['intensity'] 	|| 5;
 
 	return function (img) {
-		let s = [];
-		for (let k = 0; k < width * height * 4; k++)
-			s.push(0);
+		let s = img.slice().fill(0);
 		const abs = (x) => (x > 0) ? x : -x;
 		for (let y = 0, n = 0, m, nb_near; y < height; y++) {
-			for (let x = 0; x < width; x++, n += 4) {
+			for (let x = 0; x < width; x++ , n += 4) {
 				nb_near = 0;
 				for (let i = -d; i < d + 1; i++) {
 					for (let j = -d + abs(i); j < d - abs(i) + 1; j++) {
@@ -63,19 +60,17 @@ function filter_simpleBlur(dict) {
  * @return outlined texture
 */
 function filter_amplifyOutlines(dict) {
-
-	const width = dict['width'] 		|| WIDTH;
-	const s = dict['sensivity'] 		|| 5;
-	const d = dict['intensity']			|| 5;
-	const colors = dict['colors'] 		|| [];
-	const color = dict['color1'] 		|| colors[0] || COLORS.cyan;
+	const width = 	dict['width'] 		|| WIDTH;
+	const s = 		dict['sensivity'] 	|| 5;
+	const d = 		dict['intensity'] 	|| 5;
+	const colors = 	dict['colors'] 		|| [];
+	const color = 	dict['color1'] 		|| colors[0] || COLORS.cyan;
 
 	return function (img) {
-		let data = [];
-		data.length = img.length;
+		let data = img.slice();
 		const height = img.length / (4 * width);
 		for (let i = 0, n = 0; i < height; i++) {
-			for (let j = 0; j < width; j++, n += 4) {
+			for (let j = 0; j < width; j++ , n += 4) {
 				let cond = true;
 				for (let k = 0; k < 4; k++) {
 					if (j + 1 < width && Math.abs(img[n + k] - img[n + k + 4]) > s
@@ -92,8 +87,12 @@ function filter_amplifyOutlines(dict) {
 						}
 					}
 				}
-				if (cond && [data[n], data[n + 1], data[n + 2], data[n + 3]] !== color)
-					[data[n], data[n + 1], data[n + 2], data[n + 3]] = [img[n], img[n + 1], img[n + 2], img[n + 3]];
+				if (cond && [data[n], data[n + 1], data[n + 2], data[n + 3]] !== color) {
+					data[n] = img[n];
+					data[n + 1] = img[n + 1];
+					data[n + 2] = img[n + 2];
+					data[n + 3] = img[n + 3];
+				}
 			}
 		}
 		return data;
@@ -104,19 +103,19 @@ function filter_amplifyOutlines(dict) {
  * @param r the mask radius
  * @param stdev standard deviation
  * @return a (2*r+1) length normalized mask
- */ 
+ */
 function gaussianMask(r, stdev) {
-	const len = 2*r + 1;
-	const V = stdev**2;
+	const len = 2 * r + 1;
+	const V = stdev ** 2;
 	let mask = new Array(len).fill().map(() => Array(len).fill(0));
 
-	for(let i = 0; i < len; i++) {
-		for(let j = 0; j < len; j++) {
-			mask[i][j] = Math.exp( -(((i-r)**2 + (j-r)**2) / (2*V) ) ) / (2*Math.PI*V);
+	for (let i = 0; i < len; i++) {
+		for (let j = 0; j < len; j++) {
+			mask[i][j] = Math.exp(-(((i - r) ** 2 + (j - r) ** 2) / (2 * V))) / (2 * Math.PI * V);
 		}
 	}
-	const sum = mask.reduce((acc, e) => acc + e.reduce((acc2, e2) => acc2+e2), 0);
-	return mask.map(e => e.map(e2 => e2/sum));
+	const sum = mask.reduce((acc, e) => acc + e.reduce((acc2, e2) => acc2 + e2), 0);
+	return mask.map(e => e.map(e2 => e2 / sum));
 }
 
 /* Applies a convolution filter to an image
@@ -128,78 +127,81 @@ function gaussianMask(r, stdev) {
  * @param method the edge management method
  * @return the filtered image
  */
-function applyMask(img, width, height, mask, method="extension") {
+function applyMask(img, width, height, mask, method = "extension") {
 	let data = img.slice();
-	const maskLenX = Math.floor(mask.length/2);
-	const maskLenY = Math.floor(mask[0].length/2);
+	const maskLenX = Math.floor(mask.length / 2);
+	const maskLenY = Math.floor(mask[0].length / 2);
 
-	let acc = [0,0,0,0];
+	let acc = [0, 0, 0, 0];
 	let imgIndex = 0, col = 0, row = 0;
 	let leftHl = 0, rightHl = 0, topHl = 0, bottomHl = 0;
 
 	// Edge management method
 	function getEdge(xval, yval) {
-		switch(method) {
+		switch (method) {
 			// Extend the last pixel
 			case "extension":
 				leftHl = 0;
-				rightHl = width-1;
+				rightHl = width - 1;
 				topHl = 0;
-				bottomHl = height-1;
-			break;
+				bottomHl = height - 1;
+				break;
 
 			// Wrapping all the way round
 			case "wrapping":
-				leftHl = xval+width;
-				rightHl = xval-width;
-				topHl = yval+height;
-				bottomHl = yval-height;
-			break;
+				leftHl = xval + width;
+				rightHl = xval - width;
+				topHl = yval + height;
+				bottomHl = yval - height;
+				break;
 
 			// Mirroring base image
 			case "mirror":
 				leftHl = -xval;
-				rightHl = 2*width-1-xval;
+				rightHl = 2 * width - 1 - xval;
 				topHl = -yval;
-				bottomHl = 2*height-1-yval;
-			break;
+				bottomHl = 2 * height - 1 - yval;
+				break;
 		}
 	}
 
-	for(let y = 0; y < height; y++) {
-		for(let x = 0; x < width; x++) {
+	for (let y = 0; y < height; y++) {
+		for (let x = 0; x < width; x++) {
 
-			acc = [0,0,0,0];
-			for(let i = 0; i < mask.length; i++) {
-				for(let j = 0; j < mask[0].length; j++) {
-					for(let k = 0; k < 4; k++) {
+			acc = [0, 0, 0, 0];
+			for (let i = 0; i < mask.length; i++) {
+				for (let j = 0; j < mask[0].length; j++) {
+					for (let k = 0; k < 4; k++) {
 
 						// Get handler values
-						getEdge(y+i-maskLenY, x+j-maskLenX);
+						getEdge(y + i - maskLenY, x + j - maskLenX);
 
-						if(y+i-maskLenY >= 0) {
-							if(y+i-maskLenY < height)
-								col = y+i-maskLenY;
-							else col = bottomHl;
-						} else col = topHl;
+						if (y + i - maskLenY >= 0) {
+							if (y + i - maskLenY < height)
+								col = y + i - maskLenY;
+							else 
+								col = bottomHl;
+						} else 
+							col = topHl;
 
-						if(x+j-maskLenX >= 0) {
-							if(x+j-maskLenX < width)
-								row = x+j-maskLenX;
-							else row = rightHl;
-						} else row = leftHl;
+						if (x + j - maskLenX >= 0) {
+							if (x + j - maskLenX < width)
+								row = x + j - maskLenX;
+							else 
+								row = rightHl;
+						} else 
+							row = leftHl;
 
-						imgIndex = ((col)*width + row)*4 + k;
-						acc[k] += mask[i][j]*img[imgIndex];
+						imgIndex = ((col) * width + row) * 4 + k;
+						acc[k] += mask[i][j] * img[imgIndex];
 					}
 				}
 			}
 
-			data[(y*width + x)*4] 	  = Math.abs(acc[0]);
-			data[(y*width + x)*4 + 1] = Math.abs(acc[1]);
-			data[(y*width + x)*4 + 2] = Math.abs(acc[2]);
-			data[(y*width + x)*4 + 3] = Math.abs(acc[3]);
-
+			data[(y * width + x) * 4] = Math.abs(acc[0]);
+			data[(y * width + x) * 4 + 1] = Math.abs(acc[1]);
+			data[(y * width + x) * 4 + 2] = Math.abs(acc[2]);
+			data[(y * width + x) * 4 + 3] = Math.abs(acc[3]);
 		}
 	}
 	return data;
@@ -212,18 +214,17 @@ function applyMask(img, width, height, mask, method="extension") {
  * @return the filtered image
  */
 function filter_sobel(dict) {
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
 
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
-
-	return function(img) {
+	return function (img) {
 		const data = filter_greyScale({})(img);
-		const horizontalMask = [[-1,0,1],[-2,0,2],[-1,0,1]];
-		const verticalMask = [[-1,-2,-1],[0,0,0],[1,2,1]];
+		const horizontalMask = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+		const verticalMask = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
 
 		const Gx = applyMask(data, width, height, horizontalMask);
 		const Gy = applyMask(data, width, height, verticalMask);
-		return Gx.map((e,i) => (i%4 === 3) ? 255 : 255*Math.sqrt((e/255)**2 + (Gy[i]/255)**2));
+		return Gx.map((e, i) => (i % 4 === 3) ? 255 : 255 * Math.sqrt((e / 255) ** 2 + (Gy[i] / 255) ** 2));
 	};
 }
 
@@ -237,20 +238,15 @@ function filter_sobel(dict) {
  */
 // TODO gaussian filter size in parameters
 function filter_canny(dict) {
+	const lowTreshold = 	dict['low'] 	|| 0.01;
+	const highTreshold = 	dict['high'] 	|| 0.1;
+	const width = 			dict['width'] 	|| WIDTH;
+	const height = 			dict['height'] 	|| HEIGHT;
 
-	const lowTreshold = dict['low']   || 0.01;
-	const highTreshold = dict['high'] || 0.1;
-	const width = dict['width'] 	  || WIDTH;
-	const height = dict['height'] 	  || HEIGHT;
-
-	return function(img) {
-	
-		// Gaussian mask example :
-		//let noiseReductionMask = [[2,4,5,4,2],[4,9,12,9,4],[5,12,15,12,5],[4,9,12,9,4],[2,4,5,4,2]];
-		//noiseReductionMask = noiseReductionMask.map(e => e.map(e2 => e2/159));
+	return function (img) {
 		const noiseReductionMask = gaussianMask(2, 1.4);
-		const horizontalMask = [[-1,0,1]];
-		const verticalMask = [[1],[0],[-1]];
+		const horizontalMask = [[-1, 0, 1]];
+		const verticalMask = [[1], [0], [-1]];
 
 		// Noise reduction
 		let data = filter_greyScale({})(img);
@@ -259,31 +255,31 @@ function filter_canny(dict) {
 		// Gradient mapping
 		const Gx = applyMask(data, width, height, horizontalMask);
 		const Gy = applyMask(data, width, height, verticalMask);
-		const G = Gx.map((e,i) => (i%4 === 3) ? 255 : Math.sqrt(e**2 + Gy[i]**2));
+		const G = Gx.map((e, i) => (i % 4 === 3) ? 255 : Math.sqrt(e ** 2 + Gy[i] ** 2));
 
 		// Non-maxima deletion
 		function isLocalMaxima(e, i) {
-			if(e >= G[i-4] && e >= G[i+4] && e >= G[i-(width)*4] && e >= G[i+(width)*4])
+			if (e >= G[i - 4] && e >= G[i + 4] && e >= G[i - (width) * 4] && e >= G[i + (width) * 4])
 				return true;
 			return false;
 		}
-		data = G.map((e,i) => (i%4 === 3) ? 255 : (isLocalMaxima(e, i) ? e : 0) );
+		data = G.map((e, i) => (i % 4 === 3) ? 255 : (isLocalMaxima(e, i) ? e : 0));
 
 		// Outline tresholding (Hysteresis filter)
-		let accepted = new Array(G.length/4).fill(0);
+		let accepted = new Array(G.length / 4).fill(0);
 		function tresholding(e, i) {
-			if(e >= highTreshold) {
+			if (e >= highTreshold) {
 				accepted[i] = 1;
 				return 255;
-			} else if(e >= lowTreshold) {
-				if(accepted[i-1] === 1 || accepted[i-width] === 1) {
+			} else if (e >= lowTreshold) {
+				if (accepted[i - 1] === 1 || accepted[i - width] === 1) {
 					accepted[i] = 1;
 					return 255;
 				}
 			}
 			return 0;
 		}
-		const O = data.map((e,i) => (i%4 === 3) ? 255 : tresholding(e/255, (i-i%4)/4) );
+		const O = data.map((e, i) => (i % 4 === 3) ? 255 : tresholding(e / 255, (i - i % 4) / 4));
 		return O;
 	};
 }
@@ -296,13 +292,12 @@ function filter_canny(dict) {
  * @return the filtered image
  */
 function filter_sharpness(dict) {
-	
-	const ity = dict['intensity']   || 1;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
+	const ity = 	dict['intensity'] 	|| 1;
+	const width = 	dict['width'] 		|| WIDTH;
+	const height = 	dict['height'] 		|| HEIGHT;
 
-	return function(img) {
-		const mask = [[0,-ity,0],[-ity,1+4*ity,-ity],[0,-ity,0]];
+	return function (img) {
+		const mask = [[0, -ity, 0], [-ity, 1 + 4 * ity, -ity], [0, -ity, 0]];
 		return applyMask(img, width, height, mask);
 	};
 }
@@ -315,15 +310,14 @@ function filter_sharpness(dict) {
  * @return the filtered image
  */
 function filter_boxBlur(dict) {
-	
-	const radius = dict['radius'] 	|| 1;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
-	const method = dict['method']	|| "extension";
+	const radius = 	dict['radius'] 	|| 1;
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
+	const method = 	dict['method'] 	|| "extension";
 
-	return function(img) {
-		const len = 2*radius + 1;
-		const mask = new Array(len).fill().map(() => Array(len).fill(1/(len**2)));
+	return function (img) {
+		const len = 2 * radius + 1;
+		const mask = new Array(len).fill().map(() => Array(len).fill(1 / (len ** 2)));
 		return applyMask(img, width, height, mask, method);
 	};
 }
@@ -337,13 +331,12 @@ function filter_boxBlur(dict) {
  * @return the filtered image
  */
 function filter_gaussianBlur(dict) {
-	
-	const radius = dict['radius'] 	|| 1;
-	const stdev = dict['stdev'] 	|| 1.4;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
+	const radius = 	dict['radius'] 	|| 1;
+	const stdev = 	dict['stdev'] 	|| 1.4;
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
 
-	return function(img) {
+	return function (img) {
 		const mask = gaussianMask(radius, stdev);
 		return applyMask(img, width, height, mask);
 	};
@@ -358,23 +351,22 @@ function filter_gaussianBlur(dict) {
  * @return the filtered image
  */
 function filter_gaussianUnsharpMasking(dict) {
-	
-	const radius = dict['radius'] 	|| 1;
-	const stdev = dict['stdev'] 	|| 1.4;
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
+	const radius = 	dict['radius'] 	|| 1;
+	const stdev = 	dict['stdev'] 	|| 1.4;
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
 
-	return function(img) {
+	return function (img) {
 		let mask = gaussianMask(radius, stdev).map(e => e.map(e2 => -e2));
 		mask[radius][radius] = 2 - mask[radius][radius];
 
 		// Implementation choice : using the mask only on the luminosity channel
 		// Resulting in less variation errors than applying it on rgb channels
-		const H = filter_getHSLChannel({c:'h'})(img);
-		const S = filter_getHSLChannel({c:'s'})(img);
-		const L = filter_getHSLChannel({c:'l'})(img);
+		const H = filter_getHSLChannel({ c: 'h' })(img);
+		const S = filter_getHSLChannel({ c: 's' })(img);
+		const L = filter_getHSLChannel({ c: 'l' })(img);
 		const Lp = applyMask(L, width, height, mask);
-		
+
 		return gatherHSLChannels(H, S, Lp);
 	};
 }
@@ -386,15 +378,14 @@ function filter_gaussianUnsharpMasking(dict) {
  * @return the filtered image
  */
 function filter_unsharpMasking(dict) {
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
 
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
+	return function (img) {
+		const identity = [[0, 0, 0], [0, 1, 0], [0, 0, 0]];
+		const sharpeningMask = [[0, 1, 0], [1, -4, 1], [0, 1, 0]];
+		const unsharpMask = identity.map((e, i) => e.map((e2, i2) => e2 - sharpeningMask[i][i2]));
 
-	return function(img) {
-		const identity = [[0,0,0],[0,1,0],[0,0,0]];
-		const sharpeningMask = [[0,1,0],[1,-4,1],[0,1,0]];
-		const unsharpMask = identity.map((e,i) => e.map((e2,i2) => e2 - sharpeningMask[i][i2]) );
-		
 		// Application of the mask on separate channels
 		// Because this is a "simple" mask, the choice is on color channels (done automatically by applyMask)
 		// (see gaussian_unsharp_masking for more)
@@ -402,39 +393,15 @@ function filter_unsharpMasking(dict) {
 	};
 }
 
-// /* Filter : Movement blur
-//  * 
-//  * @param width image width
-//  * @param height image height
-//  * @param 
-//  * @return the filtered image
-//  */
-// function filter_movementBlur_sketch(dict) {
-
-// 	const width = dict['width'] 	|| WIDTH;
-// 	const height = dict['height'] 	|| HEIGHT;
-// 	const angle = dict['angle'] 	|| 0;
-// 	const len = dict['radius']		|| 1;
-
-// 	return function(img) {
-// 		let movementMask = new Array(len).fill().map(() => Array(len).fill(0));
-// 		for(let i = 0; i < len; i++) {
-
-// 		}
-// 		console.log(movementMask);
-// 		return applyMask(img, width, height, movementMask)
-// 	};
-// }
-
 // Exports
-exports.gaussianMask 	= gaussianMask;
-exports.applyMask 		= applyMask;
-exports.canny 			= filter_canny;
-exports.sobel 			= filter_sobel;
-exports.sharpness 		= filter_sharpness;
-exports.simpleBlur 		= filter_simpleBlur;
-exports.boxBlur 		= filter_boxBlur;
-exports.gaussianBlur 	= filter_gaussianBlur;
+exports.gaussianMask 			= gaussianMask;
+exports.applyMask 				= applyMask;
+exports.canny 					= filter_canny;
+exports.sobel 					= filter_sobel;
+exports.sharpness 				= filter_sharpness;
+exports.simpleBlur 				= filter_simpleBlur;
+exports.boxBlur 				= filter_boxBlur;
+exports.gaussianBlur 			= filter_gaussianBlur;
 exports.unsharpMasking 			= filter_unsharpMasking;
 exports.gaussianUnsharpMasking 	= filter_gaussianUnsharpMasking;
-exports.amplifyOutlines = filter_amplifyOutlines;
+exports.amplifyOutlines 		= filter_amplifyOutlines;

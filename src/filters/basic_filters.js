@@ -24,20 +24,17 @@ function filter_copy() {
  * @return clockwise-rotated texture (use negative angles for counter-clockwise rotations)
  */
 function filter_rotation(dict) {
-
-	const width = dict['width']			|| WIDTH;
-	const height = dict['height']		|| HEIGHT;
-	const angle = dict['angle'] 		|| 45;
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
+	const angle = 	dict['angle'] 	|| 45;
 
 	return function (img) {
-
-		let data = img.slice().fill(0,0);
-		//const height = data.length / (4 * width);
+		let data = img.slice().fill(0, 0);
 		let x_init, y_init;
 		let r, angle_init;
 		let x, y;
 		for (let i = 0, n = 0, m; i < height; i++) {
-			for (let j = 0; j < width; j++, n += 4) {
+			for (let j = 0; j < width; j++ , n += 4) {
 				if (img[n + 3] !== 0) {
 					x_init = j - width / 2 + 1;
 					y_init = i - height / 2 + 1;
@@ -76,19 +73,18 @@ function filter_rotation(dict) {
  * @param intensity translation length
  */
 function filter_translation(dict) {
-
-	const width = dict['width']			|| WIDTH;
-	const height = dict['height']		|| HEIGHT;
-	const dir = dict['direction'] 		|| "vertical";
-	const len = dict['intensity'] 		|| 40;
+	const width = 	dict['width'] 		|| WIDTH;
+	const height =	dict['height'] 		|| HEIGHT;
+	const dir = 	dict['direction'] 	|| "vertical";
+	const len = 	dict['intensity'] 	|| 40;
 
 	let xdiff = 0; let ydiff = 0;
-	switch(dir){
-		case "vertical": xdiff = len; break;
-		case "horizontal": ydiff = len; break;
-		case "oblique1": xdiff = len; ydiff = len; break;
-		case "oblique2": xdiff = len; ydiff = -len; break;
-		default: xdiff = len; break;
+	switch (dir) {
+		case "vertical": 	xdiff = len; break;
+		case "horizontal": 	ydiff = len; break;
+		case "oblique1": 	xdiff = len; ydiff = len; break;
+		case "oblique2": 	xdiff = len; ydiff = -len; break;
+		default: 			xdiff = len; break;
 	}
 
 	return function (img) {
@@ -96,8 +92,8 @@ function filter_translation(dict) {
 
 		for (let i = 0; i < width; i++) {
 			for (let j = 0; j < height; j++) {
-				for(let k = 0; k < 4; k++) {
-					data[(j*width + i)*4 + k] = img[(((j-xdiff)%height)*width + (i-ydiff)%width)*4 + k];
+				for (let k = 0; k < 4; k++) {
+					data[(j * width + i) * 4 + k] = img[(((j - xdiff) % height) * width + (i - ydiff) % width) * 4 + k];
 				}
 			}
 		}
@@ -111,12 +107,10 @@ function filter_translation(dict) {
  * @return texture flipped horizontally
  */
 function filter_horizontalFlip(dict) {
-
-	const width = dict['width'] 		|| WIDTH;
+	const width = 	dict['width'] 	|| WIDTH;
 
 	return function horizontalFlip(img) {
-		let data = [];
-		data.length = img.length;
+		let data = img.slice();
 		const height = data.length / (4 * width);
 		for (let i = 0; i < height; i++) {
 			for (let j = 0; j < width * 4; j++) {
@@ -133,12 +127,10 @@ function filter_horizontalFlip(dict) {
  * @return texture flipped vertically
  */
 function filter_verticalFlip(dict) {
-
-	const width = dict['width'] 		|| WIDTH;
+	const width = 	dict['width'] 	|| WIDTH;
 
 	return function (img) {
-		let data = [];
-		data.length = img.length;
+		let data = img.slice();
 		const height = data.length / (4 * width);
 		for (let i = 0; i < height; i++) {
 			for (let j = 0; j < width; j++) {
@@ -157,8 +149,8 @@ function filter_verticalFlip(dict) {
  * @return texture with inverted colors 
  */
 function filter_negativeImage() {
-	return function(img) {
-		return img.map((e,i) => (i%4===3) ? e : 256 - e);
+	return function (img) {
+		return img.map((e, i) => (i % 4 === 3) ? e : 256 - e);
 	};
 }
 
@@ -169,18 +161,17 @@ function filter_negativeImage() {
  * @return the filtered image
  */
 function filter_greyScale(dict) {
+	const width = 	dict['width'] 	|| WIDTH;
+	const height = 	dict['height'] 	|| HEIGHT;
 
-	const width = dict['width'] 	|| WIDTH;
-	const height = dict['height'] 	|| HEIGHT;
-
-	return function(img) {
+	return function (img) {
 		let data = img.slice();
 		let val = 0;
-		for(let y = 0; y < height; y++) {
-			for(let x = 0; x < width; x++) {
-				val = Math.floor(img.slice((y*width + x)*4, (y*width + x)*4+3).reduce((acc, el) => acc+el, 0)/3);
-				for(let k = 0; k < 3; k++) {
-					data[(y*width + x)*4 + k] = val;
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				val = Math.floor(img.slice((y * width + x) * 4, (y * width + x) * 4 + 3).reduce((acc, el) => acc + el, 0) / 3);
+				for (let k = 0; k < 3; k++) {
+					data[(y * width + x) * 4 + k] = val;
 				}
 			}
 		}
@@ -195,31 +186,30 @@ function filter_greyScale(dict) {
  * @param n zoom intensity
  */
 function filter_resize(dict) {
+	const width = 	dict['width'] 		|| WIDTH;
+	const height = 	dict['height'] 		|| HEIGHT;
+	const n = 		dict['intensity'] 	|| 10;
 
-	const width = dict['width']		|| WIDTH;
-	const height = dict['height']	|| HEIGHT;
-	const n = dict['intensity']		|| 10;
+	return function (img) {
+		let data = img.slice();
 
-	return function(img) {
-		let data = [];
-		data.length = img.length;
-
-		for (let i = 0; i < Math.floor(height/n)+1; i++) {
-			for (let j = 0; j < Math.floor(width/n)+1; j++) {
+		for (let i = 0; i < Math.floor(height / n) + 1; i++) {
+			for (let j = 0; j < Math.floor(width / n) + 1; j++) {
 
 				for (let i2 = 0; i2 < n; i2++) {
-					if(i*n + i2 >= height) break;
+					if (i * n + i2 >= height)
+						break;
 					for (let j2 = 0; j2 < n; j2++) {
-						if(j*n + j2 >= width) break;
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4] = img[i*width*4 + j*4];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 1] = img[i*width*4 + j*4 + 1];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 2] = img[i*width*4 + j*4 + 2];
-						data[(i2 + n*i)*width*4 + (j2 + n*j)*4 + 3] = img[i*width*4 + j*4 + 3];
+						if (j * n + j2 >= width)
+							break;
+						data[(i2 + n * i) * width * 4 + (j2 + n * j) * 4] = img[i * width * 4 + j * 4];
+						data[(i2 + n * i) * width * 4 + (j2 + n * j) * 4 + 1] = img[i * width * 4 + j * 4 + 1];
+						data[(i2 + n * i) * width * 4 + (j2 + n * j) * 4 + 2] = img[i * width * 4 + j * 4 + 2];
+						data[(i2 + n * i) * width * 4 + (j2 + n * j) * 4 + 3] = img[i * width * 4 + j * 4 + 3];
 					}
 				}
 			}
 		}
-
 		return data;
 	};
 }
@@ -233,38 +223,39 @@ function filter_resize(dict) {
  * @return the image with first color replaced by the other in a rectangle
  */
 function filter_replaceColor(dict) {
+	const width = 		dict['width'] 	|| WIDTH;
+	const height = 		dict['height'] 	|| HEIGHT;
+	const x_offset = 	dict['offsetx'] || 0;
+	const y_offset = 	dict['offsety'] || 0;
+	const colors = 		dict['colors'] 	|| [];
+	const color1 = 		dict['color1'] 	|| colors[0] || COLORS.blue;
+	const color2 = 		dict['color2'] 	|| colors[1] || COLORS.cyan;
 
-	const width = dict['width']			|| WIDTH;
-	const height = dict['height']		|| HEIGHT;
-	const x_offset = dict['offsetx'] 	|| 0;
-	const y_offset = dict['offsety'] 	|| 0;
-	const colors = dict['colors']   || [];
-    const color1 = dict['color1']   || colors[0] || COLORS.blue;
-    const color2 = dict['color2']   || colors[1] || COLORS.cyan;
-    const maxheight = (height + y_offset > height) ? height - y_offset : height;
-    const maxwidth = (width + x_offset > width) ? width - x_offset : width;
+	const maxheight = (height + y_offset > height) ? height - y_offset : height;
+	const maxwidth = (width + x_offset > width) ? width - x_offset : width;
 
-	return function(img) {
+	return function (img) {
 		let data = img.slice();
-		for(let y = y_offset; y < maxheight; y++) {
-			for(let x = x_offset; x < maxwidth; x++) {
-				if(img[(y*width + x)*4] === color1[0] && img[(y*width + x)*4+1] === color1[1]
-				&& img[(y*width + x)*4+2] === color1[2] && img[(y*width + x)*4+3] === color1[3]) {
-					for(let k = 0; k < 4; k++)
-						data[(y*width + x)*4 + k] = color2[k];
+		for (let y = y_offset; y < maxheight; y++) {
+			for (let x = x_offset; x < maxwidth; x++) {
+				if (img[(y * width + x) * 4] === color1[0] && img[(y * width + x) * 4 + 1] === color1[1]
+					&& img[(y * width + x) * 4 + 2] === color1[2] && img[(y * width + x) * 4 + 3] === color1[3]) {
+					for (let k = 0; k < 4; k++)
+						data[(y * width + x) * 4 + k] = color2[k];
 				}
 			}
 		}
 		return data;
 	};
 }
+
 // Exports
-exports.copy 				= filter_copy;
-exports.rotation 			= filter_rotation;
-exports.translation 		= filter_translation;
-exports.horizontalFlip 		= filter_horizontalFlip;
-exports.verticalFlip 		= filter_verticalFlip;
-exports.negativeImage 		= filter_negativeImage;
-exports.greyScale 			= filter_greyScale;
-exports.resize 				= filter_resize;
-exports.replaceColor 		= filter_replaceColor;
+exports.copy 			= filter_copy;
+exports.rotation 		= filter_rotation;
+exports.translation 	= filter_translation;
+exports.horizontalFlip 	= filter_horizontalFlip;
+exports.verticalFlip 	= filter_verticalFlip;
+exports.negativeImage 	= filter_negativeImage;
+exports.greyScale 		= filter_greyScale;
+exports.resize 			= filter_resize;
+exports.replaceColor 	= filter_replaceColor;
