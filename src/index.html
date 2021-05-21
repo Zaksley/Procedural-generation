@@ -1,458 +1,474 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf8"/>
-  <title>Procedural Textures (Equipe 12830)</title>
-  <meta name="author" content="Mathieu Brassart,Enzo Médina,Léna Herau,Killian Dieu"/>
+    <meta charset="utf8" />
+    <title>Procedural Textures (Equipe 12830)</title>
+    <meta name="author" content="Mathieu Brassart,Enzo Médina,Léna Herau,Killian Dieu" />
 </head>
 
 <body>
 
-<style>
-body {
-	font-family:arial;
-	width:100vw;
-	height:calc(100vh + 8px);
-	overflow:hidden;
-	display:grid;
-	grid-template-columns:30% 1fr;
-	margin-top:-8px;
-	margin-left:-8px
-}
-p {
-	font-size:18px;
-}
-input[type=range]{
-	-webkit-appearance: none; 
-  	appearance: none;
-  	width: 100%;
-  	height: 10px;
-  	background: #AAA;
-  	outline: none;
-  	border-radius:10px;
-  	opacity: 0.7;
-  	-webkit-transition: .2s;
-  	transition: opacity .2s;
-}
-input[type=range]:hover {
-	opacity:1;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: black;
-  cursor: pointer;
-}
-input[type=range]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: black;
-  cursor: pointer;
-  border-radius:30%;
-  border:0;
-}
-input[type=color] {
-	margin-left:18px;
-}
-textarea {
-	background-color:white;
-	width:calc(100% - 24px);
-	padding:12px;
-	resize:none;
-	/*overflow-y:hidden;*/
-	font-size:1.2em;
-}
-#treebutton {
-	/*width:calc(100% + 2px);*/
-	padding:4px;
-	font-size:1.1em;
-	margin-top:12px;
-	float:right;
-}
-</style>
+    <style>
+        body {
+            font-family: arial;
+            width: 100vw;
+            height: calc(100vh + 8px);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 30% 1fr;
+            margin-top: -8px;
+            margin-left: -8px
+        }
 
-	<div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA; overflow-y:auto;">
-		
-		<!-- ========= Sliders & parameters ======== -->
-		<h2>Base texture :</h2>
+        p {
+            font-size: 18px;
+        }
 
-		<label for="texture">Select a texture : </label>
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            background: #AAA;
+            outline: none;
+            border-radius: 10px;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
 
-		<script>
-			window.DICT = {};
-			window.ANIMATION = false;
-		</script>
+        input[type=range]:hover {
+            opacity: 1;
+        }
 
-		<select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
-			<option value="none" selected>No texture selected</option>
-			<optgroup label="Specific Textures">
-				<option value="solid">Solid color</option>
-				<option value="horizontalGradient">Color gradients</option>
-				<option value="star">Star pattern</option>
-				<option value="regularShape">Polygon pattern</option>
-				<option value="disk">Disk shape</option>
-				<option value="circle">circle shape</option>
-				<option value="tileBoard">Tile Board</option>
-				<option value="yinyang">Yin Yang</option>
-			</optgroup>
-			<optgroup label="Regular Tilings">
-				<option value="triangleTiling">Triangular tiling</option>
-				<option value="hexagonTiling">Hexagonal tiling</option>
-			</optgroup>
-			<optgroup label="Semi-Regular Tilings">
-				<option value="cubeTiling">Isometric cubic tiling</option>
-				<option value="gambarTiling">Gambar tiling</option>
-				<option value="elongatedTriangular">Elongated triangular tiling</option>
-				<option value="snubSquare">Snub square tiling</option>
-				<option value="snubHexagonal">Snub hexagonal tiling</option>
-				<option value="truncatedSquare">Truncated square tiling</option>
-				<option value="truncatedHexagon">Truncated hexagon tiling</option>
-				<option value="smallRhombitrihexagonalTiling">Small rhombitrihexagonal tiling</option>
-				<option value="bigRhombitrihexagonalTiling">Big rhombitrihexagonal tiling</option>
-				<option value="trihexagonal">Trihexagonal tiling</option>
-			</optgroup>
-			<optgroup label="Non-regular Tilings">
-				<option value="squareTiling">Checkboard</option>
-				<option value="caireTiling">Pentagonal tiling</option>
-				<option value="pentagonTiling3">Rotating pentagonal tiling</option>
-				<option value="pentagonTiling4" disabled>PentagonTiling4</option>
-			</optgroup>
-			<optgroup label="Noise maps">
-				<option value="whiteNoise">White noise</option>
-				<option value="limitedWhiteNoise">Limited white noise</option>
-				<option value="perlinNoise">Perlin noise</option>
-			</optgroup>
-			<optgroup label="Diagrams & Fractals">
-				<option value="Voronoi">Voronoï diagram</option>
-				<option value="squareFractal">Square fractal</option>
-				<option value="triangularFractal">Triangular fractal</option>
-			</optgroup>
-         <optgroup label="Cellular Automata">
-            <option value="forestFire">Forest Fire</option>
-            <option value="gameOfLife">Conway's Game Of Life</option>
-	    <option value="greenbergHastings">Greenberg-Hasting simulation</option>
-            <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
-            <option value="cyclic1DCellularAutomaton">Cyclic 1D Cellular Automaton</option>
-         </optgroup>
-			<optgroup label="Signed distance Textures">
-            <option value="sdCircle">Circle</option>
-            <option value="sdBox">Rectangle</option>
-            <option value="sdRoundedBox">Rounded Rectangle</option>
-				<option value="sdOrientedBox">Oriented Rectangle</option>
-				<option value="sdSegment">Segment</option>
-				<option value="sdRhombus">Rhombus</option>
-				<option value="sdIsoscelesTrapezoid">Isosceles Trapezoid</option>
-				<option value="sdParallelogram">Parallelogram</option>
-				<option value="sdEquilateralTriangle">Equilateral Triangle</option>
-				<option value="sdIsoscelesTriangle">Isosceles Triangle</option>
-				<option value="sdTriangle">Triangle</option>
-				<option value="sdUnevenCapsule">Uneven Capsule</option>
-				<option value="sdRegularPentagon">Regular Pentagon</option>
-				<option value="sdRegularHexagon">Regular Hexagon</option>
-				<option value="sdRegularOctogon">Regular Octogon</option>
-				<option value="sdHexagram">Hexagram</option>
-				<option value="sdStar5">Star 5</option>
-				<option value="sdRegularStar">Regular Star</option>
-				<option value="sdPie">Pie</option>
-				<option value="sdArc">Arc</option>
-				<option value="sdHorseshoe">Horseshoe</option>
-				<option value="sdVesica">Vesica</option>
-				<option value="sdMoon">Moon</option>
-				<option value="sdSimpleEgg">Simple Egg</option>
-				<option value="sdHeart">Heart</option>
-				<option value="sdCross">Cross</option>
-				<option value="sdCircleCross" disabled>Circle Cross</option>
-				<option value="sdBobblyCross" disabled>Bobbly Cross</option>
-				<option value="sdRoundedX">Rounded X</option>
-				<option value="sdPolygon">Polygon</option>
-				<option value="sdEllipse">Ellipse</option>
-				<option value="sdParabola">Parabola</option>
-				<option value="sdParabolaSegment">Parabola Segment</option>
-				<option value="sdQuadraticBezier" disabled>Quadratic Bezier</option>
-         </optgroup>
-         <optgroup label="Animations">
-				<option value="chromaticCircle">Chromatic Circle</option>
-				<option value="Yinyang">Yin Yang</option>
-				<option value="randomFunction">Random Textures</option>
-				<option value="ForestFire">Forest Fire</option>
-				<option value="GameOfLife">Game Of Life</option>
-				<option value="GreenbergHastings">Greenberg Hastings</option>
-				<option value="rain">Rain</option>
-			</optgroup>
-		</select><br><br>
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: black;
+            cursor: pointer;
+        }
 
-		<!-- SIZE -->
-		<div class="textureOption size" style="display:none">
-			<p>Pattern size : <b id="size">80</b></p>
-			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size', this.value)"
-			onchange="window.DICT['size'] = parseInt(this.value); regenerateImage();">
-		</div>
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: black;
+            cursor: pointer;
+            border-radius: 30%;
+            border: 0;
+        }
 
-		<!-- SIZE 2 -->
-		<div class="textureOption size2" style="display:none">
-			<p>Pattern second size : <b id="size2">80</b></p>
-			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size2', this.value)"
-			onchange="window.DICT['size2'] = parseInt(this.value); regenerateImage();">
-		</div>
+        input[type=color] {
+            margin-left: 18px;
+        }
 
-		<!-- SIZE 3 -->
-		<div class="textureOption size3" style="display:none">
-			<p>Pattern third size : <b id="size3">80</b></p>
-			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size3', this.value)"
-			onchange="window.DICT['size3'] = parseInt(this.value); regenerateImage();">
-		</div>
+        textarea {
+            background-color: white;
+            width: calc(100% - 24px);
+            padding: 12px;
+            resize: none;
+            /*overflow-y:hidden;*/
+            font-size: 1.2em;
+        }
 
-		<!-- DISTANCE -->
-		<div class="textureOption distance" style="display:none">
-			<p>Distance : <b id="distance">80</b></p>
-			<input type="range" min="-100" max="100" value="0" oninput="updateSliderValue('distance', this.value)"
-			onchange="window.DICT['distance'] = parseInt(this.value); regenerateImage();">
-		</div>
+        #treebutton {
+            /*width:calc(100% + 2px);*/
+            padding: 4px;
+            font-size: 1.1em;
+            margin-top: 12px;
+            float: right;
+        }
+    </style>
 
-		<!-- COLUMNS -->
-		<div class="textureOption columns" style="display:none">
-			<p>Columns : <b id="columns">3</b></p>
-			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('columns', this.value)"
-			onchange="window.DICT['columns'] = parseInt(this.value); regenerateImage();">
-		</div>
+    <div style="grid-column: 1 / 2;padding:32px;background-color:#DDD;border-right:1px solid #AAA; overflow-y:auto;">
 
-		<!-- ROWS -->
-		<div class="textureOption rows" style="display:none">
-			<p>Rows : <b id="rows">3</b></p>
-			<input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
-			onchange="window.DICT['rows'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <!-- ========= Sliders & parameters ======== -->
+        <h2>Base texture :</h2>
 
-		<div class="textureOption outline" style="display:none">
-			<p>Outline width : <b id="outline">80</b></p>
-			<input type="range" min="10" max="100" value="80" oninput="updateSliderValue('outline', this.value)"
-			onchange="window.DICT['epsilon'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <label for="texture">Select a texture : </label>
 
-		<!-- TREE PROBABILITY -->
-		<div class="textureOption treeP" style="display:none">
-			<p>Tree Probability : <b id="treeP">50</b></p>
-			<input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
-			onchange="window.DICT['treeP'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <script>
+            window.DICT = {};
+            window.ANIMATION = false;
+        </script>
 
-		<!-- LIGHTNING PROBABILITY -->
-		<div class="textureOption lightP" style="display:none">
-			<p>Lightning Probability : <b id="lightP">5</b></p>
-			<input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
-			onchange="window.DICT['lightP'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <select name="texture" id="textureName" oninput="showTextureOptions(this.value)">
+            <option value="none" selected>No texture selected</option>
+            <optgroup label="Specific Textures">
+                <option value="solid">Solid color</option>
+                <option value="horizontalGradient">Color gradients</option>
+                <option value="star">Star pattern</option>
+                <option value="regularShape">Polygon pattern</option>
+                <option value="disk">Disk shape</option>
+                <option value="circle">circle shape</option>
+                <option value="tileBoard">Tile Board</option>
+                <option value="yinyang">Yin Yang</option>
+            </optgroup>
+            <optgroup label="Regular Tilings">
+                <option value="triangleTiling">Triangular tiling</option>
+                <option value="hexagonTiling">Hexagonal tiling</option>
+            </optgroup>
+            <optgroup label="Semi-Regular Tilings">
+                <option value="cubeTiling">Isometric cubic tiling</option>
+                <option value="gambarTiling">Gambar tiling</option>
+                <option value="elongatedTriangular">Elongated triangular tiling</option>
+                <option value="snubSquare">Snub square tiling</option>
+                <option value="snubHexagonal">Snub hexagonal tiling</option>
+                <option value="truncatedSquare">Truncated square tiling</option>
+                <option value="truncatedHexagon">Truncated hexagon tiling</option>
+                <option value="smallRhombitrihexagonalTiling">Small rhombitrihexagonal tiling</option>
+                <option value="bigRhombitrihexagonalTiling">Big rhombitrihexagonal tiling</option>
+                <option value="trihexagonal">Trihexagonal tiling</option>
+            </optgroup>
+            <optgroup label="Non-regular Tilings">
+                <option value="squareTiling">Checkboard</option>
+                <option value="caireTiling">Pentagonal tiling</option>
+                <option value="pentagonTiling3">Rotating pentagonal tiling</option>
+                <option value="pentagonTiling4" disabled>PentagonTiling4</option>
+            </optgroup>
+            <optgroup label="Noise maps">
+                <option value="whiteNoise">White noise</option>
+                <option value="limitedWhiteNoise">Limited white noise</option>
+                <option value="perlinNoise">Perlin noise</option>
+            </optgroup>
+            <optgroup label="Diagrams & Fractals">
+                <option value="Voronoi">Voronoï diagram</option>
+                <option value="squareFractal">Square fractal</option>
+                <option value="triangularFractal">Triangular fractal</option>
+            </optgroup>
+            <optgroup label="Cellular Automata">
+                <option value="forestFire">Forest Fire</option>
+                <option value="gameOfLife">Conway's Game Of Life</option>
+                <option value="greenbergHastings">Greenberg-Hasting simulation</option>
+                <option value="elementaryCellularAutomaton">Elementary Cellular Automaton</option>
+                <option value="cyclic1DCellularAutomaton">Cyclic 1D Cellular Automaton</option>
+            </optgroup>
+            <optgroup label="Signed distance Textures">
+                <option value="sdCircle">Circle</option>
+                <option value="sdBox">Rectangle</option>
+                <option value="sdRoundedBox">Rounded Rectangle</option>
+                <option value="sdOrientedBox">Oriented Rectangle</option>
+                <option value="sdSegment">Segment</option>
+                <option value="sdRhombus">Rhombus</option>
+                <option value="sdIsoscelesTrapezoid">Isosceles Trapezoid</option>
+                <option value="sdParallelogram">Parallelogram</option>
+                <option value="sdEquilateralTriangle">Equilateral Triangle</option>
+                <option value="sdIsoscelesTriangle">Isosceles Triangle</option>
+                <option value="sdTriangle">Triangle</option>
+                <option value="sdUnevenCapsule">Uneven Capsule</option>
+                <option value="sdRegularPentagon">Regular Pentagon</option>
+                <option value="sdRegularHexagon">Regular Hexagon</option>
+                <option value="sdRegularOctogon">Regular Octogon</option>
+                <option value="sdHexagram">Hexagram</option>
+                <option value="sdStar5">Star 5</option>
+                <option value="sdRegularStar">Regular Star</option>
+                <option value="sdPie">Pie</option>
+                <option value="sdArc">Arc</option>
+                <option value="sdHorseshoe">Horseshoe</option>
+                <option value="sdVesica">Vesica</option>
+                <option value="sdMoon">Moon</option>
+                <option value="sdSimpleEgg">Simple Egg</option>
+                <option value="sdHeart">Heart</option>
+                <option value="sdCross">Cross</option>
+                <option value="sdCircleCross" disabled>Circle Cross</option>
+                <option value="sdBobblyCross" disabled>Bobbly Cross</option>
+                <option value="sdRoundedX">Rounded X</option>
+                <option value="sdPolygon">Polygon</option>
+                <option value="sdEllipse">Ellipse</option>
+                <option value="sdParabola">Parabola</option>
+                <option value="sdParabolaSegment">Parabola Segment</option>
+                <option value="sdQuadraticBezier" disabled>Quadratic Bezier</option>
+            </optgroup>
+            <optgroup label="Animations">
+                <option value="chromaticCircle">Chromatic Circle</option>
+                <option value="Yinyang">Yin Yang</option>
+                <option value="randomFunction">Random Textures</option>
+                <option value="ForestFire">Forest Fire</option>
+                <option value="GameOfLife">Game Of Life</option>
+                <option value="GreenbergHastings">Greenberg Hastings</option>
+                <option value="rain">Rain</option>
+            </optgroup>
+        </select><br><br>
 
-		<!-- STEP NUMBER -->
-		<div class="textureOption step" style="display:none">
-			<p>Step : <b id="step">30</b></p>
-			<input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
-			onchange="window.DICT['step'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <!-- SIZE -->
+        <div class="textureOption size" style="display:none">
+            <p>Pattern size : <b id="size">80</b></p>
+            <input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size', this.value)"
+                onchange="window.DICT['size'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- GERMS -->
-		<div class="textureOption germs" style="display:none">
-			<p>Germs : <b id="germs">10</b></p>
-			<input type="range" min="1" max="40" value="10" oninput="updateSliderValue('germs', this.value)"
-			onchange="window.DICT['germs'] = parseInt(this.value); regenerateImage();">
-		</div>
-                
-		<!-- ANGLE (90-180) -->
-		<div class="textureOption angle" style="display:none">
-			<p>Angle : <b id="angle">135</b>°</p>
-			<input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
-			onchange="window.DICT['angle'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <!-- SIZE 2 -->
+        <div class="textureOption size2" style="display:none">
+            <p>Pattern second size : <b id="size2">80</b></p>
+            <input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size2', this.value)"
+                onchange="window.DICT['size2'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- ANGLE (0-360) -->
-		<div class="textureOption fullangle" style="display:none">
-			<p>Angle : <b id="fullangle">45</b>°</p>
-			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle', this.value*15)"
-			onchange="window.DICT['angle'] = parseInt(this.value*15); regenerateImage();">
-		</div>
+        <!-- SIZE 3 -->
+        <div class="textureOption size3" style="display:none">
+            <p>Pattern third size : <b id="size3">80</b></p>
+            <input type="range" min="10" max="100" value="80" oninput="updateSliderValue('size3', this.value)"
+                onchange="window.DICT['size3'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- ANGLE 2 (0-360) -->
-		<div class="textureOption fullangle2" style="display:none">
-			<p>Second Angle : <b id="fullangle2">45</b>°</p>
-			<input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle2', this.value*15)"
-			onchange="window.DICT['angle2'] = parseInt(this.value*15); regenerateImage();">
-		</div>
+        <!-- DISTANCE -->
+        <div class="textureOption distance" style="display:none">
+            <p>Distance : <b id="distance">80</b></p>
+            <input type="range" min="-100" max="100" value="0" oninput="updateSliderValue('distance', this.value)"
+                onchange="window.DICT['distance'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- BRANCHES -->
-		<div class="textureOption branches" style="display:none">
-			<p>Branches : <b id="branches">5</b></p>
-			<input type="range" min="3" max="20" value="5" oninput="updateSliderValue('branches', this.value)"
-			onchange="window.DICT['branches'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <!-- COLUMNS -->
+        <div class="textureOption columns" style="display:none">
+            <p>Columns : <b id="columns">3</b></p>
+            <input type="range" min="1" max="40" value="3" oninput="updateSliderValue('columns', this.value)"
+                onchange="window.DICT['columns'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- BRANCHES2 -->
-		<div class="textureOption branches2" style="display:none">
-			<p>Branches second option : <b id="branches2">5</b></p>
-			<input type="range" min="2" max="20" value="5" oninput="updateSliderValue('branches2', this.value)"
-			onchange="window.DICT['branches2'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <!-- ROWS -->
+        <div class="textureOption rows" style="display:none">
+            <p>Rows : <b id="rows">3</b></p>
+            <input type="range" min="1" max="40" value="3" oninput="updateSliderValue('rows', this.value)"
+                onchange="window.DICT['rows'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- FRACTAL DEPTH -->
-		<div class="textureOption depth" style="display:none">
-			<p>Depth levels : <b id="depth">3</b></p>
-			<input type="range" min="1" max="8" value="3" oninput="updateSliderValue('depth', this.value)"
-			onchange="window.DICT['depth'] = parseInt(this.value); regenerateImage();">
-		</div>
+        <div class="textureOption outline" style="display:none">
+            <p>Outline width : <b id="outline">80</b></p>
+            <input type="range" min="10" max="100" value="80" oninput="updateSliderValue('outline', this.value)"
+                onchange="window.DICT['epsilon'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- CENTER X -->
-		<div class="textureOption centerx" style="display:none">
-			<p>Horizontal centering : <b id="centerx">0.5</b></p>
-			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centerx', this.value*10/WIDTH)"
-			onchange="window.DICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
-		</div>
+        <!-- TREE PROBABILITY -->
+        <div class="textureOption treeP" style="display:none">
+            <p>Tree Probability : <b id="treeP">50</b></p>
+            <input type="range" min="5" max="95" value="50" oninput="updateSliderValue('treeP', this.value)"
+                onchange="window.DICT['treeP'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- CENTER Y -->
-		<div class="textureOption centery" style="display:none">
-			<p>Vertical centering : <b id="centery">0.5</b></p>
-			<input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centery', this.value*10/HEIGHT)"
-			onchange="window.DICT['centery'] = parseInt(this.value)*10; regenerateImage();">
-		</div>
+        <!-- LIGHTNING PROBABILITY -->
+        <div class="textureOption lightP" style="display:none">
+            <p>Lightning Probability : <b id="lightP">5</b></p>
+            <input type="range" min="5" max="95" value="5" oninput="updateSliderValue('lightP', this.value)"
+                onchange="window.DICT['lightP'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- COLOR 1 -->
-		<div class="textureOption color1" style="display:none">
-			<p>Color 1 : <b id="color1">#0080FF</b>
-			<input type="color" value="#0080FF" oninput="updateSliderValue('color1', this.value)"
-			onchange="window.DICT['color1'] = hexaToRGBA(this.value); regenerateImage();">
-			</p>
-		</div>
+        <!-- STEP NUMBER -->
+        <div class="textureOption step" style="display:none">
+            <p>Step : <b id="step">30</b></p>
+            <input type="range" min="1" max="100" value="30" oninput="updateSliderValue('step', this.value)"
+                onchange="window.DICT['step'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- COLOR 2 -->
-		<div class="textureOption color2" style="display:none">
-			<p>Color 2 : <b id="color2">#0000FF</b>
-			<input type="color" value="#0000FF" oninput="updateSliderValue('color2', this.value)"
-			onchange="window.DICT['color2'] = hexaToRGBA(this.value); regenerateImage();">
-			</p>
-		</div>
+        <!-- GERMS -->
+        <div class="textureOption germs" style="display:none">
+            <p>Germs : <b id="germs">10</b></p>
+            <input type="range" min="1" max="40" value="10" oninput="updateSliderValue('germs', this.value)"
+                onchange="window.DICT['germs'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- COLOR 3 -->
-		<div class="textureOption color3" style="display:none">
-			<p>Color 3 : <b id="color3">#ff8000</b>
-			<input type="color" value="#ff8000" oninput="updateSliderValue('color3', this.value)"
-			onchange="window.DICT['color3'] = hexaToRGBA(this.value); regenerateImage();">
-			</p>
-		</div>
+        <!-- ANGLE (90-180) -->
+        <div class="textureOption angle" style="display:none">
+            <p>Angle : <b id="angle">135</b>°</p>
+            <input type="range" min="90" max="180" value="135" oninput="updateSliderValue('angle', this.value)"
+                onchange="window.DICT['angle'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- COLOR 4 -->
-		<div class="textureOption color4" style="display:none">
-			<p>Color 4 : <b id="color4">#ef76ff</b>
-			<input type="color" value="#ef76ff" oninput="updateSliderValue('color4', this.value)"
-			onchange="window.DICT['color4'] = hexaToRGBA(this.value); regenerateImage();">
-			</p>
-		</div>
+        <!-- ANGLE (0-360) -->
+        <div class="textureOption fullangle" style="display:none">
+            <p>Angle : <b id="fullangle">45</b>°</p>
+            <input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle', this.value*15)"
+                onchange="window.DICT['angle'] = parseInt(this.value*15); regenerateImage();">
+        </div>
 
-                <!-- RULE SELECTOR -->
-		<div class="textureOption rule" style="display:none">
-		  <p>Rule :
-                    <select name="ruleSelector" id="ruleSelector" oninput="(this.value)" onchange="window.DICT['rule'] = getRule(this.value); regenerateImage();">
-		      <option value="73" selected>73</option>
-                      <option value="73_rng">73 random</option>
-                      <option value="90">90</option>
-                      <option value="90_rng">90 random</option>
-                      <option value="110">110</option>
-                      <option value="110_rng">110 random</option>
-                    </select>
-			</p>
-		</div>
+        <!-- ANGLE 2 (0-360) -->
+        <div class="textureOption fullangle2" style="display:none">
+            <p>Second Angle : <b id="fullangle2">45</b>°</p>
+            <input type="range" min="0" max="24" value="3" oninput="updateSliderValue('fullangle2', this.value*15)"
+                onchange="window.DICT['angle2'] = parseInt(this.value*15); regenerateImage();">
+        </div>
 
-		<!-- Starting configuration -->
-		<div class="textureOption config" style="display:none">
-			<p>Configuration :
-				<select name="configSelector" id="configSelector" oninput="(this.value)" onchange="window.DICT['config'] = this.value; regenerateImage();">
-					<option value="flipper">Flipper</option>
-					<option value="gosper">Gosper glid</option>
-					<option value="fireworks">Fireworks</option>
-					<option value="sun">Sun</option>
-				</select>
-			</p>
-		</div>
+        <!-- BRANCHES -->
+        <div class="textureOption branches" style="display:none">
+            <p>Branches : <b id="branches">5</b></p>
+            <input type="range" min="3" max="20" value="5" oninput="updateSliderValue('branches', this.value)"
+                onchange="window.DICT['branches'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-		<!-- Color function -->
-		<div class="textureOption color function" style="display:none">
-			<p>Color Function :
-				<select name="colorFunctionSelector" id="colorFunctionSelector" oninput="(this.value)" onchange="window.DICT['function'] = this.value; regenerateImage();">
-					<option value="default">Default</option>
-					<option value="example">Basic</option>
-					<option value="noise">Noise</option>
-					<option value="gradient">Gradient</option>
-					<option value="random">Random</option>
-					<option value="lines">Lines</option>
-					<option value="biwaves">Biwaves</option>
-					<option value="fade">Fade</option>
-				</select>
-			</p>
-		</div>
+        <!-- BRANCHES2 -->
+        <div class="textureOption branches2" style="display:none">
+            <p>Branches second option : <b id="branches2">5</b></p>
+            <input type="range" min="2" max="20" value="5" oninput="updateSliderValue('branches2', this.value)"
+                onchange="window.DICT['branches2'] = parseInt(this.value); regenerateImage();">
+        </div>
 
-                
-		<!-- RESET -->
-		<div class="reset">
-			<p>
-			<input type="button" id="resetButton" value="Regenerate" onclick="regenerateImage();">
-			</p>
-		</div>
+        <!-- FRACTAL DEPTH -->
+        <div class="textureOption depth" style="display:none">
+            <p>Depth levels : <b id="depth">3</b></p>
+            <input type="range" min="1" max="8" value="3" oninput="updateSliderValue('depth', this.value)"
+                onchange="window.DICT['depth'] = parseInt(this.value); regenerateImage();">
+        </div>
+
+        <!-- CENTER X -->
+        <div class="textureOption centerx" style="display:none">
+            <p>Horizontal centering : <b id="centerx">0.5</b></p>
+            <input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centerx', this.value*10/WIDTH)"
+                onchange="window.DICT['centerx'] = parseInt(this.value)*10; regenerateImage();">
+        </div>
+
+        <!-- CENTER Y -->
+        <div class="textureOption centery" style="display:none">
+            <p>Vertical centering : <b id="centery">0.5</b></p>
+            <input type="range" min="0" max="50" value="25" oninput="updateSliderValue('centery', this.value*10/HEIGHT)"
+                onchange="window.DICT['centery'] = parseInt(this.value)*10; regenerateImage();">
+        </div>
+
+        <!-- COLOR 1 -->
+        <div class="textureOption color1" style="display:none">
+            <p>Color 1 : <b id="color1">#0080FF</b>
+                <input type="color" value="#0080FF" oninput="updateSliderValue('color1', this.value)"
+                    onchange="window.DICT['color1'] = hexaToRGBA(this.value); regenerateImage();">
+            </p>
+        </div>
+
+        <!-- COLOR 2 -->
+        <div class="textureOption color2" style="display:none">
+            <p>Color 2 : <b id="color2">#0000FF</b>
+                <input type="color" value="#0000FF" oninput="updateSliderValue('color2', this.value)"
+                    onchange="window.DICT['color2'] = hexaToRGBA(this.value); regenerateImage();">
+            </p>
+        </div>
+
+        <!-- COLOR 3 -->
+        <div class="textureOption color3" style="display:none">
+            <p>Color 3 : <b id="color3">#ff8000</b>
+                <input type="color" value="#ff8000" oninput="updateSliderValue('color3', this.value)"
+                    onchange="window.DICT['color3'] = hexaToRGBA(this.value); regenerateImage();">
+            </p>
+        </div>
+
+        <!-- COLOR 4 -->
+        <div class="textureOption color4" style="display:none">
+            <p>Color 4 : <b id="color4">#ef76ff</b>
+                <input type="color" value="#ef76ff" oninput="updateSliderValue('color4', this.value)"
+                    onchange="window.DICT['color4'] = hexaToRGBA(this.value); regenerateImage();">
+            </p>
+        </div>
+
+        <!-- RULE SELECTOR -->
+        <div class="textureOption rule" style="display:none">
+            <p>Rule :
+                <select name="ruleSelector" id="ruleSelector" oninput="(this.value)"
+                    onchange="window.DICT['rule'] = getRule(this.value); regenerateImage();">
+                    <option value="73" selected>73</option>
+                    <option value="73_rng">73 random</option>
+                    <option value="90">90</option>
+                    <option value="90_rng">90 random</option>
+                    <option value="110">110</option>
+                    <option value="110_rng">110 random</option>
+                </select>
+            </p>
+        </div>
+
+        <!-- Starting configuration -->
+        <div class="textureOption config" style="display:none">
+            <p>Configuration :
+                <select name="configSelector" id="configSelector" oninput="(this.value)"
+                    onchange="window.DICT['config'] = this.value; regenerateImage();">
+                    <option value="flipper">Flipper</option>
+                    <option value="gosper">Gosper glid</option>
+                    <option value="fireworks">Fireworks</option>
+                    <option value="sun">Sun</option>
+                </select>
+            </p>
+        </div>
+
+        <!-- Color function -->
+        <div class="textureOption color function" style="display:none">
+            <p>Color Function :
+                <select name="colorFunctionSelector" id="colorFunctionSelector" oninput="(this.value)"
+                    onchange="window.DICT['function'] = this.value; regenerateImage();">
+                    <option value="default">Default</option>
+                    <option value="example">Basic</option>
+                    <option value="noise">Noise</option>
+                    <option value="gradient">Gradient</option>
+                    <option value="random">Random</option>
+                    <option value="lines">Lines</option>
+                    <option value="biwaves">Biwaves</option>
+                    <option value="fade">Fade</option>
+                </select>
+            </p>
+        </div>
 
 
-                
-		<!-- ======= -->
+        <!-- RESET -->
+        <div class="reset">
+            <p>
+                <input type="button" id="resetButton" value="Regenerate" onclick="regenerateImage();">
+            </p>
+        </div>
 
-		<hr style="margin-top:18px;opacity:0">
 
-		<h2>Display options :</h2>
 
-		<!-- ZOOM -->
-		<div class="filterOption zoom" style="display:block">
-			<p>Zoom : <b id="zoom">1</b>00%</p>
-			<input type="range" min="1" max="10" value="1" oninput="updateSliderValue('zoom', this.value)"
-			onchange="OPTDICT['intensity'] = parseInt(this.value); regenerateFilters();">
-		</div>
+        <!-- ======= -->
 
-		<!-- TRANSLATION X -->
-		<div class="filterOption xoffset" style="display:block">
-			<p>X-Offset : <b id="xoffset">0</b>px (<b id="xoffsetprc">0</b>%)</p>
-			<input type="range" min="0" max="500" value="0" oninput="updateSliderValue('xoffset', this.value); updateSliderValue('xoffsetprc', this.value*100/WIDTH);"
-			onchange="XOFFSET = parseInt(this.value); regenerateFilters();">
-		</div>
+        <hr style="margin-top:18px;opacity:0">
 
-		<!-- TRANSLATION Y -->
-		<div class="filterOption yoffset" style="display:block">
-			<p>Y-Offset : <b id="yoffset">0</b>px (<b id="yoffsetprc">0</b>%)</p>
-			<input type="range" min="0" max="500" value="0" oninput="updateSliderValue('yoffset', this.value); updateSliderValue('yoffsetprc', this.value*100/HEIGHT);"
-			onchange="YOFFSET = parseInt(this.value); regenerateFilters();">
-		</div>
+        <h2>Display options :</h2>
 
-		<!-- <input type="button" id="regeneratebutton" onclick="regenerateImage(); regenerateFilters();" value="Regenerate with those options"><br><br><br> -->
+        <!-- ZOOM -->
+        <div class="filterOption zoom" style="display:block">
+            <p>Zoom : <b id="zoom">1</b>00%</p>
+            <input type="range" min="1" max="10" value="1" oninput="updateSliderValue('zoom', this.value)"
+                onchange="OPTDICT['intensity'] = parseInt(this.value); regenerateFilters();" disabled>
+        </div>
 
-		<!-- ======= -->
+        <!-- TRANSLATION X -->
+        <div class="filterOption xoffset" style="display:block">
+            <p>X-Offset : <b id="xoffset">0</b>px (<b id="xoffsetprc">0</b>%)</p>
+            <input type="range" min="0" max="500" value="0"
+                oninput="updateSliderValue('xoffset', this.value); updateSliderValue('xoffsetprc', this.value*100/WIDTH);"
+                onchange="XOFFSET = parseInt(this.value); regenerateFilters();" disabled>
+        </div>
 
-		<!-- =============== JSON DOC ============== -->
+        <!-- TRANSLATION Y -->
+        <div class="filterOption yoffset" style="display:block">
+            <p>Y-Offset : <b id="yoffset">0</b>px (<b id="yoffsetprc">0</b>%)</p>
+            <input type="range" min="0" max="500" value="0"
+                oninput="updateSliderValue('yoffset', this.value); updateSliderValue('yoffsetprc', this.value*100/HEIGHT);"
+                onchange="YOFFSET = parseInt(this.value); regenerateFilters();" disabled> 
+        </div>
 
-		<hr style="margin-top:18px;opacity:0">
+        <!-- <input type="button" id="regeneratebutton" onclick="regenerateImage(); regenerateFilters();" value="Regenerate with those options"><br><br><br> -->
 
-		<h2>Tree generator :</h2>
-		<textarea placeholder="'property': {&#x0a;&#x09;'subproperty':'value',&#x0a;&#x09;'subproperty_2':'value2'&#x0a;}" id="textarea" rows="20" spellcheck="false"></textarea>
-		<input type="button" id="treebutton" onclick="generateHTMLImageFromJson();" value="Generate image"><br><br><br>
+        <!-- ======= -->
 
-		<p id="jsonerror" style="display:none;color:red"></p>
+        <!-- =============== JSON DOC ============== -->
 
-		<br style="margin-top:40px">
+        <hr style="margin-top:18px;opacity:0">
 
-	</div>
+        <h2>Tree generator :</h2>
+        <textarea
+            placeholder="'property': {&#x0a;&#x09;'subproperty':'value',&#x0a;&#x09;'subproperty_2':'value2'&#x0a;}"
+            id="textarea" rows="20" spellcheck="false"></textarea>
+        <input type="button" id="treebutton" onclick="generateHTMLImageFromJson();" value="Generate image"><br><br><br>
 
-	<div style="grid-column: 2 / 3;overflow-y: auto;overflow-x: hidden;padding-right:32px">
-		<!-- ================ Canvas =============== -->
+        <p id="jsonerror" style="display:none;color:red"></p>
 
-		<h2 style="margin-left:32px;margin-top:32px">Procedural textures</h2>
-		<canvas id="canvas" style="border:1px solid black;margin:32px;"></canvas>
+        <br style="margin-top:40px">
 
-	</div>
+    </div>
 
-	<script src="./browser_main.js"></script>
+    <div style="grid-column: 2 / 3;overflow-y: auto;overflow-x: hidden;padding-right:32px">
+        <!-- ================ Canvas =============== -->
+
+        <h2 style="margin-left:32px;margin-top:32px">Procedural textures</h2>
+        <canvas id="canvas" style="border:1px solid black;margin:32px;"></canvas>
+
+    </div>
+
+    <script src="./browser_main.js"></script>
 
 </body>
 
