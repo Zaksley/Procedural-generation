@@ -217,7 +217,7 @@ describe('Filters test suite', () => {
             found[4 * whiteCells[i] + 3] = white[3];
         }
 
-        found = BF.negativeImage(found);
+        found = BF.negativeImage()(found);
 
         for (let i = 0; i < 9; ++i) {
             expect(found[4 * i]).toEqual(expected[4 * i]);
@@ -261,7 +261,7 @@ describe('Filters test suite', () => {
             found[4 * whiteCells[i] + 3] = white[3];
         }
 
-        found = BF.negativeImage(found);
+        found = BF.negativeImage()(found);
 
         for (let i = 0; i < 25; ++i) {
             expect(found[4 * i]).toEqual(expected[4 * i]);

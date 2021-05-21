@@ -150,7 +150,7 @@ function filter_verticalFlip(dict) {
  */
 function filter_negativeImage() {
 	return function (img) {
-		return img.map((e, i) => (i % 4 === 3) ? e : 256 - e);
+		return img.map((e, i) => (i % 4 === 3) ? e : 255 - e);
 	};
 }
 
