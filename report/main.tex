@@ -11,7 +11,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 \usepackage{graphicx}
-\graphicspath{{./images/}}
+\graphicspath{{./rapport/}}
 \usepackage{amsmath, amssymb}
 \usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm]{geometry}
 \usepackage[dvipsnames]{xcolor}
@@ -177,6 +177,8 @@ Dans une optique d'adaptabilité, les utilisateurs (et nous-mêmes) devaient fin
 
 
 \section{Implémentation}
+\paragraph{}
+Le but de cette partie est de visualiser l'évolution du noyau du générateur d'images, de textures et de filtres. 
 
 \subsection{Couleurs, textures et filtres}
 \label{sec:colors}
@@ -361,6 +363,8 @@ Pour ce faire, les noms des fonctions sont récupérés dans les listes définie
 
 
 \section{Fonctions implémentées}
+\paragraph{}
+Le but de cette partie est d'établir le travail effectué sur les différents filtres et textures implémentés, mais aussi des quelques animations créées.
 
 \subsection{Textures}
 \label{sec:textures}
@@ -417,7 +421,10 @@ Nous avons mis au point une fonction permettant de créer un polygone quelconque
 \paragraph{}
 Nous nous sommes par la suite intéressés aux \textbf{automates cellulaires} tels que le feu de foret, le jeu de la vie\cite{goL}, Greenberg Hastings ou encore les automates élémentaires et cycliques en une seule dimension. Ces trois fonctions sont représentées (agrandies) dans la figure~\ref{fig:automates}. Les textures à étapes opèrent en se basant sur une fonction \texttt{getMooreNeighboorState} récupérant l'état des voisins de Moore\cite{moore} d'un pixel (au plus les huit voisins autour de lui), puis en la passant dans une méthode \texttt{reduce} afin d'assigner une constante de décision à ce pixel (par exemple, en connaissant le nombre de ses voisins "en vie"). Pour les \textbf{automates élémentaires}\cite{elemCellu}, plusieurs règles et conditions initiales ont été implémentées, ainsi que la façon de gérer ces règles facilement. Les utilisateurs peuvent donc ajouter de nouvelles règles pour enrichir la bibliothèque du projet de façon aisée.
 
+\paragraph{}
 Chaque génération d'automate cellulaire fonctionne de la même manière, aux règles d'évolution près. Tout d'abord, la situation initiale est générée, par aléatoire ou une fonction donnée. Ensuite, l'étape suivante est calculée grâce à une fonction \texttt{x\_nextStep} où $x$ représente le nom de l'automate. Après fin de calcul, l'automate se trouve dans l'état final, et est donc prêt à être représenté.
+
+Petit point tout de même à souligner est la redondance de ces générations. En effet, il aurait été tout à fait possible de ne créer qu'une seule fonction génératrice et lui passer en paramètres deux fonctions: l'initialisation et le passage à l'étape suivante. Cet exemple est visible dans le cas des automates cellulaires à une dimension, où la règle choisie ainsi que la situation initiale sont données en paramètres. L'extension de cette forme à tous les automates cellulaires serait une bonne piste d'optimisation de ces générateurs de texture.
 
 \begin{figure}
     \centering
