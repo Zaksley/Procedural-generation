@@ -1,4 +1,4 @@
-"paste": { "paste": { "paste": {
+"paste": { "paste": { "paste": { "paste": {
 	"compose": {
 		"operation":"plus",
 		"sdHorseshoe": {
@@ -155,5 +155,51 @@
 			"height":410,
 			"width":1025
 		} 
+	}},
+	"compose": { "operation":"minus",
+	"compose": {
+		"operation":"minus",
+		"replaceColor": {
+			"color1":"black",
+			"color2":"0",
+			"amplifyOutlines": {
+				"color1":[255,180,200,255],
+				"intensity":"1",
+				"cut": {
+					"sdStar5": {
+						"function":"lines",
+						"intensity":4,
+						"color1": [41,255,179,255],
+						"size":400
+					},
+					"replaceColor": {
+						"color1":"white",
+						"color2":"0",
+						"amplifyOutlines": {
+							"intensity": 5,
+							"color1": "white",
+							"sobel": {
+								"yinyang": {
+									"size":110,
+									"centery":300
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"horizontalGradient": {
+			"color1":[0,0,0,0],
+			"color2":[255,255,255,255],
+			"columns":1,
+			"angle":-90
+		}},
+		"horizontalGradient": {
+			"color1":[0,0,0,0],
+			"color2":[255,255,255,255],
+			"columns":1,
+			"angle":-90
+		}
 	}
 }

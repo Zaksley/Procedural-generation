@@ -728,6 +728,7 @@ function texture_sdHexagram(dict) {
 function texture_sdStar5(dict) {
    const r =         dict['size']      || WIDTH / 5;
    const rf =        dict['size2'] / r || 1.7;
+   const intensity = dict['intensity'] || 2;
    const center =    dict['center']    || [];
    const center_x =  dict['centerx']   || center[0] || WIDTH / 2;
    const center_y =  dict['centery']   || center[1] || HEIGHT / 2;
@@ -751,7 +752,7 @@ function texture_sdStar5(dict) {
    return function (x, y) {
       const p = [x - center_x, y - center_y];
 
-      const d = 2 * dist(p, r, rf) / WIDTH;
+      const d = intensity * dist(p, r, rf) / WIDTH;
 
       return fcolor(d);
    };
